@@ -9,7 +9,7 @@
 ### 현재 상태 (AS-IS)
 - 심리적 고민을 가진 성인들이 상담을 원하지만, 전문 상담은 비싸고 1:1 구조
 - 시중 AI 챗봇은 결국 사람이 아님 — 공감과 연대감을 줄 수 없음
-- BetterHelp 등 온라인 플랫폼도 매칭 알고리즘이 불투명하고 그룹 상담 없음 [1]
+- BetterHelp 등 온라인 플랫폼도 매칭 알고리즘이 불투명하고 그룹 상담 없음 ([Forbes BetterHelp Review](https://www.forbes.com/health/mind/betterhelp-review/))
 
 ### 원하는 상태 (TO-BE)
 - AI가 대화로 고민을 파악하고 → 비슷한 고민을 가진 사람들을 소그룹 매칭
@@ -33,7 +33,7 @@
 - 일상은 기능하지만 내면의 회복이 필요한 성인
 - 혼자 감당하기 버겁지만 정신과·심리상담까지는 아닌 것 같은 사람
 - 다른 사람의 이야기를 들으면서 "나만 그런 게 아니구나" — 상호 회복이 가능한 사람
-- 전문 용어: **Subclinical 수준** — 임상 진단 기준(DSM-5)에는 미충족하지만 심리적 지원이 필요한 상태 [2]
+- 전문 용어: **Subclinical 수준** — 임상 진단 기준([DSM-5](https://www.psychiatry.org/psychiatrists/practice/dsm))에는 미충족하지만 심리적 지원이 필요한 상태
 
 **서비스 경계 명시:** 본 서비스는 의료/임상 서비스가 아닌 정서 지원 플랫폼입니다.
 
@@ -51,7 +51,7 @@
 - 챗봇 대화 분석 → 고민 주제 분류
 - 소그룹 고정 구성 (4~6명, 매 세션 같은 멤버)
 - 1주일 이내 그룹 + 상담사 동시 배정
-- 매칭 이유 투명 공개 ("번아웃·직장 스트레스 키워드 기반 배정") [1]
+- 매칭 이유 투명 공개 ("번아웃·직장 스트레스 키워드 기반 배정") ([Forbes BetterHelp Review](https://www.forbes.com/health/mind/betterhelp-review/))
 - **상담사 매칭 기준: 미정 (다음 결정 필요)**
 
 ### 3-3. 집단 상담 세션
@@ -103,7 +103,7 @@
 
 | 서비스 | 약점 | 우리의 차별화 |
 |--------|------|-------------|
-| BetterHelp | 1:1만 가능, 매칭 불투명, FTC 데이터 논란 [1] | 그룹 × 투명한 매칭 × 신뢰 설계 |
+| BetterHelp | 1:1만 가능, 매칭 불투명, FTC 데이터 논란 ([Forbes](https://www.forbes.com/health/mind/betterhelp-review/)) | 그룹 × 투명한 매칭 × 신뢰 설계 |
 | 일반 AI 챗봇 | 사람이 아님, 연대감 없음 | AI는 매칭 도구, 상담은 사람이 |
 | 오프라인 자조 모임 | 매칭 없음, 비구조적 | AI 매칭으로 유사 고민 그룹 구성 |
 
@@ -157,13 +157,5 @@
 | 버전 | 날짜 | 주요 변경 |
 |------|------|----------|
 | v1.0 | 2026-03-06 | 최초 작성 (Day 3 clarify 세션) |
-| v2.0 | 2026-03-06 | 핵심 포지셔닝 재정의, Subclinical 타깃 명시, 출처 추가 |
-| v2.1 | 2026-03-06 | POC/Wizard of Oz 전략 추가, 그룹 구성 확정 (4~6명 고정), 매칭 타임라인 확정 (1주일), 미결 사항 섹션 추가 |
-
----
-
-## References
-
-[1] Forbes Health. "BetterHelp Review." Forbes. https://www.forbes.com/health/mind/betterhelp-review/
-
-[2] American Psychiatric Association. *Diagnostic and Statistical Manual of Mental Disorders, Fifth Edition (DSM-5)*. Arlington, VA: American Psychiatric Publishing, 2013.
+| v2.0 | 2026-03-06 | 핵심 포지셔닝 재정의, Subclinical 타깃, 출처 추가 |
+| v2.1 | 2026-03-06 | POC/Wizard of Oz 전략, 그룹 구성 확정, 인라인 링크 출처로 변경 |
