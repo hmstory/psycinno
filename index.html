@@ -8,12 +8,10 @@
     :root {
       --bg: #0f0f1a;
       --surface: #1a1a2e;
-      --card: #1e2a4a;
       --text: #d4d4d8;
       --heading: #ffffff;
       --accent: #6c63ff;
-      --accent2: #e94560;
-      --border: #333;
+      --border: #2a2a3e;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -31,117 +29,203 @@
     h1 {
       font-size: 1.8rem;
       color: var(--heading);
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
     .subtitle {
-      color: var(--accent);
-      font-size: 0.95rem;
-      margin-bottom: 40px;
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 44px;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 36px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
     .section-title {
-      font-size: 1.1rem;
-      color: var(--accent);
-      margin: 32px 0 16px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border);
+      font-size: 1.05rem;
+      color: var(--heading);
+      font-weight: 700;
     }
-    .card-grid {
-      display: grid;
-      gap: 12px;
+    .section-desc {
+      font-size: 0.78rem;
+      color: #666;
+      margin-left: auto;
     }
+
+    /* Cards */
+    .card-grid { display: grid; gap: 8px; }
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
+      border-radius: 10px;
+      padding: 14px 18px;
       text-decoration: none;
       color: var(--text);
-      transition: all 0.2s;
+      transition: all 0.15s;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
     .card:hover {
       border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(108,99,255,0.15);
+      transform: translateX(4px);
     }
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-    .card-icon.purple { background: rgba(108,99,255,0.2); }
-    .card-icon.green { background: rgba(46,204,113,0.2); }
-    .card-icon.amber { background: rgba(230,162,60,0.2); }
-    .card-body h3 {
-      font-size: 0.95rem;
-      color: var(--heading);
-      margin-bottom: 2px;
-    }
-    .card-body p {
-      font-size: 0.82rem;
-      color: #888;
-    }
-    .badge {
+    .card-tag {
       font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tag-purple { background: rgba(108,99,255,0.15); color: #a8a4ff; }
+    .tag-green  { background: rgba(46,204,113,0.15); color: #81ecb0; }
+    .tag-amber  { background: rgba(230,162,60,0.15); color: #f0c078; }
+    .tag-red    { background: rgba(233,69,96,0.15); color: #f08090; }
+    .tag-teal   { background: rgba(56,178,172,0.15); color: #81e6d9; }
+    .tag-blue   { background: rgba(66,133,244,0.15); color: #90b8f8; }
+
+    .card-title {
+      font-size: 0.9rem;
+      color: var(--heading);
+      font-weight: 500;
+    }
+    .card-meta {
+      font-size: 0.75rem;
+      color: #666;
       margin-left: auto;
       flex-shrink: 0;
-      font-weight: 600;
+      white-space: nowrap;
     }
-    .badge.w3 { background: rgba(108,99,255,0.2); color: #a8a4ff; }
-    .badge.w4 { background: rgba(233,69,96,0.2); color: #e94560; }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 8px 0 36px;
+    }
+
     footer {
       text-align: center;
       padding: 40px 20px;
-      font-size: 0.8rem;
-      color: #555;
+      font-size: 0.75rem;
+      color: #444;
     }
     @media (max-width: 600px) {
       .container { padding: 32px 14px 60px; }
       h1 { font-size: 1.5rem; }
+      .card { padding: 12px 14px; }
+      .card-meta { display: none; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>psycinno</h1>
-    <p class="subtitle">연세대학교 심리이노베이션대학원 | 김형모</p>
+    <p class="subtitle">연세대학교 심리이노베이션대학원 디지털 혁신 트랙 | 김형모</p>
 
-    <h2 class="section-title">인지공학심리학</h2>
-    <div class="card-grid">
-      <a class="card" href="cognitive-engineering/w3-reports/prompt.html">
-        <div class="card-icon amber">P</div>
-        <div class="card-body">
-          <h3>학습 프롬프트</h3>
-          <p>프롬프트 설계 및 학습 전략</p>
-        </div>
-      </a>
-      <a class="card" href="cognitive-engineering/w3-reports/">
-        <div class="card-icon purple">3</div>
-        <div class="card-body">
-          <h3>W3 주교재 2장</h3>
-          <p>Signal Detection Theory, 인간 정보처리</p>
-        </div>
-        <span class="badge w3">W3</span>
-      </a>
-      <a class="card" href="cognitive-engineering/w3-reports/sub-chapter8.html">
-        <div class="card-icon green">8</div>
-        <div class="card-body">
-          <h3>W3 부교재 8장</h3>
-          <p>von Restorff Effect</p>
-        </div>
-        <span class="badge w3">W3</span>
-      </a>
+    <!-- 인지공학심리학 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background:#6c63ff"></div>
+        <span class="section-title">인지공학심리학</span>
+        <span class="section-desc">주간 보고서</span>
+      </div>
+      <hr class="divider">
+      <div class="card-grid">
+        <a class="card" href="cognitive-engineering/w3-reports/prompt.html">
+          <span class="card-tag tag-amber">프롬프트</span>
+          <span class="card-title">학습 프롬프트 설계</span>
+          <span class="card-meta">4-STEP 학습 전략</span>
+        </a>
+        <a class="card" href="cognitive-engineering/w3-reports/">
+          <span class="card-tag tag-purple">W3</span>
+          <span class="card-title">주교재 2장 — Signal Detection Theory</span>
+          <span class="card-meta">주교재</span>
+        </a>
+        <a class="card" href="cognitive-engineering/w3-reports/sub-chapter8.html">
+          <span class="card-tag tag-green">W3</span>
+          <span class="card-title">부교재 8장 — von Restorff Effect</span>
+          <span class="card-meta">부교재</span>
+        </a>
+      </div>
     </div>
+
+    <!-- 심리학기반 AI -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background:#38b2ac"></div>
+        <span class="section-title">심리학기반 AI</span>
+        <span class="section-desc">수업 발표 / 기획</span>
+      </div>
+      <hr class="divider">
+      <div class="card-grid">
+        <a class="card" href="psychology-ai/slides/intake-proposal/">
+          <span class="card-tag tag-teal">발표</span>
+          <span class="card-title">접수면접 AI 챗봇 — 기획 제안</span>
+          <span class="card-meta">6 slides</span>
+        </a>
+        <a class="card" href="psychology-ai/slides/child-intake.html">
+          <span class="card-tag tag-teal">발표</span>
+          <span class="card-title">아동 접수면접 제안</span>
+          <span class="card-meta">slides</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- hmslab -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background:#e94560"></div>
+        <span class="section-title">hmslab</span>
+        <span class="section-desc">보이스 그룹 카운슬링 앱</span>
+      </div>
+      <hr class="divider">
+      <div class="card-grid">
+        <a class="card" href="hmslab/vocab-quiz/">
+          <span class="card-tag tag-blue">퀴즈</span>
+          <span class="card-title">Vocab Quiz — Make Your Job a Calling</span>
+          <span class="card-meta">30문항</span>
+        </a>
+        <a class="card" href="hmslab/vocab-quiz/roediger-2006.html">
+          <span class="card-tag tag-blue">참고</span>
+          <span class="card-title">Roediger 2006 — Retrieval Practice 연구</span>
+          <span class="card-meta">논문</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 커피챗 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background:#e6a23c"></div>
+        <span class="section-title">커피챗</span>
+        <span class="section-desc">학과 커뮤니티</span>
+      </div>
+      <hr class="divider">
+      <div class="card-grid">
+        <a class="card" href="coffee-chat/">
+          <span class="card-tag tag-amber">발표</span>
+          <span class="card-title">먼슬리 커피챗 — 함께 찾아가는 우리 과 이야기</span>
+          <span class="card-meta">7 slides</span>
+        </a>
+      </div>
+    </div>
+
   </div>
-  <footer>psycinno &middot; GitHub Pages</footer>
+  <footer>psycinno &middot; GitHub Pages &middot; 2026</footer>
 </body>
 </html>
