@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>psycinno - 김형모</title>
+  <style>
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --card: #1e2a4a;
+      --text: #d4d4d8;
+      --heading: #ffffff;
+      --accent: #6c63ff;
+      --accent2: #e94560;
+      --border: #333;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: var(--heading);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-bottom: 40px;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin: 32px 0 16px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(108,99,255,0.15);
+    }
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .card-icon.purple { background: rgba(108,99,255,0.2); }
+    .card-icon.green { background: rgba(46,204,113,0.2); }
+    .card-icon.amber { background: rgba(230,162,60,0.2); }
+    .card-body h3 {
+      font-size: 0.95rem;
+      color: var(--heading);
+      margin-bottom: 2px;
+    }
+    .card-body p {
+      font-size: 0.82rem;
+      color: #888;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: auto;
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+    .badge.w3 { background: rgba(108,99,255,0.2); color: #a8a4ff; }
+    .badge.w4 { background: rgba(233,69,96,0.2); color: #e94560; }
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.8rem;
+      color: #555;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 32px 14px 60px; }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>psycinno</h1>
+    <p class="subtitle">연세대학교 심리이노베이션대학원 | 김형모</p>
+
+    <h2 class="section-title">인지공학심리학</h2>
+    <div class="card-grid">
+      <a class="card" href="cognitive-engineering/w3-reports/prompt.html">
+        <div class="card-icon amber">P</div>
+        <div class="card-body">
+          <h3>학습 프롬프트</h3>
+          <p>프롬프트 설계 및 학습 전략</p>
+        </div>
+      </a>
+      <a class="card" href="cognitive-engineering/w3-reports/">
+        <div class="card-icon purple">3</div>
+        <div class="card-body">
+          <h3>W3 주교재 2장</h3>
+          <p>Signal Detection Theory, 인간 정보처리</p>
+        </div>
+        <span class="badge w3">W3</span>
+      </a>
+      <a class="card" href="cognitive-engineering/w3-reports/sub-chapter8.html">
+        <div class="card-icon green">8</div>
+        <div class="card-body">
+          <h3>W3 부교재 8장</h3>
+          <p>von Restorff Effect</p>
+        </div>
+        <span class="badge w3">W3</span>
+      </a>
+    </div>
+  </div>
+  <footer>psycinno &middot; GitHub Pages</footer>
+</body>
+</html>
