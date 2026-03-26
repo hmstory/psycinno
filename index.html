@@ -6,12 +6,12 @@
   <title>psycinno - 김형모</title>
   <style>
     :root {
-      --bg: #0f0f1a;
-      --surface: #1a1a2e;
-      --text: #d4d4d8;
-      --heading: #ffffff;
+      --bg: #ffffff;
+      --surface: #f7f7f8;
+      --text: #444;
+      --heading: #111;
       --accent: #6c63ff;
-      --border: #2a2a3e;
+      --border: #e2e2e6;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -32,7 +32,7 @@
       margin-bottom: 4px;
     }
     .subtitle {
-      color: #888;
+      color: #999;
       font-size: 0.9rem;
       margin-bottom: 44px;
     }
@@ -60,7 +60,7 @@
     }
     .section-desc {
       font-size: 0.78rem;
-      color: #666;
+      color: #999;
       margin-left: auto;
     }
 
@@ -81,6 +81,7 @@
     .card:hover {
       border-color: var(--accent);
       transform: translateX(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .card-tag {
       font-size: 0.7rem;
@@ -91,12 +92,12 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .tag-purple { background: rgba(108,99,255,0.15); color: #a8a4ff; }
-    .tag-green  { background: rgba(46,204,113,0.15); color: #81ecb0; }
-    .tag-amber  { background: rgba(230,162,60,0.15); color: #f0c078; }
-    .tag-red    { background: rgba(233,69,96,0.15); color: #f08090; }
-    .tag-teal   { background: rgba(56,178,172,0.15); color: #81e6d9; }
-    .tag-blue   { background: rgba(66,133,244,0.15); color: #90b8f8; }
+    .tag-purple { background: rgba(108,99,255,0.1); color: #5a52d5; }
+    .tag-green  { background: rgba(46,204,113,0.1); color: #1a9a56; }
+    .tag-amber  { background: rgba(230,162,60,0.1); color: #b07820; }
+    .tag-red    { background: rgba(233,69,96,0.1); color: #c0384e; }
+    .tag-teal   { background: rgba(56,178,172,0.1); color: #2a8a84; }
+    .tag-blue   { background: rgba(66,133,244,0.1); color: #3574d4; }
 
     .card-title {
       font-size: 0.9rem;
@@ -105,7 +106,7 @@
     }
     .card-meta {
       font-size: 0.75rem;
-      color: #666;
+      color: #aaa;
       margin-left: auto;
       flex-shrink: 0;
       white-space: nowrap;
@@ -122,7 +123,7 @@
       text-align: center;
       padding: 40px 20px;
       font-size: 0.75rem;
-      color: #444;
+      color: #bbb;
     }
     @media (max-width: 600px) {
       .container { padding: 32px 14px 60px; }
