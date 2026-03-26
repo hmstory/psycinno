@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>W3 주교재 2장 요약 및 보고서 - 김형모</title>
+  <title>W4 주교재 4장 요약 및 보고서 - 김형모</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <style>
     :root {
@@ -330,10 +330,10 @@
 
   <nav class="nav">
     <span class="nav-label">인지공학심리학 |</span>
-    <a href="prompt.html">프롬프트</a>
-    <a href="index.html" class="active">W3 주교재 2장</a>
-    <a href="sub-chapter8.html">W3 부교재 8장</a>
-    <a href="../w4-reports/index.html">W4 주교재 4장</a>
+    <a href="../w3-reports/prompt.html">프롬프트</a>
+    <a href="../w3-reports/index.html">W3 주교재 2장</a>
+    <a href="../w3-reports/sub-chapter8.html">W3 부교재 8장</a>
+    <a href="index.html" class="active">W4 주교재 4장</a>
   </nav>
   <div class="container">
     <div id="content"><div class="loading">Loading...</div></div>
@@ -354,7 +354,7 @@
   <script>
     marked.setOptions({ gfm: true, breaks: true });
 
-    fetch('w3-chapter2.md')
+    fetch('w4-chapter4.md')
       .then(r => r.text())
       .then(md => {
         document.getElementById('content').innerHTML = marked.parse(md);
