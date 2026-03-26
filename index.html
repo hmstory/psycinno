@@ -37,15 +37,30 @@
       margin-bottom: 44px;
     }
 
-    /* Section */
+    /* Accordion Section */
     .section {
-      margin-bottom: 36px;
+      margin-bottom: 6px;
     }
-    .section-header {
+    .section-toggle {
+      width: 100%;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 12px;
+      transition: all 0.15s;
+      text-align: left;
+    }
+    .section-toggle:hover {
+      background: var(--surface);
+    }
+    .section.open .section-toggle {
+      border-radius: 12px 12px 0 0;
+      border-bottom-color: transparent;
+      background: var(--surface);
     }
     .section-dot {
       width: 10px;
@@ -54,7 +69,7 @@
       flex-shrink: 0;
     }
     .section-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--heading);
       font-weight: 700;
     }
@@ -63,73 +78,100 @@
       color: #999;
       margin-left: auto;
     }
+    .section-arrow {
+      font-size: 0.7rem;
+      color: #aaa;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+    .section.open .section-arrow {
+      transform: rotate(90deg);
+    }
+    .section-count {
+      font-size: 0.7rem;
+      color: #bbb;
+      background: var(--surface);
+      padding: 2px 7px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .section.open .section-count {
+      background: var(--border);
+    }
+
+    /* Collapsible body */
+    .section-body {
+      display: none;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 8px;
+      background: var(--surface);
+    }
+    .section.open .section-body {
+      display: block;
+    }
 
     /* Cards */
-    .card-grid { display: grid; gap: 8px; }
     .card {
-      background: var(--surface);
+      background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 18px;
+      border-radius: 8px;
+      padding: 12px 16px;
       text-decoration: none;
       color: var(--text);
       transition: all 0.15s;
       display: flex;
       align-items: center;
       gap: 12px;
+      margin-bottom: 4px;
     }
+    .card:last-child { margin-bottom: 0; }
     .card:hover {
       border-color: var(--accent);
-      transform: translateX(4px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transform: translateX(3px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
     .card-tag {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 2px 7px;
+      border-radius: 5px;
       flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
     .tag-purple { background: rgba(108,99,255,0.1); color: #5a52d5; }
     .tag-green  { background: rgba(46,204,113,0.1); color: #1a9a56; }
     .tag-amber  { background: rgba(230,162,60,0.1); color: #b07820; }
-    .tag-red    { background: rgba(233,69,96,0.1); color: #c0384e; }
     .tag-teal   { background: rgba(56,178,172,0.1); color: #2a8a84; }
     .tag-blue   { background: rgba(66,133,244,0.1); color: #3574d4; }
 
     .card-title {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--heading);
       font-weight: 500;
     }
     .card-meta {
-      font-size: 0.75rem;
-      color: #aaa;
+      font-size: 0.73rem;
+      color: #bbb;
       margin-left: auto;
       flex-shrink: 0;
       white-space: nowrap;
-    }
-
-    /* Divider */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 8px 0 36px;
     }
 
     footer {
       text-align: center;
       padding: 40px 20px;
       font-size: 0.75rem;
-      color: #bbb;
+      color: #ccc;
     }
     @media (max-width: 600px) {
       .container { padding: 32px 14px 60px; }
       h1 { font-size: 1.5rem; }
-      .card { padding: 12px 14px; }
+      .card { padding: 11px 13px; }
       .card-meta { display: none; }
+      .section-desc { display: none; }
     }
   </style>
 </head>
@@ -139,14 +181,15 @@
     <p class="subtitle">연세대학교 심리이노베이션대학원 디지털 혁신 트랙 | 김형모</p>
 
     <!-- 인지공학심리학 -->
-    <div class="section">
-      <div class="section-header">
+    <div class="section open" id="sec-ce">
+      <button class="section-toggle" onclick="toggle('sec-ce')">
         <div class="section-dot" style="background:#6c63ff"></div>
         <span class="section-title">인지공학심리학</span>
         <span class="section-desc">주간 보고서</span>
-      </div>
-      <hr class="divider">
-      <div class="card-grid">
+        <span class="section-count">3</span>
+        <span class="section-arrow">&#9654;</span>
+      </button>
+      <div class="section-body">
         <a class="card" href="cognitive-engineering/w3-reports/prompt.html">
           <span class="card-tag tag-amber">프롬프트</span>
           <span class="card-title">학습 프롬프트 설계</span>
@@ -166,14 +209,15 @@
     </div>
 
     <!-- 심리학기반 AI -->
-    <div class="section">
-      <div class="section-header">
+    <div class="section" id="sec-ai">
+      <button class="section-toggle" onclick="toggle('sec-ai')">
         <div class="section-dot" style="background:#38b2ac"></div>
         <span class="section-title">심리학기반 AI</span>
         <span class="section-desc">수업 발표 / 기획</span>
-      </div>
-      <hr class="divider">
-      <div class="card-grid">
+        <span class="section-count">2</span>
+        <span class="section-arrow">&#9654;</span>
+      </button>
+      <div class="section-body">
         <a class="card" href="psychology-ai/slides/intake-proposal/">
           <span class="card-tag tag-teal">발표</span>
           <span class="card-title">접수면접 AI 챗봇 — 기획 제안</span>
@@ -188,14 +232,15 @@
     </div>
 
     <!-- hmslab -->
-    <div class="section">
-      <div class="section-header">
+    <div class="section" id="sec-lab">
+      <button class="section-toggle" onclick="toggle('sec-lab')">
         <div class="section-dot" style="background:#e94560"></div>
         <span class="section-title">hmslab</span>
         <span class="section-desc">보이스 그룹 카운슬링 앱</span>
-      </div>
-      <hr class="divider">
-      <div class="card-grid">
+        <span class="section-count">2</span>
+        <span class="section-arrow">&#9654;</span>
+      </button>
+      <div class="section-body">
         <a class="card" href="hmslab/vocab-quiz/">
           <span class="card-tag tag-blue">퀴즈</span>
           <span class="card-title">Vocab Quiz — Make Your Job a Calling</span>
@@ -210,14 +255,15 @@
     </div>
 
     <!-- 커피챗 -->
-    <div class="section">
-      <div class="section-header">
+    <div class="section" id="sec-coffee">
+      <button class="section-toggle" onclick="toggle('sec-coffee')">
         <div class="section-dot" style="background:#e6a23c"></div>
         <span class="section-title">커피챗</span>
         <span class="section-desc">학과 커뮤니티</span>
-      </div>
-      <hr class="divider">
-      <div class="card-grid">
+        <span class="section-count">1</span>
+        <span class="section-arrow">&#9654;</span>
+      </button>
+      <div class="section-body">
         <a class="card" href="coffee-chat/">
           <span class="card-tag tag-amber">발표</span>
           <span class="card-title">먼슬리 커피챗 — 함께 찾아가는 우리 과 이야기</span>
@@ -228,5 +274,11 @@
 
   </div>
   <footer>psycinno &middot; GitHub Pages &middot; 2026</footer>
+
+  <script>
+    function toggle(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+  </script>
 </body>
 </html>
