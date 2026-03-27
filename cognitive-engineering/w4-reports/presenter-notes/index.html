@@ -111,6 +111,26 @@
     .lightbox.show { display: flex; }
     .lightbox img { max-width: 98vw; max-height: 92vh; border-radius: 8px; }
 
+    /* Desktop: parallel layout */
+    @media (min-width: 768px) {
+      .container { max-width: 1100px; }
+      .slide.open .slide-body { display: flex; gap: 20px; padding: 16px 18px; }
+      .slide-visual {
+        flex: 0 0 40%;
+        position: sticky;
+        top: 70px;
+        align-self: flex-start;
+        max-height: calc(100vh - 90px);
+        overflow-y: auto;
+      }
+      .slide-notes { flex: 1; min-width: 0; }
+      .slide-img { margin: 0 0 8px; }
+    }
+
+    /* Mobile: vertical stack (default) */
+    @media (max-width: 767px) {
+      .slide-visual { margin-bottom: 8px; }
+    }
     @media (max-width: 600px) {
       body { font-size: 16px; }
       .slide-header { padding: 12px 14px; }
@@ -152,7 +172,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-01.png" alt="Slide 1" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -178,6 +201,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"공항 보안 검색원을 떠올려보세요. X-ray 화면을 볼 때 한 번에 전체가 보이는 게 아닙니다. 눈이 선명하게 볼 수 있는 범위, UFOV라고 하는데, 이 범위로 화면을 조금씩 훑어야 합니다. 이게 시각적 탐색입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -189,9 +213,12 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-02.png" alt="Slide 2" loading="lazy">
         <div class="textbook-fig-label">교재 원본 Figure 3.2 (SSTS)</div>
         <img class="textbook-fig" src="textbook-figures/figure3.2-SSTS.png" alt="Figure 3.2" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -217,6 +244,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"이 공식은 어렵게 보이지만 핵심은 하나입니다. 가방에 물건이 10개면 평균 5개쯤 봤을 때 찾고, 100개면 50개. 물건이 많으면 정직하게 느려집니다. 그게 N/2입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -228,7 +256,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-03.png" alt="Slide 3" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -256,6 +287,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"무기가 있으면 발견 즉시 멈추니까 빠르지만, 없는 가방은 끝까지 다 뒤져봐야 '깨끗하다'고 판정합니다. 그래서 시간이 정확히 두 배입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -267,7 +299,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-04.png" alt="Slide 4" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -293,6 +328,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"SSTS는 하나 찾으면 멈추는 모델인데, 현실에서는 위험물이 여러 개일 수 있습니다. 칼 1개 찾고 '통과'시키면 나머지를 놓치겠죠. 이게 첫 번째 예외입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -304,7 +340,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-05.png" alt="Slide 5" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -331,6 +370,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"X-ray에서 총 모양이 딱 보이면 주변에 물건이 아무리 많아도 바로 눈에 들어옵니다. 이걸 팝아웃이라 하고, 그래프가 수평이 되는 게 특징입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -342,7 +382,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-06.png" alt="Slide 6" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -372,6 +415,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"총 모양은 팝아웃으로 바로 보이지만, '금속이면서 액체인 것'은 두 가지를 동시에 따져야 해서 하나씩 확인해야 합니다. 방해물이 제각각이면 더 힘듭니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -383,7 +427,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-07.png" alt="Slide 7" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -409,6 +456,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"택배 분류하듯 맨날 같은 걸 찾으면 자동화됩니다. 하지만 '오늘은 폭발물, 내일은 마약'처럼 매번 바뀌면 아무리 베테랑이어도 하나씩 봐야 합니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -420,7 +468,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-08.png" alt="Slide 8" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -447,6 +498,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"경험 많은 검색원은 전부 다 보지 않습니다. 색깔, 위치 같은 단서로 후보를 줄여가는 깔때기 구조입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -458,7 +510,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-09.png" alt="Slide 9" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -485,6 +540,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"가방 1000개 중 무기가 나오는 건 일주일에 한 번도 없으면, 검색원이 점점 대충 봅니다. 그래서 실제 공항에서는 가짜 무기 이미지를 일부러 섞어 긴장감을 유지시킵니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -503,9 +559,12 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-10.png" alt="Slide 10" loading="lazy">
         <div class="textbook-fig-label">교재 원본 Figure 3.3 (구조적 vs 비구조적)</div>
         <img class="textbook-fig" src="textbook-figures/figure3.3-clutter.png" alt="Figure 3.3" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -534,6 +593,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"아무리 뛰어난 검색원이어도 가방 속이 뒤죽박죽이면 한계가 있습니다. 클러터, 쉽게 말해 '시각적 소음'인데요, 원인이 4가지입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -552,7 +612,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-11.png" alt="Slide 11" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -579,6 +642,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"사람은 변화맹 때문에 눈앞에서 바뀌어도 놓칠 수 있습니다. 그래서 AI가 '여기 봐!'하고 알려줍니다. 방법이 두 가지입니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -590,7 +654,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-12.png" alt="Slide 12" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -616,6 +683,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"첫 번째 방법은 화면 가운데에 화살표를 띄우는 겁니다. 네비게이션처럼 '오른쪽 위 봐'라고요. 맞으면 빠르지만 틀리면 시간만 낭비합니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -627,7 +695,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-13.png" alt="Slide 13" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -653,6 +724,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"카톡 빨간 뱃지 보면 생각 안 해도 눈이 가죠? 같은 원리입니다. 의심 물건 위에서 직접 깜빡이니까 첫 번째 방법보다 빠릅니다."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -664,7 +736,10 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-14.png" alt="Slide 14" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -693,6 +768,7 @@
           <div class="mic-label">발표 멘트</div>
           <p>"깜빡임이 너무 강하면 물건을 가려서 '여기 뭔가 있다'까지는 아는데 '칼인지 가위인지' 구분이 안 됩니다. 위험물인지 판단을 못 하는 거죠."</p>
         </div>
+        </div>
       </div>
     </div>
 
@@ -704,9 +780,12 @@
         <span class="slide-toggle">&#9654;</span>
       </div>
       <div class="slide-body">
+        <div class="slide-visual">
         <img class="slide-img" src="slides/slide-15.png" alt="Slide 15" loading="lazy">
         <div class="textbook-fig-label">교재 원본 Figure 3.5 (HUD &mdash; 터널링 유발 환경)</div>
         <img class="textbook-fig" src="textbook-figures/figure3.5-HUD.png" alt="Figure 3.5" loading="lazy">
+        </div>
+        <div class="slide-notes">
         <div class="glossary">
           <div class="glossary-label">용어 사전</div>
           <ul>
@@ -734,6 +813,7 @@
         <div class="mic">
           <div class="mic-label">발표 멘트 (클로징)</div>
           <p>"AI가 '여기!'라고 표시하면 검색원이 거기만 봅니다. 나머지는 아예 확인을 안 합니다. 이게 3막의 결론입니다. 정리하면 &mdash; 1막에서 사람의 한계, 2막에서 환경의 방해, 3막에서 기계의 도움과 새로운 함정을 봤습니다. 결국 사람과 기계의 균형이 핵심입니다."</p>
+        </div>
         </div>
       </div>
     </div>
