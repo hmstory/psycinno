@@ -120,16 +120,17 @@
     /* Flow */
     .flow {
       display: flex; align-items: center; justify-content: center;
-      gap: 0; margin: 1.5rem 0; flex-wrap: wrap;
+      gap: 0; margin: 1.5rem 0; flex-wrap: nowrap; overflow-x: auto;
     }
     .flow-step {
       background: var(--card); border: 2px solid var(--accent);
-      border-radius: 10px; padding: 12px 18px; text-align: center;
-      font-size: 0.85rem; font-weight: 500; min-width: 120px; color: var(--text);
+      border-radius: 8px; padding: 8px 10px; text-align: center;
+      font-size: 0.75rem; font-weight: 500; min-width: 0; white-space: nowrap; color: var(--text);
+      flex-shrink: 0;
     }
     .flow-step.active { background: var(--accent); color: #0f1a1a; font-weight: 700; }
-    .flow-step small { display: block; font-size: 0.7rem; opacity: 0.8; margin-top: 2px; }
-    .flow-arrow { font-size: 1.2rem; color: var(--accent); margin: 0 6px; font-weight: 700; }
+    .flow-step small { display: block; font-size: 0.6rem; opacity: 0.8; margin-top: 1px; }
+    .flow-arrow { font-size: 1rem; color: var(--accent); margin: 0 3px; font-weight: 700; flex-shrink: 0; }
 
     /* Chat */
     .chat-container {
@@ -219,7 +220,7 @@
       h3 { font-size: 1.05rem; padding: 12px 14px; }
       .nav { padding: 8px 12px; gap: 6px; }
       .nav a { font-size: 0.8rem; padding: 5px 10px; }
-      .flow-step { min-width: 100px; font-size: 0.75rem; padding: 8px 10px; }
+      .flow-step { font-size: 0.65rem; padding: 6px 7px; }
       .chat-bubble { max-width: 92%; }
     }
 
