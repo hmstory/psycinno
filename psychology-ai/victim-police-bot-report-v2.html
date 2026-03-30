@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피해자전담경찰 접수면담 챗봇 v2.0 — 테스트 리포트</title>
+  <style>
+    :root {
+      --bg: #0f1a1a;
+      --surface: #142626;
+      --card: #1a3333;
+      --text: #d4d8d4;
+      --heading: #ffffff;
+      --accent: #2dd4bf;
+      --accent2: #f59e0b;
+      --accent-soft: #5eead4;
+      --highlight-bg: rgba(45,212,191,0.12);
+      --code-bg: #0d2626;
+      --border: #2a4040;
+      --green: #51cf66;
+      --green-bg: rgba(81,207,102,0.12);
+      --orange: #ffa94d;
+      --orange-bg: rgba(255,169,77,0.12);
+      --red: #f87171;
+      --red-bg: rgba(248,113,113,0.12);
+      --chat-bot: #1a3333;
+      --chat-user: #0d6e5e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 300; transition: width 0.1s linear; width: 0%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg); color: var(--text);
+      line-height: 1.85; font-size: 17px;
+    }
+    .container { max-width: 820px; margin: 0 auto; padding: 20px 16px 80px; }
+
+    /* Nav */
+    .nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap;
+      align-items: center; position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .nav a {
+      color: var(--text); text-decoration: none; font-size: 0.85rem;
+      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .nav a:hover { border-color: var(--accent); color: var(--accent); }
+    .nav a.active { background: var(--accent); color: #0f1a1a; border-color: var(--accent); font-weight: 700; }
+    .nav-label { color: var(--accent-soft); font-size: 0.8rem; font-weight: 600; margin-right: 4px; }
+
+    /* Version badge */
+    .version-badge {
+      display: inline-block; background: var(--accent2); color: #0f1a1a;
+      padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 800;
+      margin-left: 8px; vertical-align: middle;
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 1.6rem; color: var(--heading); margin: 2.5rem 0 1rem;
+      padding-bottom: 10px; border-bottom: 2px solid var(--accent);
+    }
+    h2 { font-size: 1.35rem; color: var(--accent); margin: 2rem 0 0.8rem; }
+    h3 {
+      font-size: 1.15rem; color: var(--accent-soft); margin: 2rem 0 0.8rem;
+      background: var(--card); padding: 14px 18px; border-radius: 10px;
+      border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    h4 { font-size: 1.05rem; color: var(--accent2); margin: 1.4rem 0 0.5rem; }
+
+    p { margin: 0.7rem 0; }
+    strong { color: #fff; font-weight: 700; }
+    em {
+      color: var(--accent-soft); font-style: normal;
+      background: var(--highlight-bg); padding: 1px 6px; border-radius: 3px;
+    }
+    hr { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+    ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    li { margin: 0.35rem 0; }
+
+    /* Tables */
+    table {
+      width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;
+      display: block; overflow-x: auto;
+    }
+    th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+    th { background: var(--surface); color: var(--accent); font-weight: 600; }
+    tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+    /* Cards */
+    .card {
+      background: var(--card); border-radius: 10px; padding: 20px 24px;
+      margin: 1rem 0; border-left: 4px solid var(--accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .card.green { border-left-color: var(--green); background: var(--green-bg); }
+    .card.orange { border-left-color: var(--orange); background: var(--orange-bg); }
+    .card.red { border-left-color: var(--red); background: var(--red-bg); }
+    .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 8px; color: var(--heading); }
+
+    /* Tags */
+    .tag {
+      display: inline-block; padding: 3px 10px; border-radius: 4px;
+      font-size: 0.75rem; font-weight: 700;
+    }
+    .tag-pass { background: var(--green-bg); color: var(--green); }
+    .tag-warn { background: var(--orange-bg); color: var(--orange); }
+    .tag-fail { background: var(--red-bg); color: var(--red); }
+
+    /* Flow */
+    .flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; margin: 1.5rem 0; flex-wrap: wrap;
+    }
+    .flow-step {
+      background: var(--card); border: 2px solid var(--accent);
+      border-radius: 10px; padding: 12px 18px; text-align: center;
+      font-size: 0.85rem; font-weight: 500; min-width: 120px; color: var(--text);
+    }
+    .flow-step.active { background: var(--accent); color: #0f1a1a; font-weight: 700; }
+    .flow-step small { display: block; font-size: 0.7rem; opacity: 0.8; margin-top: 2px; }
+    .flow-arrow { font-size: 1.2rem; color: var(--accent); margin: 0 6px; font-weight: 700; }
+
+    /* Chat */
+    .chat-container {
+      background: var(--surface); border-radius: 16px; padding: 20px; margin: 1rem 0;
+      border: 1px solid var(--border);
+    }
+    .chat-turn-label {
+      text-align: center; font-size: 0.7rem; color: var(--accent-soft);
+      font-weight: 600; margin: 20px 0 10px; letter-spacing: 1px;
+    }
+    .chat-turn-label:first-child { margin-top: 0; }
+    .chat-bubble {
+      max-width: 88%; padding: 12px 16px; border-radius: 14px;
+      margin: 6px 0; font-size: 0.88rem; line-height: 1.7; position: relative;
+    }
+    .chat-bubble.bot {
+      background: var(--chat-bot); color: var(--text);
+      border: 1px solid var(--border); margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-bubble.user {
+      background: var(--chat-user); color: #fff;
+      margin-left: auto; border-bottom-right-radius: 4px;
+    }
+    .chat-sender {
+      font-size: 0.68rem; font-weight: 700; margin-bottom: 4px; color: var(--accent-soft);
+    }
+    .chat-bubble.user .chat-sender { color: rgba(255,255,255,0.6); }
+
+    /* Report box */
+    .report-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px; margin: 1rem 0; font-size: 0.88rem;
+    }
+    .report-title {
+      text-align: center; font-size: 1.1rem; font-weight: 900; color: var(--heading);
+      border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;
+    }
+    .report-box h4 { font-size: 0.95rem; color: var(--accent); margin: 14px 0 6px; }
+    .report-box h4:first-child { margin-top: 0; }
+    .report-box ul { margin-left: 16px; margin-bottom: 8px; }
+    .report-footer {
+      margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--accent-soft); text-align: center;
+    }
+
+    /* Diff table */
+    .diff-old { color: var(--red); text-decoration: line-through; opacity: 0.7; }
+    .diff-new { color: var(--green); font-weight: 700; }
+
+    /* Back to top / TOC */
+    .top-btn {
+      position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px;
+      background: var(--accent); color: #0f1a1a; border: none; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; display: none;
+      align-items: center; justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 200;
+    }
+    .toc-toggle {
+      position: fixed; bottom: 20px; left: 20px; width: 44px; height: 44px;
+      background: var(--accent2); color: #0f1a1a; border: none; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .toc-panel {
+      display: none; position: fixed; bottom: 72px; left: 16px; right: 16px;
+      max-height: 60vh; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; overflow-y: auto; z-index: 199;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .toc-panel.show { display: block; }
+    .toc-panel a {
+      display: block; color: var(--text); text-decoration: none;
+      padding: 8px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .toc-panel a:hover { color: var(--accent); }
+    .toc-panel a.toc-h1 { font-weight: 700; color: var(--heading); }
+    .toc-panel a.toc-h2 { font-weight: 600; color: var(--accent); }
+    .toc-panel a.toc-h3 { padding-left: 16px; color: var(--accent-soft); font-size: 0.85rem; }
+
+    @media (max-width: 600px) {
+      body { font-size: 16px; }
+      .container { padding: 16px 12px 80px; }
+      h1 { font-size: 1.4rem; }
+      h2 { font-size: 1.2rem; }
+      h3 { font-size: 1.05rem; padding: 12px 14px; }
+      .nav { padding: 8px 12px; gap: 6px; }
+      .nav a { font-size: 0.8rem; padding: 5px 10px; }
+      .flow-step { min-width: 100px; font-size: 0.75rem; padding: 8px 10px; }
+      .chat-bubble { max-width: 92%; }
+    }
+
+    @media print {
+      .nav, .top-btn, .toc-toggle, .toc-panel, .progress-bar { display: none !important; }
+      body { background: #fff; color: #222; font-size: 12px; }
+      .container { padding: 0; }
+      h1, h2 { color: #222; }
+      h3 { background: #f5f5f5; color: #333; border-left-color: #2dd4bf; }
+      .card { background: #f9f9f9; border-left-width: 4px; }
+      th { background: #eee; color: #333; }
+      td, th { border-color: #ccc; }
+      .chat-container { background: #f5f5f5; }
+      .chat-bubble.bot { background: #fff; color: #222; border-color: #ccc; }
+      .chat-bubble.user { background: #0d6e5e; }
+      .report-box { background: #f9f9f9; border-color: #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <nav class="nav">
+    <span class="nav-label">심리학기반AI |</span>
+    <a href="victim-police-bot-report.html">ver 1.0 신고전</a>
+    <a href="victim-police-bot-report-v2.html" class="active">ver 2.0 신고후</a>
+  </nav>
+
+  <div class="container">
+
+    <h1>피해자전담경찰 접수면담 챗봇 — 테스트 리포트 <span class="version-badge">v2.0</span></h1>
+    <p><strong>EBT:</strong> 심리적 응급처치(PFA) + OARS &nbsp;|&nbsp; <strong>테스트 일시:</strong> 2026.03.30 &nbsp;|&nbsp; <strong>작성:</strong> 김형모</p>
+
+    <hr>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- SECTION 0: 버전 변경 요약        -->
+    <!-- ═══════════════════════════════ -->
+    <h2>0. v1.0 &rarr; v2.0 변경 사항</h2>
+
+    <table>
+      <tr><th>항목</th><th>v1.0</th><th>v2.0</th></tr>
+      <tr><td><strong>위치</strong></td><td class="diff-old">신고 전</td><td class="diff-new">신고 후 (KICS 입력 후)</td></tr>
+      <tr><td><strong>EBT</strong></td><td class="diff-old">동기강화상담 (MI)</td><td class="diff-new">심리적 응급처치 (PFA)</td></tr>
+      <tr><td><strong>의사소통 기법</strong></td><td>OARS (MI 내장)</td><td>OARS (PFA 내 독립 기법)</td></tr>
+      <tr><td><strong>목적</strong></td><td class="diff-old">신고 동기 강화</td><td class="diff-new">심리 안정화 + 면담 준비</td></tr>
+      <tr><td><strong>대상</strong></td><td class="diff-old">신고 망설이는 피해자</td><td class="diff-new">신고 완료, 전담경찰관 배정 대기 피해자</td></tr>
+      <tr><td><strong>페르소나</strong></td><td class="diff-old">이수진 (29세, 스토킹)</td><td class="diff-new">이정훈 (43세, 강도)</td></tr>
+      <tr><td><strong>논문 근거</strong></td><td>—</td><td class="diff-new">서명희(2020) 경남대 석사논문</td></tr>
+      <tr><td><strong>색상 테마</strong></td><td class="diff-old">보라/빨강</td><td class="diff-new">청록/골드</td></tr>
+    </table>
+
+    <h3>왜 바꿨나?</h3>
+    <div class="card">
+      <div class="card-title">3가지 근거</div>
+      <ol>
+        <li><strong>제도적 진입점</strong> — 전담경찰관은 KICS 입력 후에만 피해자를 인지하고 개입 가능(서명희, 2020, p.11). 신고 전에는 챗봇을 연결할 트리거 자체가 없다.</li>
+        <li><strong>챗봇의 핵심 가치</strong> — 논문이 지적한 최대 문제는 "전담경찰관이 사전 정보 없이 피해자를 대면"(p.45~46). 이 문제는 신고 후에만 존재한다.</li>
+        <li><strong>EBT 정합성</strong> — MI는 "변화 동기 강화"가 목적인데, 신고 후에는 동기 강화가 아니라 안정화가 필요. PFA가 신고 후 위기 개입에 적합하다.</li>
+      </ol>
+    </div>
+
+    <hr>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- SECTION 1: 챗봇 정의            -->
+    <!-- ═══════════════════════════════ -->
+    <h2>1. 챗봇 정의</h2>
+
+    <table>
+      <tr><th>항목</th><th>내용</th></tr>
+      <tr><td><strong>이름</strong></td><td>피해자전담경찰 접수면담 챗봇</td></tr>
+      <tr><td><strong>목적</strong></td><td>신고 후 범죄 피해자의 심리 안정화, 면담 준비, 면담 요약서 생성</td></tr>
+      <tr><td><strong>위치</strong></td><td>112 신고 &rarr; KICS &rarr; 전담경찰관 배정 &rarr; <strong>챗봇</strong> &rarr; 대면 면담</td></tr>
+      <tr><td><strong>EBT</strong></td><td>심리적 응급처치 (Psychological First Aid, PFA)</td></tr>
+      <tr><td><strong>의사소통</strong></td><td>OARS (Open questions, Affirmation, Reflective listening, Summarizing)</td></tr>
+      <tr><td><strong>대상</strong></td><td>112 신고 후, 전담경찰관 면담 대기 중인 성인 피해자</td></tr>
+      <tr><td><strong>구조</strong></td><td>총 10턴, 약 10~15분</td></tr>
+    </table>
+
+    <h3>서비스 흐름</h3>
+    <div class="flow">
+      <div class="flow-step">피해 발생</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">112 신고</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">KICS 입력</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">전담경찰관 배정</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step active">챗봇<small>PFA 기반 사전면담</small></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">대면 면담</div>
+    </div>
+
+    <h3>PFA(심리적 응급처치)란?</h3>
+    <p>WHO/NCTSN이 개발한 위기 직후 심리 지원 프로토콜. 전문 심리치료가 아니라, <strong>비전문가도 제공할 수 있는 초기 심리 안정화 기법</strong>이다. "치료"가 아닌 "안정화와 연계"에 초점.</p>
+
+    <h4>PFA 8대 핵심 활동</h4>
+    <table>
+      <tr><th>#</th><th>활동</th><th>설명</th><th>챗봇 적용 턴</th></tr>
+      <tr><td>1</td><td><strong>접촉</strong></td><td>비침습적 첫 접근, 관계 형성</td><td>턴 1</td></tr>
+      <tr><td>2</td><td><strong>안전</strong></td><td>즉각적 안전 확인·확보</td><td>턴 1, 6</td></tr>
+      <tr><td>3</td><td><strong>안정화</strong></td><td>감정 수용, 심리적 진정</td><td>턴 2</td></tr>
+      <tr><td>4</td><td><strong>정보수집</strong></td><td>현재 필요와 걱정 파악</td><td>턴 3~5</td></tr>
+      <tr><td>5</td><td><strong>실질적 도움</strong></td><td>즉각적 필요 해결 지원</td><td>턴 7</td></tr>
+      <tr><td>6</td><td><strong>사회적 지지 연결</strong></td><td>지원 체계 연결</td><td>턴 7</td></tr>
+      <tr><td>7</td><td><strong>대처 정보</strong></td><td>스트레스 대처법 안내</td><td>턴 7~8</td></tr>
+      <tr><td>8</td><td><strong>후속 연계</strong></td><td>전문기관·후속 지원 연결</td><td>턴 9~10</td></tr>
+    </table>
+
+    <h4>PFA 5대 원칙</h4>
+    <table>
+      <tr><th>원칙</th><th>설명</th></tr>
+      <tr><td><strong>안전 우선</strong></td><td>피해자의 즉각적 안전을 최우선으로 확인</td></tr>
+      <tr><td><strong>존엄성 존중</strong></td><td>판단·비난 없이 피해자의 선택과 감정을 존중</td></tr>
+      <tr><td><strong>권리 기반</strong></td><td>피해자의 알 권리, 거부 권리를 보장</td></tr>
+      <tr><td><strong>자기결정권</strong></td><td>피해자가 원하지 않으면 강요하지 않음</td></tr>
+      <tr><td><strong>해악 금지</strong></td><td>2차 피해를 유발하지 않음</td></tr>
+    </table>
+
+    <h4>OARS 의사소통 기법</h4>
+    <table>
+      <tr><th>기법</th><th>설명</th><th>발화 예시</th></tr>
+      <tr><td><strong>O</strong>pen Questions</td><td>자기 말로 이야기하게</td><td>"편하신 만큼 말씀해 주실 수 있을까요?"</td></tr>
+      <tr><td><strong>A</strong>ffirmation</td><td>강점·용기 인정</td><td>"신고해 주신 것만으로도 큰 용기를 내신 거예요"</td></tr>
+      <tr><td><strong>R</strong>eflective Listening</td><td>감정·의미 반영</td><td>"얼마나 억울하고 황당하셨을지 짐작이 됩니다"</td></tr>
+      <tr><td><strong>S</strong>ummarizing</td><td>대화 내용 정리</td><td>"지금까지 말씀해 주신 내용을 정리하면..."</td></tr>
+    </table>
+
+    <div class="card green">
+      <div class="card-title">학술 근거</div>
+      <ul>
+        <li>서명희 (2020). <em>경찰의 피해자 위기개입에 관한 연구</em>. 경남대학교 석사논문. — 전담경찰관 법적 근거, KICS 이후 개입, 인력 부족 현실</li>
+        <li>WHO (2011). <em>Psychological First Aid: Guide for Field Workers</em>. — PFA 8대 핵심 활동, 5대 원칙</li>
+        <li>NCTSN &amp; NCPTSD (2006). <em>Psychological First Aid: Field Operations Guide</em> (2nd ed.). — PFA 현장 적용 프로토콜</li>
+        <li>Gilliland, B. E., &amp; James, R. K. (2013). <em>Crisis Intervention Strategies</em> (7th ed.). — 6단계 위기개입 모형</li>
+      </ul>
+    </div>
+
+    <h3>10턴 대화 구조</h3>
+    <table>
+      <tr><th>턴</th><th>단계</th><th>PFA 활동</th><th>핵심 목표</th></tr>
+      <tr><td>1</td><td>인사 + 안전 확인</td><td>접촉, 안전</td><td>위기 스크리닝, 봇 소개</td></tr>
+      <tr><td>2</td><td>감정 수용 + 안정화</td><td>안정화</td><td>감정 반영, 심리적 진정</td></tr>
+      <tr><td>3</td><td>피해 개요 (언제, 어디)</td><td>정보수집</td><td>시간·장소 수집</td></tr>
+      <tr><td>4</td><td>피해 개요 (무엇, 어떻게)</td><td>정보수집</td><td>피해 내용 수집</td></tr>
+      <tr><td>5</td><td>가해자 관계</td><td>정보수집</td><td>관계 파악</td></tr>
+      <tr><td>6</td><td>안전 재확인 + 현재 상태</td><td>안전</td><td>신체·심리 상태, 안전 재확인</td></tr>
+      <tr><td>7</td><td>권리 안내 + 지원기관</td><td>실질적 도움, 사회적 지지</td><td>권리 3가지, 지원기관 안내</td></tr>
+      <tr><td>8</td><td>면담 리허설</td><td>대처 정보</td><td>전담경찰관 면담 준비</td></tr>
+      <tr><td>9</td><td>요약 확인</td><td>후속 연계</td><td>요약서 제시, 수정 요청</td></tr>
+      <tr><td>10</td><td>마무리 + 면담 요약서</td><td>후속 연계</td><td>최종 요약서, 종료</td></tr>
+    </table>
+
+    <hr>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- SECTION 2: 테스트 페르소나       -->
+    <!-- ═══════════════════════════════ -->
+    <h2>2. 테스트 페르소나</h2>
+
+    <table>
+      <tr><th>항목</th><th>내용</th></tr>
+      <tr><td><strong>이름</strong></td><td>이정훈</td></tr>
+      <tr><td><strong>나이</strong></td><td>43세</td></tr>
+      <tr><td><strong>직업</strong></td><td>배달 기사</td></tr>
+      <tr><td><strong>피해 유형</strong></td><td>흉기 위협 강도 (필수사건, 제13조 해당)</td></tr>
+      <tr><td><strong>피해 내용</strong></td><td>심야 배달 중 골목에서 칼로 위협, 현금·휴대폰·오토바이 강취</td></tr>
+      <tr><td><strong>신고 상태</strong></td><td>112 신고 완료, KICS 입력됨, 전담경찰관 배정 대기</td></tr>
+      <tr><td><strong>신체 상태</strong></td><td>왼팔 찰과상 (응급 치료 완료)</td></tr>
+      <tr><td><strong>심리 상태</strong></td><td>억울함, 공포, 자기비난, 생계 걱정</td></tr>
+      <tr><td><strong>양가감정</strong></td><td>"범인 못 잡으면 보복?" / "진술하면 시간 빼앗기는데 배달은?"</td></tr>
+    </table>
+
+    <h3>페르소나 선정 근거 (논문 기반)</h3>
+    <div class="card">
+      <div class="card-title">서명희(2020) 논문 p.16</div>
+      <p>전담경찰관 필수개입 대상: <strong>살인, 강도, 방화, 체포·감금, 약취·유인, 중상해(2개월+)</strong></p>
+      <p>강도는 필수사건이며, 단건·개별 피해자로서 1:1 텍스트 챗봇 10턴 구조에 가장 적합.</p>
+    </div>
+
+    <hr>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- SECTION 3: 대화 전문             -->
+    <!-- ═══════════════════════════════ -->
+    <h2>3. 챗봇 테스트 대화 전문</h2>
+    <p>가상 피해자 <strong>이정훈</strong>(43세, 흉기 강도)과의 대화 기록</p>
+
+    <div class="chat-container">
+
+      <div class="chat-turn-label">TURN 1 &mdash; 인사 + 안전 확인 (PFA: 접촉, 안전)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        안녕하세요. 저는 피해자전담경찰관 면담을 준비해 드리는 도우미예요. 신고해 주신 것만으로도 큰 용기를 내신 거예요. 지금 안전한 곳에 계신가요?
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        네 지금 집이요. 아까 병원 갔다 왔는데... 솔직히 아직도 손이 떨려요. 그놈이 칼 들고 있었거든요. 경찰분이 여기서 얘기 좀 하고 오시라고 해서 들어왔는데, 뭘 어떻게 해야 하는 건지 모르겠어요.
+      </div>
+
+      <div class="chat-turn-label">TURN 2 &mdash; 감정 수용 + 안정화 (PFA: 안정화)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        칼을 들이대는 일을 겪으셔서 지금도 손이 떨리시는 게 너무 당연해요. 그래도 지금 집에서 이렇게 말씀해 주시는 것만으로도 정말 큰 일을 해내고 계신 거예요. 앞으로 전담경찰관을 만나실 때 덜 막막하시도록, 차근차근 정리만 같이 해 보시면 됩니다. 지금 마음 상태는 어떠세요? 불안함, 무서움, 억울함 같은 감정들 중에 특히 크게 느껴지는 게 있으신가요?
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        솔직히 다 있는 것 같아요. 근데 제일 큰 건... 억울한 거? 저는 그냥 배달하고 있었을 뿐인데. 아무것도 잘못한 게 없는데 왜 저한테 그런 짓을 하는 건지. 그리고 오토바이 없으면 내일부터 일을 못 해요. 그게 지금 제일 걱정이에요.
+      </div>
+
+      <div class="chat-turn-label">TURN 3 &mdash; 피해 개요: 언제, 어디 (PFA: 정보수집)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        아무 잘못도 없는데 그런 일을 당하셔서 얼마나 억울하고 황당하셨을지 짐작이 됩니다. 오토바이까지 잃으셔서 당장 일 걱정이 크신 것도 너무 현실적인 고민이세요. 이렇게 속마음을 이야기해 주셔서 감사합니다. 편하신 만큼, 그 일이 언제 어디에서 있었는지부터 천천히 말씀해 주실 수 있을까요?
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        어제 밤 11시쯤이요. 강남구 역삼동 쪽 골목인데... 아파트 단지 뒤쪽 좁은 길이에요. 배달 끝나고 다음 콜 잡으려고 오토바이 세워놨는데 갑자기 뒤에서 나타났어요. 어두워서 얼굴은 잘 못 봤는데 키가 크고 검정 패딩 입고 있었어요. 마스크도 쓰고 있었고.
+      </div>
+
+      <div class="chat-turn-label">TURN 4 &mdash; 피해 개요: 무엇, 어떻게 (PFA: 정보수집)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        어두운 골목에서 갑자기 그런 일을 겪으셔서 얼마나 놀라고 무서우셨을지 느껴집니다. 그래도 기억나는 것들을 이렇게 구체적으로 말씀해 주신 게 전담경찰관께 큰 도움이 될 거예요. 이제, 그 사람이 나타난 뒤에 어떤 일이 있었는지, 편하신 만큼만 조금 더 말씀해 주실 수 있을까요? 말하기 너무 힘드시면 일부만 말씀하셔도 괜찮습니다.
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        그... 칼이었어요. 목 쪽에 대면서 소리 지르면 죽인다고. 그 다음은 잘 기억이 안 나는데 현금이랑 폰 다 줬어요. 오토바이 키도요. 그냥 아무것도 못 하고 줬어요. ...저도 바보 같은데 그냥 얼어서.
+      </div>
+
+      <div class="chat-turn-label">TURN 5 &mdash; 가해자 관계 (PFA: 정보수집)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        목에 칼을 대고 협박을 당하셨으면 누구라도 얼 수밖에 없습니다. 그 상황에서 살아서 빠져나오신 것만으로도 정말 최선을 다하신 거예요. 그건 절대 바보 같아서가 아니고, 몸이 위험에서 스스로를 지키려고 한 자연스러운 반응입니다. 이 일과 관련해서, 그 사람과는 전혀 모르는 사이였는지, 아니면 전에 본 적이 있는 사람인지 여쭤봐도 될까요? 말하기 불편하시면 안 알려주셔도 괜찮습니다.
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        아뇨 처음 봐요. 근데 그 근처 배달 자주 가거든요. ...혹시 또 마주치면 어떡하죠?
+      </div>
+
+      <div class="chat-turn-label">TURN 6 &mdash; 안전 재확인 + 현재 상태 (PFA: 안전)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        처음 보는 사람인데 자주 가던 동네라, 또 마주칠까 봐 걱정되시는 마음이 아주 자연스럽습니다. 그런 생각만으로도 많이 무섭고 불안하실 수 있어요. 지금은 그 사람이 어디 있는지 모르고, 선생님께서도 당분간 그 근처는 피하고 싶으실 것 같은데, 몸 상태나 마음 상태는 지금 이 순간 어떠신가요? 숨이 가쁘다거나, 심장이 너무 빨리 뛴다거나, 특히 힘든 느낌이 있으면 말씀해 주시겠어요?
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        몸은 뭐... 팔 긁힌 거 빼면 괜찮아요. 근데 아까부터 계속 그 장면이 떠올라요. 칼 들고 있던 거. 눈 감으면 보여요. 잠을 못 잘 것 같은데.
+      </div>
+
+      <div class="chat-turn-label">TURN 7 &mdash; 권리 안내 + 지원기관 (PFA: 실질적 도움, 사회적 지지)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        그 장면이 자꾸 떠오르고 눈을 감으면 보이는 게 너무 괴로우실 것 같아요. 그런 일 바로 뒤에는 많은 분들이 비슷하게 겪으시는데, 그래서 잠도 잘 오지 않는 경우가 많습니다. 지금 이렇게 말씀으로 풀어내고 계신 것만 해도 큰 도움이 되는 과정이에요. 이제부터는 전담경찰관을 만나실 때 도움이 되도록, 선생님께 어떤 점을 꼭 도와줬으면 하는지부터 같이 정리해 볼까요? 예를 들면 '오토바이 문제', '다시 안 마주치게 해 달라는 부분' 같은 것 중에 지금 제일 먼저 해결됐으면 하는 건 무엇인지 말씀해 주실 수 있을까요?
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        오토바이요. 그게 없으면 진짜 일을 못 해요. 할부도 아직 남았는데... 그런 거 도움받을 수 있는 데가 있어요?
+      </div>
+
+      <div class="chat-turn-label">TURN 8 &mdash; 면담 리허설 (PFA: 대처 정보)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        오토바이가 생계랑 바로 연결돼 있어서 가장 걱정되시는 게 너무 이해됩니다. 범죄피해자지원센터 같은 곳에서 생계비나 긴급 지원, 피해 회복 비용을 도와주는 경우가 있어서 전담경찰관이 그 부분을 함께 알아봐 줄 수 있어요. 전담경찰관을 만나시면 이렇게 말씀해 보셔도 좋습니다: "강도 때문에 오토바이를 잃어서 당장 일을 못 하는데, 경제적인 지원이나 도움을 받을 수 있는지 알고 싶습니다." 이제, 전담경찰관께 처음 한마디로 설명하신다면 "저는 어떤 일을 당했고, 무엇을 도와줬으면 좋겠다"고 말하고 싶으신지, 편한 말로 한번 적어 보시겠어요?
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        음... "어제 밤에 배달하다가 칼로 위협당하고 오토바이랑 다 뺏겼는데요. 오토바이 없으면 일을 못 해서 그거 도움 좀 받고 싶습니다." ...이렇게요?
+      </div>
+
+      <div class="chat-turn-label">TURN 9 &mdash; 요약 확인 (PFA: 후속 연계)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        지금 말씀해 주신 표현이면 전담경찰관도 상황을 잘 이해하실 거예요. 짧지만 핵심이 잘 들어가 있어서 그대로 말씀하셔도 충분합니다. 이제 지금까지 말씀해 주신 내용을 정리해서, 담당 전담경찰관께 전달될 요약을 한번 읽어 드릴게요. 보시고 틀린 부분이나 빼고 싶은 부분이 있으면 말씀해 주세요.
+      </div>
+    </div>
+
+    <!-- 면담 요약서 -->
+    <h3>챗봇 생성 면담 요약서</h3>
+    <div class="report-box">
+      <div class="report-title">접수면담 요약서</div>
+
+      <h4>면담 일시</h4>
+      <p>[자동 기입]</p>
+
+      <h4>피해 개요</h4>
+      <ul>
+        <li><strong>시기:</strong> 어제 밤 11시경</li>
+        <li><strong>장소:</strong> 서울 강남구 역삼동 인근 아파트 단지 뒤쪽 좁은 골목 (배달 지역)</li>
+        <li><strong>내용:</strong> 피해자는 배달 업무 중 오토바이를 세워 두고 다음 콜을 기다리던 중, 키가 크고 검은 패딩과 마스크를 착용한 남성이 뒤에서 다가와 목 부근에 칼을 대고 "소리 지르면 죽인다"고 협박하여, 현금·휴대전화·오토바이 키 및 오토바이를 강취당했다고 진술함. 얼굴은 어두운 골목이라 잘 보지 못했다고 함.</li>
+        <li><strong>가해자 관계:</strong> 처음 보는 사람. 평소 그 동네에 배달을 자주 다님.</li>
+      </ul>
+
+      <h4>피해자 현재 상태</h4>
+      <ul>
+        <li><strong>감정:</strong> 억울함이 가장 크고, 그 밖에 무서움·불안함이 함께 있음. 사건 장면이 계속 떠오르고 눈을 감으면 칼을 들고 있던 모습이 보이는 느낌. 잠을 잘 수 있을지 걱정.</li>
+        <li><strong>신체:</strong> 팔에 긁힌 상처 외 큰 부상 없음 (병원 진료 후 귀가).</li>
+        <li><strong>안전:</strong> 현재 자택, 즉각적 위험 없음. 같은 동네에서 배달을 자주 하므로 가해자 재마주침 불안.</li>
+      </ul>
+
+      <h4>피해자 요청사항</h4>
+      <ul>
+        <li>오토바이 상실로 인한 생계 지원 (할부금 잔여). 범죄피해자지원센터 등 경제적 지원 연계 희망.</li>
+        <li>가해자 재마주침 방지를 위한 보호 조치 희망.</li>
+      </ul>
+
+      <h4>안내된 권리</h4>
+      <ul>
+        <li>말하기 어려운 부분은 말하지 않을 수 있음 (진술 거부 가능)</li>
+        <li>전담경찰관을 통해 신변보호·지원기관 연계 요청 가능</li>
+      </ul>
+
+      <h4>안내된 지원기관</h4>
+      <ul>
+        <li>범죄피해자지원센터: 생계비·긴급 지원 가능성 안내</li>
+      </ul>
+
+      <h4>참고사항</h4>
+      <ul>
+        <li>피해자는 "저는 그냥 배달하고 있었을 뿐인데, 아무 잘못이 없는데 왜 그런 일을 당했는지 억울하다"고 반복적으로 표현함.</li>
+        <li>피해자는 전담경찰관을 만났을 때 "어제 밤에 배달하다가 칼로 위협당하고 오토바이랑 다 뺏겼는데요. 오토바이 없으면 일을 못 해서 그거 도움 좀 받고 싶습니다."라고 설명해 보겠다고 연습함.</li>
+      </ul>
+
+      <div class="report-footer">
+        본 요약서는 AI 사전면담 도우미에 의해 자동 생성되었습니다.<br>
+        피해자의 동의하에 전담경찰관에게 전달됩니다.<br>
+        이 요약서의 내용은 피해자의 자발적 진술에 기반하며, 봇이 추론한 내용을 포함하지 않습니다.
+      </div>
+    </div>
+
+    <div class="chat-container" style="margin-top: 16px;">
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        ...다 맞는 것 같은데. 근데 "바보 같다"고 한 거는 좀 빼주실 수 있어요? 경찰분이 보시면 좀 그렇잖아요.
+      </div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        그 부분 신경 쓰이실 수 있어요. 요청해 주셔서 감사합니다. 말씀 주신 대로 그 문장은 빼고 정리하겠습니다.
+      </div>
+    </div>
+
+    <div class="chat-container" style="margin-top: 16px;">
+      <div class="chat-turn-label">TURN 10 &mdash; 마무리 (PFA: 후속 연계)</div>
+      <div class="chat-bubble bot">
+        <div class="chat-sender">챗봇</div>
+        신고까지 해 주시고 여기에서 상황을 정리해 주신 것만으로도 정말 큰일을 해내신 거예요. 지금 느끼시는 무서움과 답답함은 너무 당연한 감정이라, 스스로를 탓하지 않으셨으면 합니다. 전담경찰관을 만나시면, 오늘 정리한 내용과 "밤에도 일은 해야 해서, 최대한 안전하게 할 수 있도록 도와달라"는 말씀을 꼭 전해 주세요. 이 대화는 여기서 마무리할게요. 필요하실 때는 언제든 다시 오셔도 괜찮습니다.
+      </div>
+      <div class="chat-bubble user">
+        <div class="chat-sender">이정훈</div>
+        ... 아뇨 없어요. 감사합니다.
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- ═══════════════════════════════ -->
+    <!-- SECTION 4: 평가                 -->
+    <!-- ═══════════════════════════════ -->
+    <h2>4. 테스트 평가</h2>
+
+    <h3>4-1. PFA 적용 평가</h3>
+    <table>
+      <tr><th>평가 항목</th><th>결과</th><th>비고</th></tr>
+      <tr><td>PFA 접촉 (턴 1)</td><td><span class="tag tag-pass">PASS</span></td><td>비침습적 접근, 봇 소개</td></tr>
+      <tr><td>PFA 안전 확인 (턴 1, 6)</td><td><span class="tag tag-pass">PASS</span></td><td>초기 + 중간 재확인 모두 수행</td></tr>
+      <tr><td>PFA 안정화 (턴 2)</td><td><span class="tag tag-pass">PASS</span></td><td>감정 수용, "당연한 반응" 정상화</td></tr>
+      <tr><td>PFA 정보수집 (턴 3~5)</td><td><span class="tag tag-pass">PASS</span></td><td>시기/장소/행위/관계 확보</td></tr>
+      <tr><td>PFA 실질적 도움 (턴 7)</td><td><span class="tag tag-pass">PASS</span></td><td>범죄피해자지원센터 안내</td></tr>
+      <tr><td>PFA 대처 정보 (턴 8)</td><td><span class="tag tag-pass">PASS</span></td><td>면담 리허설 완료</td></tr>
+      <tr><td>PFA 후속 연계 (턴 9~10)</td><td><span class="tag tag-pass">PASS</span></td><td>요약서 생성, 전담경찰관 연계</td></tr>
+    </table>
+
+    <h3>4-2. OARS 적용 평가</h3>
+    <table>
+      <tr><th>기법</th><th>결과</th><th>비고</th></tr>
+      <tr><td>Open Questions</td><td><span class="tag tag-pass">PASS</span></td><td>매 턴 열린 질문으로 마무리</td></tr>
+      <tr><td>Affirmation</td><td><span class="tag tag-pass">PASS</span></td><td>"큰 용기", "큰 일을 해내고 계신", "최선을 다하신"</td></tr>
+      <tr><td>Reflective Listening</td><td><span class="tag tag-pass">PASS</span></td><td>"얼마나 억울하고 황당하셨을지", "누구라도 얼 수밖에"</td></tr>
+      <tr><td>Summarizing</td><td><span class="tag tag-pass">PASS</span></td><td>턴 9 면담 요약서</td></tr>
+    </table>
+
+    <h3>4-3. 금지 행동 준수</h3>
+    <table>
+      <tr><th>금지 항목</th><th>결과</th></tr>
+      <tr><td>심리 진단·판정</td><td><span class="tag tag-pass">PASS</span></td></tr>
+      <tr><td>법적 조언·판단</td><td><span class="tag tag-pass">PASS</span></td></tr>
+      <tr><td>수사 관여</td><td><span class="tag tag-pass">PASS</span></td></tr>
+      <tr><td>피해자 비난</td><td><span class="tag tag-pass">PASS</span></td></tr>
+      <tr><td>톤·말투 (존댓말, 비판단적)</td><td><span class="tag tag-pass">PASS</span></td></tr>
+      <tr><td>자기비난 대응</td><td><span class="tag tag-pass">PASS</span></td></tr>
+    </table>
+
+    <h3>4-4. RAG 규칙 준수 평가</h3>
+    <table>
+      <tr><th>규칙</th><th>결과</th><th>상세</th></tr>
+      <tr><td>3문장 + 1질문 (150자)</td><td><span class="tag tag-fail">FAIL</span></td><td>턴 9~10에서 초과</td></tr>
+      <tr><td>10턴 구조</td><td><span class="tag tag-fail">FAIL</span></td><td>턴 10에서 추가 질문 → 11턴 유발</td></tr>
+      <tr><td>면담 요약서 최종본 출력</td><td><span class="tag tag-fail">FAIL</span></td><td>수정 요청 반영 후 최종본 미출력</td></tr>
+      <tr><td>"남은 단계" 안내</td><td><span class="tag tag-fail">FAIL</span></td><td>전체 대화에서 한 번도 안 나옴</td></tr>
+      <tr><td>한 번에 여러 질문 금지</td><td><span class="tag tag-pass">PASS</span></td><td>매 턴 질문 1개</td></tr>
+      <tr><td>위기 대응 준비</td><td><span class="tag tag-pass">PASS</span></td><td>턴 1, 6 안전 확인</td></tr>
+      <tr><td>면담 요약서 형식</td><td><span class="tag tag-pass">PASS</span></td><td>RAG 포맷과 일치</td></tr>
+      <tr><td>턴 7 권리 3가지 명시</td><td><span class="tag tag-warn">PARTIAL</span></td><td>진술거부·신변보호 O, 국선변호사 X</td></tr>
+    </table>
+
+    <h3>4-5. 개선 포인트</h3>
+
+    <div class="card red">
+      <div class="card-title">1. 턴 10에서 새 질문 → 10턴 초과</div>
+      <p><strong>문제:</strong> 턴 10에서 "하나만 더 말해 주실 수 있을까요?" 질문 → 턴 11 유발. 이후 "꼭 남겨두고 싶은 말이 있을까요?" → 턴 12 유발 가능.</p>
+      <p><strong>개선:</strong> 턴 10은 질문 없이 마무리. "이 대화는 여기서 마무리합니다" 종료 선언 필수.</p>
+    </div>
+
+    <div class="card red">
+      <div class="card-title">2. "남은 단계" 진행 안내 전체 누락</div>
+      <p><strong>문제:</strong> RAG에 매 턴 "남은 단계: N단계" 표기 규칙 → 전체 대화에서 단 한 번도 출력되지 않음.</p>
+      <p><strong>개선:</strong> 예시 발화에 직접 포함하여 누락 불가능하게. "남은 단계: 8단계" 형태로 매 턴 마지막 줄에 강제.</p>
+    </div>
+
+    <div class="card red">
+      <div class="card-title">3. 수정된 최종 요약서 미출력</div>
+      <p><strong>문제:</strong> 턴 9에서 이정훈이 "바보 같다 삭제" 요청 → 참고사항 수정본만 보여주고 최종 전체 요약서 미출력.</p>
+      <p><strong>개선:</strong> 수정 요청 시 최종 전체 요약서를 다시 출력하는 규칙 추가.</p>
+    </div>
+
+    <div class="card orange">
+      <div class="card-title">4. 턴 7 권리 안내 불완전</div>
+      <p><strong>문제:</strong> 진술거부권·신변보호 요청권은 안내했으나, <strong>국선변호사 무료 선임권</strong>을 명시적으로 안내하지 않음.</p>
+      <p><strong>개선:</strong> RAG 턴 7 예시에 권리 3가지를 명시적 리스트로 포함.</p>
+    </div>
+
+    <div class="card orange">
+      <div class="card-title">5. 출력량 규칙 초과 (턴 7~10)</div>
+      <p><strong>문제:</strong> "3문장 + 1질문, 150자" 규칙을 후반 턴에서 크게 초과.</p>
+      <p><strong>개선:</strong> 리허설·요약·마무리 턴 예외 규칙 명시 ("최대 300자까지 허용" 등 구체적 상한).</p>
+    </div>
+
+    <h3>4-6. v1.0 대비 개선된 점</h3>
+    <div class="card green">
+      <div class="card-title">v1.0 &rarr; v2.0 개선 사항</div>
+      <table>
+        <tr><th>항목</th><th>v1.0</th><th>v2.0</th></tr>
+        <tr><td>중간 안전 재확인</td><td><span class="tag tag-fail">없음</span></td><td><span class="tag tag-pass">턴 6에서 수행</span></td></tr>
+        <tr><td>논문 근거</td><td><span class="tag tag-fail">없음</span></td><td><span class="tag tag-pass">서명희(2020)</span></td></tr>
+        <tr><td>서비스 흐름 현실성</td><td><span class="tag tag-warn">신고 전 (트리거 없음)</span></td><td><span class="tag tag-pass">KICS 후 (제도적 근거)</span></td></tr>
+        <tr><td>EBT 적합성</td><td><span class="tag tag-warn">MI (동기 강화)</span></td><td><span class="tag tag-pass">PFA (안정화·연계)</span></td></tr>
+        <tr><td>지원기관 안내</td><td><span class="tag tag-fail">없음</span></td><td><span class="tag tag-pass">범죄피해자지원센터</span></td></tr>
+        <tr><td>피해자 현실성</td><td><span class="tag tag-warn">유창한 진술</span></td><td><span class="tag tag-pass">파편적·끊기는 진술</span></td></tr>
+      </table>
+    </div>
+
+    <h3>4-7. 종합 평가</h3>
+    <div class="card green">
+      <div class="card-title">PFA 적용 우수, RAG 출력 규칙 개선 필요</div>
+      <p>PFA 8대 핵심 활동이 10턴 구조에 자연스럽게 매핑되어 적용됨. 특히 <strong>안전 재확인(턴 6)</strong>이 v1.0 대비 추가된 점, <strong>자기비난에 대한 정상화 반응</strong>, <strong>지원기관 안내</strong>가 우수. OARS 의사소통 기법도 전 턴에 걸쳐 적용됨.</p>
+      <p>RAG 출력 규칙(글자 수 제한, "남은 단계" 안내, 10턴 엄수, 수정 후 최종 요약서 출력)은 다음 버전에서 규칙 강화 및 예외 조건 명시 필요.</p>
+    </div>
+
+  </div>
+
+  <!-- Buttons -->
+  <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0})">&#8593;</button>
+  <button class="toc-toggle" id="tocBtn">&#9776;</button>
+  <div class="toc-panel" id="tocPanel"></div>
+
+  <script>
+    (function() {
+      const headings = document.querySelectorAll('.container h1, .container h2, .container h3');
+      const panel = document.getElementById('tocPanel');
+      headings.forEach((h, i) => {
+        h.id = 'sec-' + i;
+        const a = document.createElement('a');
+        a.href = '#sec-' + i;
+        a.textContent = h.textContent;
+        a.className = 'toc-' + h.tagName.toLowerCase();
+        a.onclick = () => panel.classList.remove('show');
+        panel.appendChild(a);
+      });
+    })();
+
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'flex' : 'none';
+    });
+
+    document.getElementById('tocBtn').onclick = () => {
+      document.getElementById('tocPanel').classList.toggle('show');
+    };
+  </script>
+</body>
+</html>
