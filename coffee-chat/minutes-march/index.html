@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>먼슬리 커피챗 — 3월 회의록</title>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0c0a09;
+      --bg-card: #1c1917;
+      --text: #fafaf9;
+      --text-sub: #a8a29e;
+      --accent: #0d9488;
+      --accent-warm: #14b8a6;
+      --accent-soft: #5eead4;
+      --accent-glow: rgba(13, 148, 136, 0.25);
+      --red: #f87171;
+      --amber: #fbbf24;
+    }
+
+    body {
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .deck { width: 100vw; height: 100vh; position: relative; }
+
+    .slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 60px 60px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .slide.active .anim {
+      animation: fadeUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .slide.active .anim:nth-child(1) { animation-delay: 0.1s; }
+    .slide.active .anim:nth-child(2) { animation-delay: 0.25s; }
+    .slide.active .anim:nth-child(3) { animation-delay: 0.4s; }
+    .slide.active .anim:nth-child(4) { animation-delay: 0.55s; }
+    .slide.active .anim:nth-child(5) { animation-delay: 0.7s; }
+    .slide.active .anim:nth-child(6) { animation-delay: 0.85s; }
+    .slide.active .anim:nth-child(7) { animation-delay: 1.0s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-number {
+      position: absolute;
+      top: 40px;
+      right: 60px;
+      font-size: 14px;
+      color: #44403c;
+      font-weight: 300;
+    }
+
+    .tag {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1.3;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      color: var(--text-sub);
+      font-weight: 300;
+      line-height: 1.8;
+      text-align: center;
+      max-width: 680px;
+    }
+
+    .highlight { color: var(--accent-warm); font-weight: 700; }
+
+    /* Page nav */
+    .page-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      gap: 0;
+      z-index: 200;
+      background: rgba(12, 10, 9, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1c1917;
+    }
+
+    .page-nav a {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.2s, background 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .page-nav a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .page-nav a.current {
+      color: var(--accent-warm);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(13, 148, 136, 0.12);
+      color: var(--accent-warm);
+    }
+
+    /* Coffee icon */
+    .coffee-icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+      animation: steam 3s ease-in-out infinite;
+    }
+    @keyframes steam {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .since {
+      font-size: 13px;
+      color: #57534e;
+      margin-top: 16px;
+      letter-spacing: 1px;
+    }
+
+    /* Participants */
+    .participants {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+      justify-content: center;
+      max-width: 500px;
+    }
+
+    .participant {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--bg-card);
+      border: 1px solid #292524;
+      color: var(--text-sub);
+    }
+
+    /* Problem table */
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 720px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .problem-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid #292524;
+      border-radius: 10px;
+    }
+
+    .problem-icon {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      border-radius: 6px;
+      background: rgba(248, 113, 113, 0.1);
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .problem-text {
+      flex: 1;
+    }
+
+    .problem-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .problem-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    /* Quote */
+    .quote-block {
+      border-left: 2px solid var(--accent);
+      padding-left: 16px;
+      margin-top: 16px;
+      max-width: 600px;
+    }
+
+    .quote-text {
+      font-size: 17px;
+      color: var(--text-sub);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    /* Bullet list */
+    .bullet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 640px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .bullet-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-sub);
+    }
+
+    .bullet-dot {
+      flex-shrink: 0;
+      margin-top: 9px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .bullet-item .em { color: var(--text); font-weight: 600; }
+
+    /* Cards */
+    .card-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 24px;
+      max-width: 720px;
+      width: 100%;
+    }
+
+    .card {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid #292524;
+      border-radius: 12px;
+      padding: 24px 20px;
+    }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .card-body {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.8;
+    }
+
+    .card-body .em { color: var(--text); font-weight: 500; }
+
+    /* Action table */
+    .action-table {
+      border-collapse: collapse;
+      margin-top: 24px;
+      width: 100%;
+      max-width: 640px;
+      font-size: 15px;
+    }
+
+    .action-table th {
+      background: var(--bg-card);
+      color: var(--accent);
+      font-weight: 700;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--accent);
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    .action-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #292524;
+      color: var(--text-sub);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+
+    .action-table .row-label {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+
+    .nav-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #44403c;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .nav-dot.active {
+      background: var(--accent);
+      width: 28px;
+      border-radius: 5px;
+    }
+
+    .nav-hint {
+      position: fixed;
+      bottom: 30px;
+      right: 40px;
+      font-size: 12px;
+      color: #44403c;
+      z-index: 100;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .slide { padding: 56px 20px 50px; overflow-y: auto; justify-content: flex-start; padding-top: 80px; }
+      .slide-number { top: 54px; right: 20px; font-size: 12px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      .tag { font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; }
+      .subtitle { font-size: 15px; line-height: 1.6; }
+      .card-row { flex-direction: column; gap: 12px; }
+      .card { padding: 18px 16px; }
+      .card-body { font-size: 13px; }
+      .problem-item { padding: 10px 12px; }
+      .problem-title { font-size: 14px; }
+      .problem-desc { font-size: 12px; }
+      .bullet-item { font-size: 14px; }
+      .quote-text { font-size: 15px; }
+      .action-table { font-size: 13px; }
+      .action-table th, .action-table td { padding: 10px 12px; }
+      .coffee-icon { font-size: 48px; }
+      .nav-hint { display: none; }
+      .page-nav a { padding: 10px 14px; font-size: 12px; }
+    }
+
+    @media (max-width: 380px) {
+      .slide { padding: 70px 14px 50px; }
+      h1 { font-size: 24px; }
+      h2 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page Navigation -->
+  <div class="page-nav">
+    <a href="../offline-march/">3월 커피챗 공지</a>
+    <a href="./" class="current">3월 커피챗 회의록</a>
+  </div>
+
+  <div class="deck">
+
+    <!-- Slide 0: 표지 -->
+    <div class="slide active" data-index="0">
+      <div class="anim coffee-icon">&#9749;</div>
+      <div class="anim tag">Monthly Coffee Chat — Minutes</div>
+      <h1 class="anim">3월 커피챗 <span class="highlight">회의록</span></h1>
+      <p class="anim subtitle">2026. 03. 29. | 참석 8명</p>
+      <div class="anim participants">
+        <span class="participant">김성언</span>
+        <span class="participant">오경민</span>
+        <span class="participant">이태석</span>
+        <span class="participant">임수연</span>
+        <span class="participant">김형모</span>
+        <span class="participant">김선우</span>
+        <span class="participant">이지민</span>
+        <span class="participant">조휘연</span>
+      </div>
+      <div class="anim badge" style="margin-top: 24px;">1·2·3기 합석</div>
+    </div>
+
+    <!-- Slide 1: 피칭데이 선언 -->
+    <div class="slide" data-index="1">
+      <span class="slide-number">02 / 08</span>
+      <div class="anim tag">Key Decision</div>
+      <h2 class="anim" style="font-size: 42px;"><span class="highlight">피칭데이</span> 개최</h2>
+      <p class="anim subtitle" style="margin-top: 8px;">
+        4월 24·25·26일 중 하루<br>
+        각자 진행 중이거나 관심 있는 프로젝트를 발표
+      </p>
+      <p class="anim subtitle" style="margin-top: 28px; font-size: 17px; color: #57534e;">
+        왜 피칭데이인가? &rarr;
+      </p>
+    </div>
+
+    <!-- Slide 2: AS IS -->
+    <div class="slide" data-index="2" style="justify-content: flex-start; padding-top: 60px;">
+      <span class="slide-number">03 / 08</span>
+      <div class="anim tag">AS IS — 지금 우리 상태</div>
+      <h2 class="anim" style="font-size: 28px;">왜 피칭데이가 <span class="highlight">필요한가</span></h2>
+      <div class="anim problem-list">
+        <div class="problem-item">
+          <div class="problem-icon">1</div>
+          <div class="problem-text">
+            <div class="problem-title">논문·프로젝트 구조 없음</div>
+            <div class="problem-desc">"뭘 해야 졸업하는 건지 모르겠다"</div>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">2</div>
+          <div class="problem-text">
+            <div class="problem-title">서로가 서로를 모름</div>
+            <div class="problem-desc">기수 불문, 각자 무슨 프로젝트를 하는지 알 방법 없음. 행정대학원은 입학하면 동문 DB가 바로 제공됨</div>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">3</div>
+          <div class="problem-text">
+            <div class="problem-title">협업 창구 없음</div>
+            <div class="problem-desc">프로젝트를 하고 싶어도 누구에게 말해야 할지 모름</div>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">4</div>
+          <div class="problem-text">
+            <div class="problem-title">교수님 1명</div>
+            <div class="problem-desc">트랙 전체를 정경미 교수님 한 분이 담당 — 방향이 좁아지는 구조</div>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">5</div>
+          <div class="problem-text">
+            <div class="problem-title">논문 없는 졸업은 연세대 전반의 문화</div>
+            <div class="problem-desc">학부도 특수대학원도 졸업논문 없이 나오는 경우가 많음 — 우리 트랙만의 문제가 아니지만, 그래서 졸업 시 손에 남는 결과물이 없다는 문제가 더 커짐</div>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">6</div>
+          <div class="problem-text">
+            <div class="problem-title">학비 대비 지원 부재</div>
+            <div class="problem-desc">행정대학원보다 학비가 높은데도 동문 DB, 앱 등 인프라 지원이 전혀 없음</div>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">7</div>
+          <div class="problem-text">
+            <div class="problem-title">건의 채널 불명확</div>
+            <div class="problem-desc">학교에 말하고 싶어도 누구에게 가야 할지 모름</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: TO BE -->
+    <div class="slide" data-index="3">
+      <span class="slide-number">04 / 08</span>
+      <div class="anim tag">TO BE — 여기로 간다</div>
+      <div class="anim" style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+        <div style="background: var(--bg-card); border: 1px solid rgba(248,113,113,0.3); border-radius: 12px; padding: 20px 28px; text-align: center; min-width: 160px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 2px; color: var(--red); margin-bottom: 8px;">AS IS</div>
+          <div style="font-size: 15px; color: var(--text-sub); line-height: 1.6;">구조도 없고<br>서로도 모르고<br>채널도 없다</div>
+        </div>
+        <div style="font-size: 28px; color: var(--accent-warm);">&rarr;</div>
+        <div style="background: var(--bg-card); border: 1px solid var(--accent); border-radius: 12px; padding: 20px 28px; text-align: center; min-width: 160px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 2px; color: var(--accent-warm); margin-bottom: 8px;">PITCHING DAY</div>
+          <div style="font-size: 15px; color: var(--text-sub); line-height: 1.6;">서로 보여주고<br>피드백하고<br>건의사항 모으기</div>
+        </div>
+        <div style="font-size: 28px; color: var(--accent-warm);">&rarr;</div>
+        <div style="background: var(--bg-card); border: 1px solid var(--accent); border-radius: 12px; padding: 20px 28px; text-align: center; min-width: 160px;">
+          <div style="font-size: 12px; font-weight: 700; letter-spacing: 2px; color: var(--accent-soft); margin-bottom: 8px;">TO BE</div>
+          <div style="font-size: 16px; color: var(--text); font-weight: 700; line-height: 1.6;">각자 하나의 결과물을<br>만들어 나가는 환경을<br>직접 만든다</div>
+        </div>
+      </div>
+      <div class="anim" style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+        <div class="badge" style="font-size: 14px; padding: 8px 18px;">서로 알기</div>
+        <div style="color: #44403c; font-size: 18px; display: flex; align-items: center;">+</div>
+        <div class="badge" style="font-size: 14px; padding: 8px 18px;">협업·팀 탐색</div>
+        <div style="color: #44403c; font-size: 18px; display: flex; align-items: center;">+</div>
+        <div class="badge" style="font-size: 14px; padding: 8px 18px;">학교 건의 근거 수집</div>
+      </div>
+    </div>
+
+    <!-- Slide 4: 1·2기 회고 -->
+    <div class="slide" data-index="4" style="justify-content: flex-start; padding-top: 60px;">
+      <span class="slide-number">05 / 08</span>
+      <div class="anim tag">1·2기 회고</div>
+      <h2 class="anim" style="font-size: 28px;">잘된 것 / <span class="highlight">아쉬운 것</span></h2>
+      <div class="anim card-row">
+        <div class="card">
+          <div class="card-label" style="color: var(--accent-soft);">GOOD</div>
+          <div class="card-body">
+            <span class="em">소수 정예 토론식 수업</span> — 교수님과 직접 소통 가능했던 초기 분위기<br><br>
+            <span class="em">가족 같은 분위기</span> — 종강 후에도 교수님들이 끝까지 남아 이야기<br><br>
+            <span class="em">IT+심리 융합</span> 지향점은 명확<br><br>
+            <span class="em">현업 적용 사례</span> — AI 툴, 뇌파 프로젝트, 교수님 컨퍼런스 섭외 등
+          </div>
+        </div>
+        <div class="card" style="border-color: rgba(248, 113, 113, 0.3);">
+          <div class="card-label" style="color: var(--red);">PAIN POINT</div>
+          <div class="card-body">
+            <span class="em">졸업 후 불명확</span> — 논문도 없고, 프로젝트 구조도 없음<br><br>
+            <span class="em">과목 중복</span> — 차별성 부족, 비슷한 내용 반복<br><br>
+            <span class="em">건의 채널 부재</span> — 누구에게 말해야 할지 모름<br><br>
+            <span class="em">선배 없음</span> — 참고할 롤모델이 없음<br><br>
+            <span class="em">교수님 1명</span> — 방향이 좁아지는 구조
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: 3기 입학 기대 -->
+    <div class="slide" data-index="5">
+      <span class="slide-number">06 / 08</span>
+      <div class="anim tag">3기 기대</div>
+      <h2 class="anim">3기 입학 <span class="highlight">기대</span></h2>
+      <div class="anim bullet-list" style="margin-top: 24px;">
+        <div class="bullet-item">
+          <div class="bullet-dot"></div>
+          <span>현업의 막막함에 대한 <span class="em">돌파구</span>를 찾아 온 경우가 많음</span>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-dot"></div>
+          <span>다양한 배경을 가진 사람들과 <span class="em">교류하며 인사이트</span>를 얻고 싶었음</span>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-dot"></div>
+          <span>막연하게라도 <span class="em">전문성 있는 결과물</span>(책, 프로젝트, 서비스 등)을 하나 내고 나오고 싶었음</span>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-dot"></div>
+          <span>구체적인 목표보다는 <span class="em">기대와 불안이 공존</span>하는 상태로 입학한 경우도 있음</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: 넥스트 액션 -->
+    <div class="slide" data-index="6">
+      <span class="slide-number">07 / 08</span>
+      <div class="anim tag">Next Action</div>
+      <h2 class="anim"><span class="highlight">넥스트</span> 액션</h2>
+      <table class="anim action-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">피칭데이 일정</td>
+            <td>4월 24·25·26일 중 후보 날짜 공지 예정<br>(중간고사 4/24 이후)</td>
+          </tr>
+          <tr>
+            <td class="row-label">참가 형식</td>
+            <td>현재 진행 중이거나 관심 있는 프로젝트를 발표</td>
+          </tr>
+          <tr>
+            <td class="row-label">이후 단계</td>
+            <td>피칭 결과 정리<br>&rarr; 학교 지원 필요사항 취합<br>&rarr; 부원장 이도준 교수님·정경미 교수님 미팅</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Slide 7: CTA — 참여 요청 -->
+    <div class="slide" data-index="7">
+      <span class="slide-number">08 / 08</span>
+      <div class="anim coffee-icon">&#9749;</div>
+      <div class="anim tag">Join Us</div>
+      <h2 class="anim" style="font-size: 34px; line-height: 1.5;">
+        참석 가능한 날짜를<br><span class="highlight">투표해 주세요</span>
+      </h2>
+      <div class="anim" style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
+        <div class="badge" style="font-size: 18px; padding: 14px 28px; background: rgba(13,148,136,0.15);">4. 24 (금)</div>
+        <div class="badge" style="font-size: 18px; padding: 14px 28px; background: rgba(13,148,136,0.15);">4. 25 (토)</div>
+        <div class="badge" style="font-size: 18px; padding: 14px 28px; background: rgba(13,148,136,0.15);">4. 26 (일)</div>
+      </div>
+      <div class="anim bullet-list" style="margin-top: 36px;">
+        <div class="bullet-item">
+          <div class="bullet-dot"></div>
+          <span><span class="em">어떤 프로젝트도 좋습니다.</span> 지금 가장 열정을 쏟고 있는 일을 공유해 주세요.</span>
+        </div>
+        <div class="bullet-item">
+          <div class="bullet-dot"></div>
+          <span>당장 할 게 없어도 괜찮습니다. <span class="em">다른 사람들이 어떤 걸 하고 있는지 보기만 해도</span> 충분히 의미 있습니다.</span>
+        </div>
+      </div>
+      <div class="anim since" style="margin-top: 32px;">Monthly Coffee Chat · 2026. 03</div>
+    </div>
+
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav" id="nav"></div>
+  <div class="nav-hint">&larr; &rarr; 키로 이동</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const nav = document.getElementById('nav');
+    let current = 0;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goTo(i));
+      nav.appendChild(dot);
+    });
+
+    function goTo(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[current].classList.remove('active');
+      nav.children[current].classList.remove('active');
+      current = index;
+      slides[current].classList.add('active');
+      nav.children[current].classList.add('active');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+    });
+  </script>
+</body>
+</html>

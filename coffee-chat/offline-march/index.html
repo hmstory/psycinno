@@ -362,9 +362,50 @@
       .abc-flow { flex-direction: column; }
       .abc-arrow { transform: rotate(90deg); }
     }
+    /* Page nav */
+    .page-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      gap: 0;
+      z-index: 200;
+      background: rgba(12, 10, 9, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #1c1917;
+    }
+
+    .page-nav a {
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-sub);
+      text-decoration: none;
+      transition: color 0.2s, background 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .page-nav a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .page-nav a.current {
+      color: var(--accent-warm);
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+    }
   </style>
 </head>
 <body>
+
+  <!-- Page Navigation -->
+  <div class="page-nav">
+    <a href="./" class="current">3월 커피챗 공지</a>
+    <a href="../minutes-march/">3월 커피챗 회의록</a>
+  </div>
+
   <div class="deck">
 
     <!-- Slide 1: Title -->
