@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>W4 주교재 3장 요약 및 보고서 - 김형모</title>
+  <title>W6 주교재 5장 요약 및 보고서 - 김형모</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <style>
     :root {
@@ -22,7 +22,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
-    /* Progress bar */
     .progress-bar {
       position: fixed;
       top: 0;
@@ -47,7 +46,6 @@
       margin: 0 auto;
       padding: 20px 16px 80px;
     }
-    /* Markdown content styling */
     #content h1 {
       font-size: 1.6rem;
       color: var(--heading);
@@ -60,7 +58,6 @@
       color: var(--accent);
       margin: 2rem 0 0.8rem;
     }
-    /* STEP card styling for h3 */
     #content h3 {
       font-size: 1.15rem;
       color: var(--accent-soft);
@@ -88,7 +85,6 @@
       border-radius: 3px;
     }
 
-    /* Responsive images with lightbox trigger */
     #content img {
       max-width: 100%;
       height: auto;
@@ -101,9 +97,7 @@
       cursor: zoom-in;
       transition: transform 0.2s;
     }
-    #content img:hover {
-      transform: scale(1.02);
-    }
+    #content img:hover { transform: scale(1.02); }
 
     #content blockquote {
       border-left: 4px solid var(--accent);
@@ -130,10 +124,7 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
-    #content pre code {
-      background: none;
-      padding: 0;
-    }
+    #content pre code { background: none; padding: 0; }
     #content table {
       width: 100%;
       border-collapse: collapse;
@@ -164,7 +155,6 @@
       text-underline-offset: 3px;
     }
 
-    /* Lightbox overlay */
     .lightbox {
       display: none;
       position: fixed;
@@ -196,7 +186,6 @@
     }
     .lightbox-close:hover { opacity: 1; }
 
-    /* Back to top */
     .top-btn {
       position: fixed;
       bottom: 20px;
@@ -216,7 +205,6 @@
       z-index: 200;
     }
 
-    /* Loading */
     .loading {
       text-align: center;
       padding: 3rem;
@@ -224,7 +212,6 @@
       font-size: 1.1rem;
     }
 
-    /* TOC toggle */
     .toc-toggle {
       position: fixed;
       bottom: 20px;
@@ -272,7 +259,6 @@
     .toc-panel a.toc-h2 { padding-left: 0; font-weight: 600; color: var(--accent); }
     .toc-panel a.toc-h3 { padding-left: 16px; color: var(--accent-soft); }
 
-    /* Navigation */
     .nav {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -312,7 +298,24 @@
       margin-right: 4px;
     }
 
-    /* Mobile */
+    /* Term links */
+    .term-link {
+      color: var(--accent-soft);
+      text-decoration: none;
+      border-bottom: 1px dashed var(--accent-soft);
+      cursor: help;
+      transition: background 0.15s;
+    }
+    .term-link:hover {
+      background: var(--highlight-bg);
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+    tr.term-highlight {
+      background: var(--highlight-bg) !important;
+      transition: background 1.5s ease-out;
+    }
+
     @media (max-width: 600px) {
       body { font-size: 16px; }
       .container { padding: 16px 12px 80px; }
@@ -333,17 +336,16 @@
     <a href="../w3-reports/prompt.html">프롬프트</a>
     <a href="../w3-reports/index.html">W3 주교재 2장</a>
     <a href="../w3-reports/sub-chapter8.html">W3 부교재 8장</a>
-    <a href="index.html" class="active">W4 주교재 3장</a>
-    <a href="sub-chapter7.html">W4 부교재 7장</a>
+    <a href="../w4-reports/index.html">W4 주교재 3장</a>
+    <a href="../w4-reports/sub-chapter7.html">W4 부교재 7장</a>
     <a href="../w5-reports/index.html">W5 주교재 4장</a>
     <a href="../w5-reports/sub-laws-ux-ch2.html">W5 부교재 Laws of UX 2장</a>
-    <a href="../w6-reports/index.html">W6 주교재 5장</a>
+    <a href="index.html" class="active">W6 주교재 5장</a>
   </nav>
   <div class="container">
     <div id="content"><div class="loading">Loading...</div></div>
   </div>
 
-  <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
     <span class="lightbox-close" id="lightboxClose">&times;</span>
     <img id="lightboxImg" src="" alt="">
@@ -358,13 +360,14 @@
   <script>
     marked.setOptions({ gfm: true, breaks: true });
 
-    fetch('w4-chapter4.md')
+    fetch('w6-chapter5.md')
       .then(r => r.text())
       .then(md => {
         document.getElementById('content').innerHTML = marked.parse(md);
         buildToc();
         renderMath();
         setupLightbox();
+        setupTermLinks();
       })
       .catch(() => {
         document.getElementById('content').innerHTML = '<p style="color:red;">Failed to load content.</p>';
@@ -384,7 +387,6 @@
       });
     }
 
-    // KaTeX: render $...$ inline math
     function renderMath() {
       const walk = document.createTreeWalker(
         document.getElementById('content'),
@@ -392,12 +394,10 @@
       );
       const nodes = [];
       while (walk.nextNode()) nodes.push(walk.currentNode);
-
       nodes.forEach(node => {
         if (!node.nodeValue || !node.nodeValue.includes('$')) return;
         const parent = node.parentNode;
         if (parent.tagName === 'CODE' || parent.tagName === 'PRE') return;
-
         const frag = document.createDocumentFragment();
         const parts = node.nodeValue.split(/(\$[^$]+\$)/g);
         parts.forEach(part => {
@@ -405,9 +405,7 @@
             const span = document.createElement('span');
             try {
               katex.render(part.slice(1, -1), span, { throwOnError: false });
-            } catch(e) {
-              span.textContent = part;
-            }
+            } catch(e) { span.textContent = part; }
             frag.appendChild(span);
           } else {
             frag.appendChild(document.createTextNode(part));
@@ -417,18 +415,15 @@
       });
     }
 
-    // Lightbox
     function setupLightbox() {
       const lb = document.getElementById('lightbox');
       const lbImg = document.getElementById('lightboxImg');
-
       document.querySelectorAll('#content img').forEach(img => {
         img.addEventListener('click', () => {
           lbImg.src = img.src;
           lb.classList.add('show');
         });
       });
-
       lb.addEventListener('click', () => lb.classList.remove('show'));
       document.getElementById('lightboxClose').addEventListener('click', () => lb.classList.remove('show'));
       document.addEventListener('keydown', (e) => {
@@ -436,17 +431,82 @@
       });
     }
 
-    // Progress bar
+    function setupTermLinks() {
+      const content = document.getElementById('content');
+
+      let termTable = null;
+      content.querySelectorAll('h3').forEach(h3 => {
+        if (termTable) return;
+        if (h3.textContent.includes('핵심 용어') || h3.textContent.includes('핵심 전문 용어')) {
+          let el = h3.nextElementSibling;
+          while (el && el.tagName !== 'TABLE') el = el.nextElementSibling;
+          if (el) termTable = el;
+        }
+      });
+      if (!termTable) return;
+
+      const terms = [];
+      termTable.querySelectorAll('tbody tr').forEach((row, i) => {
+        const td = row.querySelector('td');
+        if (!td) return;
+        const strong = td.querySelector('strong');
+        const term = strong ? strong.textContent.trim() : td.textContent.trim().split(/[\s(]/)[0];
+        if (!term || term.length < 2) return;
+        const id = 'kterm-' + i;
+        row.id = id;
+        terms.push({ id, term });
+      });
+
+      terms.sort((a, b) => b.term.length - a.term.length);
+
+      const escaped = terms.map(t => t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      const re = new RegExp(`(${escaped.join('|')})`, 'gi');
+
+      const SKIP = new Set(['A', 'CODE', 'PRE', 'SCRIPT', 'H1', 'H2', 'H3', 'H4']);
+
+      function processNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const val = node.nodeValue;
+          if (!val.trim() || !re.test(val)) return;
+          re.lastIndex = 0;
+          const html = val.replace(re, match => {
+            const t = terms.find(t => t.term.toLowerCase() === match.toLowerCase());
+            return t ? `<a href="#${t.id}" class="term-link">${match}</a>` : match;
+          });
+          if (html !== val) {
+            const span = document.createElement('span');
+            span.innerHTML = html;
+            node.parentNode.replaceChild(span, node);
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE && !SKIP.has(node.tagName)) {
+          if (termTable.contains(node)) return;
+          Array.from(node.childNodes).forEach(processNode);
+        }
+      }
+
+      content.querySelectorAll('p, li, blockquote').forEach(el => {
+        if (!termTable.contains(el)) processNode(el);
+      });
+
+      document.addEventListener('click', e => {
+        const link = e.target.closest('.term-link');
+        if (!link) return;
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (!target) return;
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.add('term-highlight');
+        setTimeout(() => target.classList.remove('term-highlight'), 2000);
+      });
+    }
+
     window.addEventListener('scroll', () => {
       const h = document.documentElement;
       const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
       document.getElementById('progressBar').style.width = pct + '%';
-
-      // Back to top button
       document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'flex' : 'none';
     });
 
-    // TOC toggle
     document.getElementById('tocBtn').onclick = () => {
       document.getElementById('tocPanel').classList.toggle('show');
     };
