@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ch.7 기억 — PART 1 상세 추출</title>
+<style>
+:root {
+  --primary: #7c3aed;
+  --primary-light: #f5f3ff;
+  --primary-border: #ddd6fe;
+  --red: #dc2626;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --bg: #ffffff;
+  --section-bg: #fafafa;
+  --fig-bg: #f0fdf4;
+  --fig-border: #16a34a;
+  --divider: #e5e7eb;
+  --cite-color: #7c3aed;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+/* 헤더 */
+.doc-header {
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: 1.2rem;
+  margin-bottom: 2rem;
+}
+.doc-header .tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.doc-header h1 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+.doc-header .subtitle {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+
+/* 파트 헤더 */
+.part-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #6d28d9 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 1.1rem 1.5rem;
+  margin-bottom: 2.5rem;
+}
+.part-header h2 {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.part-header p {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 0.2rem;
+}
+
+/* 슬라이드 섹션 */
+.slide-section {
+  margin-bottom: 3.5rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--divider);
+}
+.slide-section:last-child { border-bottom: none; }
+
+.slide-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.slide-badge {
+  background: var(--primary);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+.slide-heading h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+/* 콘텐츠 블록 */
+.content-block {
+  margin-bottom: 1.4rem;
+}
+.block-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  padding-left: 0.6rem;
+  border-left: 3px solid var(--primary);
+}
+.block-body {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.9;
+  padding-left: 0.6rem;
+}
+.block-body strong { color: var(--primary); font-weight: 700; }
+.block-body em { font-style: italic; color: var(--red); }
+
+/* 인용 */
+cite {
+  font-style: normal;
+  color: var(--cite-color);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* 불릿 리스트 */
+.bullet-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+.bullet-list li {
+  padding-left: 1.2rem;
+  position: relative;
+}
+.bullet-list li::before {
+  content: "·";
+  position: absolute;
+  left: 0.3rem;
+  color: var(--primary);
+  font-weight: 900;
+}
+.bullet-list li strong { color: var(--primary); font-weight: 700; }
+
+/* 번호 리스트 */
+.numbered-list {
+  list-style: none;
+  padding: 0;
+  counter-reset: item;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  font-size: 0.92rem;
+}
+.numbered-list li {
+  counter-increment: item;
+  padding-left: 2rem;
+  position: relative;
+  line-height: 1.8;
+}
+.numbered-list li::before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 800;
+  top: 0.25rem;
+}
+.numbered-list li strong { color: var(--primary); font-weight: 700; }
+
+/* Figure 박스 */
+.figure-box {
+  background: var(--fig-bg);
+  border: 1px solid var(--fig-border);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+}
+.figure-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #15803d;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+}
+.figure-box .bullet-list li::before { color: #16a34a; }
+
+/* 하이라이트 */
+.highlight {
+  background: var(--primary-light);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 8px 8px 0;
+  padding: 0.7rem 1rem;
+  margin: 0.8rem 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+@media print {
+  body { padding: 1cm 1.5cm; font-size: 10.5pt; }
+  .doc-header h1 { font-size: 15pt; }
+  .part-header { background: #4c1d95; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide-section { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="tag">Engineering Psychology (Wickens) · Ch.7 · NotebookLM 2단계 상세 추출</div>
+  <h1>PART 1: 인지적 병목<br>작업기억의 구조, 한계 및 간섭</h1>
+  <div class="subtitle">슬라이드 1–15 · 모든 고유명사·수치·도표 시각 요소 포함</div>
+</div>
+
+<div class="part-header">
+  <h2>🧩 PART 1 — 섹션 1~3, 슬라이드 1~15</h2>
+  <p>재귀적 완전 스캔 · 학자명·연도·모델명·통계수치·Figure X/Y축 전부 포함</p>
+</div>
+
+<!-- ══ Slide 1 ══ -->
+<div class="slide-section" id="s1">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 01</span>
+    <h3>시스템 안전과 인간 기억의 3단계 모델</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">기억 실패의 치명적 결과</div>
+    <div class="block-body">
+      기억의 실패는 방금 찾은 전화번호나 워드프로세서 프로그램의 실행 절차를 잊어버리는 것처럼 사소하고 일상적일 수도 있지만, 때로는 시스템의 유용성과 안전성에 중대한 영향을 미칩니다. 예를 들어, 작업자가 체크리스트의 중요 항목을 누락하거나 <cite>(Degani & Wiener 1990)</cite>, 항공 관제사가 조종사에게 내린 "임시" 지시를 잊어버릴 수도 있습니다 <cite>(Danaher 1980)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">실제 대형 참사 사례</div>
+    <ul class="bullet-list">
+      <li><strong>Quintinshill(1915)</strong> — 스코틀랜드에서 한 철도 스위치 조작원이 자신이 열차를 사용 중인 선로로 이동시켰다는 사실을 깜빡 잊어버렸고, 두 대의 마주 오던 열차가 같은 선로를 사용하게 되어 <strong>200명 이상</strong>이 사망하는 참사가 발생했습니다 <cite>(Rolt 1978; Reason 2008)</cite>.</li>
+      <li><strong>ValuJet DC-9(1996)</strong> — 램프 요원이 화물 상자의 내용물을 확인하는 것을 잊었는데, 정비사들이 안전 캡을 씌우는 것을 깜빡한 산소 발생기가 비행 중 작동하여 화재를 일으켰고, 결국 항공기가 에버글레이즈(Everglades)에 추락해 <strong>100명 이상</strong>이 목숨을 잃었습니다 <cite>(Langewiesche 1998)</cite>.</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">기억의 두 가지 저장소</div>
+    <div class="block-body">
+      기억은 지속 시간(duration)이 서로 다른 두 가지 시스템으로 나뉩니다. <strong>작업기억(Working memory)</strong>은 전화를 걸 때까지 새 전화번호를 유지하는 것처럼 임시적이고 주의를 요구하는(attention-demanding) 저장소이며, 암산(mental arithmetic)이나 작업 일정 시뮬레이션처럼 의식 속에서 표상을 검토·평가·변환·비교하는 <strong>"작업장(workbench)"</strong> 역할도 합니다. <strong>장기기억(Long-term memory)</strong>은 세상에 대한 사실과 방법에 관한 지식 창고(storehouse)로, 작업기억에서 부호화(encode)되어 영구 저장됩니다.
+    </div>
+  </div>
+
+  <div class="figure-box">
+    <div class="figure-title">Figure 7.1 — 기억 기능의 표상</div>
+    <ul class="bullet-list">
+      <li><strong>부호화(Encoding)</strong> 화살표: 밑에 '(학습 및 훈련, learning and training)' 표기. 작업기억으로 들어가거나 장기기억으로 바로 전환되는 두 경로.</li>
+      <li><strong>저장(Storage)</strong>: 위 상자 = 작업기억 (공간적Spatial + 언어적Verbal 코드). 아래 상자 = 장기기억 (절차적Procedural + 선언적 조직화Declarative organization + 멘탈 모델Mental models).</li>
+      <li><strong>인출(Retrieval)</strong> 화살표: 두 저장소에서 정보를 성공적으로 꺼내는 능력.</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">학습과 훈련의 정의</div>
+    <div class="block-body">
+      <strong>학습(Learning)</strong> = 정보를 작업기억에서 장기기억으로 넘기는 과정.<br>
+      <strong>훈련(Training)</strong> = 설계자나 교사가 이 학습의 효율성을 극대화하기 위해 명시적이고 의도적으로 사용하는 기법.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">저장과 인출의 실패 특성</div>
+    <div class="block-body">
+      저장 단계에서 정보가 머무는 시간과 그동안 일어나는 인지적 활동이 중요하며, 인출 단계에서는 정보가 아예 인출되지 않거나 절차의 순서를 뒤섞는 등의 잘못된 인출(망각)이 발생할 수 있습니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 2 ══ -->
+<div class="slide-section" id="s2">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 02</span>
+    <h3>배들리의 작업기억 4요소 모델 (Baddeley's WM Model)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">핵심 3요소 제안</div>
+    <div class="block-body">
+      <cite>Baddeley(1986, 1995)</cite>는 작업기억을 단순히 하나의 통이 아니라 3개의 핵심 구성 요소(subsystems)를 가진 시스템으로 정의했습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">① 음운 저장소 및 루프</div>
+    <div class="block-body">
+      <strong>음운 저장소(phonological store)</strong>는 단어나 소리 같은 언어적 형태의 정보를 표상하며, 이 정보는 입 밖으로 내거나 속으로 되뇌는(subvocally) <strong>음운 루프(phonological loop)</strong>를 통해 유지(rehearse)됩니다. 언어 처리(Chapter 6)의 대부분은 이 음운 저장소를 수반합니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">② 시공간 스케치패드</div>
+    <div class="block-body">
+      <strong>시공간 스케치패드(visuo-spatial sketch pad)</strong>는 시각적 이미지의 전형적인 형태인 아날로그 및 공간적 형태로 정보를 표상합니다 <cite>(Logie 1995)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">③ 중앙 집행기</div>
+    <div class="block-body">
+      <strong>중앙 집행기(central executive)</strong>는 작업기억의 활동을 통제하고, 다른 하위 시스템에 주의 자원(attentional resources)을 할당하며, 방해 요소를 물리치는 역할을 합니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">④ 일화적 완충기 추가 (2007)</div>
+    <div class="block-body">
+      <cite>Baddeley et al.(2007)</cite>이 네 번째 요소인 <strong>일화적 완충기(episodic buffer)</strong>를 추가했습니다. 이는 작업기억의 다양한 구성 요소가 서로 상호작용하고(예: 여러 지각적 특징을 결합해 하나의 지각적 객체나 에피소드를 형성 <cite>(Karlsen, Allen, et al. 2010)</cite>), 지각 및 장기기억의 정보와 상호작용할 수 있는 일시적이고 수동적인 저장소이며 의식을 통해 접근 가능합니다 <cite>(Baddeley, Hitch, et al. 2009)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">두 형태의 작업기억 자원 분리</div>
+    <div class="block-body">
+      <cite>Baddeley & Hitch(1974)</cite> 및 이후 연구들 <cite>(Baddeley 1986, 1995, 2007; Logie 1995, 2011)</cite>은 작업기억 내에서 공간적/시각적 vs 시간적/언어적/음성적 정보가 <strong>완전히 분리된 처리 자원</strong>을 사용하여 다루어진다는 이분법을 확립했습니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 3 ══ -->
+<div class="slide-section" id="s3">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 03</span>
+    <h3>작업기억 용량과 주의 통제의 상관관계</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">작업기억 용량의 예측력</div>
+    <div class="block-body">
+      N-back 과제, 읽기 폭(reading span), 연산 폭(operation span), 숫자 세기 폭(counting span) 등은 읽기·듣기 이해력, 학업 성취도, 멀티태스킹, 언어 이해, 지시 따르기, 어휘 학습, 노트 필기, 글쓰기, 추론, 프로그래밍 학습, 복잡한 항공 의사결정과 같은 실제 세계 과제 수행 능력을 매우 잘 예측합니다 <cite>(Miyake, Friedman, et al. 2000; Engle 2001; Kane & Engle 2002; Logie 2011; Causse, Dehaise, & Pastor 2011)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">연령과 작업기억 감소</div>
+    <div class="block-body">
+      작업기억 폭(span)은 나이가 들면서 감소합니다. <cite>Taylor et al.(2005)</cite>은 나이 든 조종사들이 항공 교통 메시지를 기억하고 실행하는 정확도가 떨어지는 현상이 나이와 관련된 작업기억 폭의 감소 때문이라는 것을 밝혀냈습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">도덕적 판단과 작업기억</div>
+    <div class="block-body">
+      <cite>Moore, Clark, Kane(2008)</cite>은 다수를 구하기 위해 한 사람을 죽이는 것이 얼마나 도덕적으로 용인되는지 묻는 실험을 진행했는데, 작업기억 용량이 큰 참가자일수록 희생자의 죽음이 불가피한(inevitable) 상황에서만 살인을 용인하는 경향이 컸습니다. 이는 작업기억 용량이 더 크고 자발적이며 선택적으로 작동하는 추론 시스템의 일부임을 증명합니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">주의 통제 시스템으로서의 본질</div>
+    <div class="block-body">
+      작업기억은 단순히 정보를 저장하는 곳(storage per se)이 아니라, 간섭과 방해가 있는 상황에서 통제되고 지속적인 주의를 유지하는 능력 <strong>(controlled attention)</strong>에 더 가깝습니다 <cite>(Engle 2002; Kane, Bleckley, et al. 2001)</cite>. <cite>McVay & Kane(2009)</cite>는 마음이 방황하고(mind to wander) 당면한 과제를 소홀히 하는 경향이 작업기억 용량과 음의 상관관계가 있으며, 이는 주의 통제의 순간적인 실패에서 비롯된다고 주장했습니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 4 ══ -->
+<div class="slide-section" id="s4">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 04</span>
+    <h3>작업기억 하위 시스템 간의 코드 간섭</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">코드의 협동과 자원 비경쟁</div>
+    <div class="block-body">
+      시공간 스케치패드와 음운 저장소는 서로 독립적이므로, 한쪽에 가해지는 방해(interference)가 다른 쪽을 침범하지 않고 오히려 협동적으로 작동합니다 <cite>(Posner 1978)</cite>. 예를 들어 <cite>Johannsdottir & Herdman(2010)</cite>은 운전자가 전방의 고속도로 교통 상황은 시공간 코드로, 후방 거울을 통해 본 교통 상황(지속적으로 보이지 않는 객체)은 음운 코드로 부호화 <cite>(Baddeley, Chincotta, & Adlam 2001)</cite>하여 서로 다른 자원을 쓴다는 것을 발견했습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">무관한 환경 정보의 모달리티별 간섭</div>
+    <div class="block-body">
+      언어적/순차적 작업기억은 공간적 과제보다 동시적인 '언어적 과제'에 의해 더 심하게 붕괴됩니다 <cite>(Vergauwe, Barrouillet, & Camos 2010)</cite>. <cite>Salamé & Baddeley(1989)</cite>, <cite>Martin, Wogalter, Forlano(1988)</cite>는 직장에서 <strong>'가사가 있는 음악'</strong>은 언어적 작업기억 과제를 심각하게 방해하지만, 가사가 없는 비슷한 음악은 방해하지 않는다는 것을 증명했습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">순서 정보의 취약성</div>
+    <div class="block-body">
+      <cite>Tremblay & Jones(2001)</cite>는 무시해야 할 <strong>'무관한 말소리(irrelevant speech)'</strong>조차도 순서(sequential) 정보를 처리하는 것을 크게 방해하며, 이는 언어적 과제뿐만 아니라 시공간적 과제의 순서 유지도 방해한다고 밝혔습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">중앙 집행기의 통제된 프로세스 간섭</div>
+    <div class="block-body">
+      중앙 집행기는 고도의 통제된 처리(controlled processes)를 요구하는 과제에 의해 붕괴됩니다. <cite>Baddeley(1996)</cite>는 <strong>무작위 글자 생성 과제(random generation task)</strong>가 동물이나 과일 이름 대기 같은 '범주 생성 과제'와는 간섭을 일으키지만, 단순한 숫자 세기(1~6 반복)와 같은 <strong>조음 억제(articulatory suppression)</strong> 과제와는 간섭을 일으키지 않음을 보였습니다(단순 숫자는 음운 루프만 쓰기 때문).
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">집행 통제(Executive Control)와의 관계</div>
+    <div class="block-body">
+      <cite>Banich(2009)</cite>는 중앙 집행기와 집행 통제가 비슷하지만, 집행 통제는 전두엽(prefrontal cortex) 피질의 특정 뇌 영역과 명확히 연관되어 있고 작업기억과 늘 결합되는 것은 아니라고 구분했습니다(예: Stroop 과제). 그러나 현실에서는 두 개념 모두 복잡한 과제에서 간섭을 억제하는 핵심 역할을 합니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 5 ══ -->
+<div class="slide-section" id="s5">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 05</span>
+    <h3>디스플레이 설계 원칙: S-C-R 호환성 (Figure 7.2)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">S-C-R 호환성 원리</div>
+    <div class="block-body">
+      <cite>Wickens, Sandry, Vidulich(1983)</cite>는 작업기억의 코드에 맞게 디스플레이 형식을 가장 최적으로 연결하는 <strong>자극-중앙처리-반응(Stimulus/Central-processing/Response compatibility)</strong> 원칙을 제시했습니다.
+    </div>
+  </div>
+
+  <div class="figure-box">
+    <div class="figure-title">Figure 7.2 — 최적의 디스플레이 포맷 할당 (2×2 매트릭스)</div>
+    <ul class="bullet-list">
+      <li><strong>Y축 (Modality):</strong> 청각(Auditory) / 시각(Visual)</li>
+      <li><strong>X축 (Working memory code):</strong> 공간적(Spatial) / 언어적(Verbal)</li>
+      <li><strong>대각선 음영 셀(최적 조합):</strong> 시각–공간(Analog pictures, 아날로그 그림/지도) + 청각–언어(Speech, 음성)</li>
+      <li><strong>비음영 셀(비효율 조합):</strong> 시각–언어(Print, 텍스트 읽기) + 청각–공간(Sound localization and pitch, 소리의 위치와 피치) → 뇌 자원 충돌</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">공간 및 언어 정보의 최적화</div>
+    <div class="block-body">
+      물건의 위치를 알려주는 공간 정보는 지도를 시각적으로 보여주는 것이 가장 좋고, 관계가 복잡할수록 말(음성이나 텍스트)로 설명하면 능률이 떨어집니다. 반면 언어적 작업기억이 필요한 과제는 음성(Speech)으로 제공될 때 더 쉽게 처리됩니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 6 ══ -->
+<div class="slide-section" id="s6">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 06</span>
+    <h3>청각 정보의 보존과 시각적 메아리 (Visual Echo)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">잔향 기억(Echoic memory)의 우수성</div>
+    <div class="block-body">
+      청각–언어적 매칭(Speech)이 시각–언어적 매칭(Print)보다 우수한 이유는, 청각 정보를 담아두는 짧은 감각 저장소인 <strong>잔향 기억(echoic memory, 3~4초 지속)</strong>이 시각 정보의 <strong>영상 기억(iconic memory)</strong>보다 훨씬 느리게 붕괴(decay)되기 때문입니다. 또한 음성은 음운 저장소에 강제적으로 접근하며 속으로 되뇌는 발성(vocalization)과 더 호환됩니다 <cite>(Nilsson, Ohlsson, & Ronnberg 1977)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">음성 메시지의 길이 한계</div>
+    <div class="block-body">
+      조종사에게 내리는 항법 지시나 의사에게 전달되는 진단 결과는 시각 텍스트보다 음성(합성음 포함)으로 제공될 때 단기적 손실이 적습니다. 그러나 이 메시지가 관련 없는 단어나 글자 <strong>4~5개를 초과</strong>하여 길어지면 작업기억의 붕괴 때문에 음성 전달의 효과가 급격히 떨어집니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">시각적 메아리(Visual Echo)의 필요성</div>
+    <div class="block-body">
+      메시지가 길어질 때 나타나는 휘발성을 극복하기 위해, 청각으로 전달된 메시지를 시각 디스플레이 화면에 한 번 더 띄워주는(redundant) <strong>'시각적 메아리(visual echo)'</strong> 설계가 강력히 권장됩니다 <cite>(Helleberg & Wickens 2003)</cite>. 최근 지상-공중 통신이 기존 라디오 음성에서 텍스트 전용인 <strong>디지털 데이터 링크(digital data link)</strong>로 전환되고 있는데 <cite>(Kerns 1999)</cite>, 이 경우 역으로 텍스트를 합성 음성으로 중복(echo) 지원해야 하는지 설계적 이슈가 발생합니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 7 ══ -->
+<div class="slide-section" id="s7">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 07</span>
+    <h3>작업기억의 지속 시간 한계와 붕괴 (Figure 7.3)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">브라운-피터슨 패러다임(Brown-Peterson Paradigm)</div>
+    <div class="block-body">
+      1950년대 후반 <cite>Brown(1959)</cite>과 <cite>Peterson & Peterson(1959)</cite>은 작업기억 속 정보가 되뇌기(rehearse) 없이 얼마나 지속되는지 알아내기 위해 실험을 고안했습니다. 피험자에게 무작위 알파벳 3개를 외우게 한 뒤, 속으로 되뇌는 것을 막기 위해 특정 숫자부터 <strong>'3씩 거꾸로 빼며 소리 내어 세기(방해 과제, filler task)'</strong>를 시켰습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">20초의 시한부 수명</div>
+    <div class="block-body">
+      실험 결과, 이런 방식으로 되뇌기를 방해받았을 때 작업기억 속 정보는 단 <strong>20초 만에 거의 '0(Zero)'</strong>으로 붕괴(decay)되었습니다.
+    </div>
+  </div>
+
+  <div class="figure-box">
+    <div class="figure-title">Figure 7.3 — 되뇌기 방지 시 인출 정확도의 미끄럼틀 곡선</div>
+    <ul class="bullet-list">
+      <li><strong>X축 (Retention interval, sec):</strong> 정보 유지 시간 (0초에서 30초까지)</li>
+      <li><strong>Y축 (Recall accuracy):</strong> 회상 정확도 (Chance(찍기 확률)에서 100%까지)</li>
+      <li><strong>곡선의 의미:</strong> '1 item' 곡선은 가장 위에서 완만하게 떨어짐. 외울 항목이 3개, 5개, 7개(7 items)로 늘어날수록 기울기가 절벽처럼 가팔라지며, 특히 7개 곡선은 10~20초 구간에서 바닥(Chance)으로 곤두박질치는 심각한 쇠퇴(decay) 현상.</li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">시공간 정보의 동일한 붕괴</div>
+    <div class="block-body">
+      이 붕괴 현상은 언어 정보뿐만 아니라 조종사의 항법 정보 <cite>(Loftus, Dark, & Williams 1979)</cite>나 레이더 관제사 정보 <cite>(Moray 1986)</cite> 같은 시공간 정보에서도 똑같이 확인되었습니다. 정보는 시간의 흐름에 따라 소멸하지만 <cite>(Barrouillet, Bernardin, & Camos 2004; Burgess & Hitch 2006)</cite>, 단순히 시간 때문만이 아니라 방해 과제나 외워야 할 재질 자체의 간섭과도 관련이 있습니다 <cite>(Lewandowsky, Overauer, & Brown 2009)</cite>.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 8 ══ -->
+<div class="slide-section" id="s8">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 08</span>
+    <h3>마법의 숫자 7의 붕괴: 작업기억의 물리적 용량</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">용량과 시간의 상호작용</div>
+    <div class="block-body">
+      작업기억의 용량(capacity)은 시간과 상호작용합니다. 5개 아이템은 1개 아이템보다 훨씬 빨리 붕괴하는데 <cite>(Melton 1963)</cite>, 이는 되뇌기(rehearsal)가 즉시(instantaneous) 일어나는 것이 아니기 때문입니다. 외울 것이 많아질수록 각 항목을 다시 되뇌기까지 걸리는 시간적 지연이 길어져 최소 인출 한계선 아래로 소멸할 확률이 높아집니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">발음 길이 효과 (발음 속도 = 용량)</div>
+    <div class="block-body">
+      되뇌기 속도는 단어를 말하는 시간에 의해 결정되며 <cite>(Baddeley 1986, 1990)</cite>, 속도가 빠를수록 용량이 큽니다. 중국어 숫자는 영어나 웨일스어 숫자보다 발음이 훨씬 짧아서, 중국어권 사람들의 기억 폭은 <strong>9.9자리(digits)</strong>로 늘어나는 반면 <cite>(Hoosain & Salili 1988)</cite>, 단어 길이가 긴 웨일스어 사용자의 기억 폭은 <strong>5.8자리</strong>로 뚝 떨어집니다 <cite>(Ellis & Hennelly 1980)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">마법의 숫자의 하향 조정</div>
+    <div class="block-body">
+      <cite>Miller(1956)</cite>는 전적으로 주의를 집중할 때 외울 수 있는 최대 기억 폭(Memory span)을 <strong>"마법의 숫자 7±2 (5~9개)"</strong>라고 명명했습니다. 그러나 이후 연구를 통해 이 숫자는 무작위 문자를 들려주고 N번째 전 항목을 맞히는 가혹한 N-back 과제 등에서 <strong>"3~4개(3~4 items)"</strong>로 하향 조정되었습니다 <cite>(Broadbent 1975; Cowan 2001)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">설계 적용</div>
+    <div class="block-body">
+      시스템 디자이너는 조종사에게 "고도 180 도달 시 기수 155, 속도 240 변경"과 같이 항목이 5~9개에 이르는 긴 정보를 한 번에 던지거나, 한눈에 비교해야 할 컴퓨터 메뉴 옵션의 개수를 작업기억 한계 이상으로 늘려서는 안 됩니다 <cite>(Mayhew 1992)</cite>.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 9 ══ -->
+<div class="slide-section" id="s9">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 09</span>
+    <h3>인지적 한계 극복의 기초: 청킹 (Chunking)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">청킹의 원리</div>
+    <div class="block-body">
+      <cite>Miller(1956)</cite>가 제시한 한계는 단편적인 조각이 아니라 <strong>"7±2개의 청크(Chunks)"</strong>입니다. 청크란 장기기억의 연합(associations)을 통해 서로 인접한 자극 단위들을 의미 있게 하나로 묶은 덩어리입니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">의미의 마법</div>
+    <div class="block-body">
+      개, 고양이 등 3글자로 된 단어 7개는 총 21개의 철자(letters)지만, 장기기억에서 이미 익숙하게 묶여 있으므로 7개의 청크로 취급되어 작업기억 한계 내에 여유롭게 들어갑니다. 더 나아가 "London is the largest city in England"와 같이 규칙과 결합된 친숙한 문장은 전체가 단 <strong>1개의 청크</strong>로 압축됩니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">부호화 기법</div>
+    <div class="block-body">
+      작업기억 쇠퇴 곡선은 단일 알파벳이든, 단어이든, 친숙한 구문이든 상관없이 1, 3, 5, 8 덩어리의 규칙을 똑같이 따릅니다. 이렇게 하위 요소들을 의미론적으로 연결(semantically associating)하여 작업기억의 한계를 우회하는 기법이 바로 <strong>'청킹(chunking)'</strong>이며, 이 결합 과정은 Baddeley의 일화적 완충기(episodic buffer)에서 일어납니다 <cite>(Baddeley, Hitch, & Allen 2009)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">글자 대 숫자의 청킹 우위</div>
+    <div class="block-body">
+      미국 맞춤형 번호판 "473 HOG"나 상업용 전화번호 "Dial 263 HELP"처럼, 순차적 의미를 부여하기 쉬운 영문자(Letters)가 단순 숫자(Digits)보다 청킹에 훨씬 유리합니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 10 ══ -->
+<div class="slide-section" id="s10">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 10</span>
+    <h3>UI/UX 설계를 위한 파싱 (Parsing) 전략</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">물리적 분할의 힘</div>
+    <div class="block-body">
+      청킹은 항목들을 물리적으로 띄워주는 <strong>'파싱(Parsing)'</strong>을 통해 극대화됩니다. 예를 들어 "4149283141865"라는 13자리 숫자는 "4 1492 8 314 1865"로 파싱되었을 때 연상 작용("콜럼버스(1492)가 파이(3.14)를 먹었다" 등)을 일으켜 5개의 덩어리로 훨씬 쉽게 부호화됩니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">파싱의 실험적 근거</div>
+    <ul class="bullet-list">
+      <li><cite>Loftus, Dark, Williams(1979)</cite> — 조종사들이 항공 관제 코드 4자리를 외울 때 낱개 "2 7 8 4"보다 "27 84"로 파싱되었을 때 기억률이 훨씬 높음.</li>
+      <li><cite>Bower & Springston(1970)</cite> — 친숙한 약어 사이에 멈춤(pauses)을 넣었을 때(FBI JFK TV)가 엉뚱하게 잘렸을 때(FB IJF KTV)보다 기억력이 폭발적으로 증가.</li>
+      <li><cite>Wickelgren(1964)</cite> — 전화번호를 3자리씩 묶는 것이 최적임을 증명.</li>
+    </ul>
+  </div>
+
+  <div class="highlight">
+    <strong>설계 가이드라인</strong> — 식별 부호나 알파뉴메릭 코드(alphanumeric strings)를 디스플레이에 띄울 때 시각적인 군집 크기를 <strong>"3자리에서 4자리"</strong>로 강제 분할 <cite>(Bailey 1989)</cite>.
+  </div>
+</div>
+
+<!-- ══ Slide 11 ══ -->
+<div class="slide-section" id="s11">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 11</span>
+    <h3>과거가 현재를 덮친다: 순행 간섭 (PI)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">간섭의 정의</div>
+    <div class="block-body">
+      작업기억 속 정보(MTBR, Material to be remembered)는 단지 시간이 흘러서뿐만 아니라 다른 시간대에 학습된 정보의 <strong>'간섭(Interference)'</strong>에 의해 인출에 실패합니다. 이전 기억으로부터의 간섭을 다루는 것은 작업기억 내 중앙 집행기 통제 기능의 주된 임무입니다 <cite>(Anderson 2003)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">순행 간섭(PI)의 원리</div>
+    <div class="block-body">
+      <strong>순행 간섭(Proactive Interference, PI)</strong>은 타겟 정보(MTBR)를 입력하기 <strong>'이전에(prior to)'</strong> 수행한 과거의 행동이나 학습이 현재 정보의 인출을 방해하는 현상입니다 <cite>(Keppel & Underwood 1962; Jonides & Nee 2006)</cite>. 예를 들어 목격자가 범인 라인업을 보기 전에 다른 수많은 머그샷(용의자 사진)을 미리 보면 과거의 얼굴들이 현재의 판단을 흐리게 만듭니다 <cite>(Deffenbacher, Bornstein, & Penrod 2006)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">PI의 취약 조건</div>
+    <ul class="bullet-list">
+      <li>항공 교통 관제사처럼 쉴 틈 없이 연속적으로 기억 과제를 수행해야 할 때 <cite>(Hopkin 1980)</cite></li>
+      <li>다른 과제를 동시에 수행 중일 때 <cite>(Kane & Engle 2000)</cite></li>
+      <li>작업기억 용량 자체가 작은 사람일수록 <cite>(Kane & Engle 2000; Whitney, Arnett, et al. 2001)</cite></li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">최소 지연 시간 확보</div>
+    <div class="block-body">
+      <cite>Loftus, Dark, Williams(1979)</cite>는 조종사와 관제사의 무전에서 이전의 통신 내용이 다음 통신 내용의 기억을 간섭하지 않으려면 최소한 <strong>10초 이상의 침묵(delay)</strong>이 필요하다는 사실을 밝혀냈습니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 12 ══ -->
+<div class="slide-section" id="s12">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 12</span>
+    <h3>현재가 과거를 지운다: 역행 간섭 (RI)</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">역행 간섭(RI)의 원리</div>
+    <div class="block-body">
+      <strong>역행 간섭(Retroactive interference, RI)</strong>은 정보를 외운 직후에 새롭게 들어온 활동이나 정보가 <strong>'시간을 거슬러 올라가(backwards in time)'</strong> 방금 외운 타겟 정보를 머릿속에서 완전히 지워버리는 현상입니다. 새로운 전화번호를 한참 쓰고 나면 과거에 수년 동안 쓰던 옛날 전화번호가 생각나지 않는 것이 그 예입니다.
+    </div>
+  </div>
+
+  <div class="figure-box">
+    <div class="figure-title">Figure 7.4 — 간섭이 기억에 미치는 영향 시간축 도식화</div>
+    <ul class="bullet-list">
+      <li>중앙: 외워야 할 타겟 <strong>MTBR (Material to be remembered)</strong></li>
+      <li>타겟의 왼쪽(과거) → '이전 번호 누르기 활동' 화살표 = <strong>순행 간섭(PI)</strong></li>
+      <li>타겟의 오른쪽(미래) → '대화하기 활동' 역방향 화살표 = <strong>역행 간섭(RI)</strong></li>
+    </ul>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">동일 자원의 간섭 파괴력</div>
+    <div class="block-body">
+      Brown-Peterson 패러다임에서 쓰인 숫자 거꾸로 세기 방해 과제 역시 RI를 유발하는 완벽한 장치입니다. 언어 정보는 이후에 들어오는 언어 정보에 의해 지워지며 <cite>(McGeoch 1936; Anderson 2003)</cite>, 목격자 증언 라인업 <cite>(Davies, Shepherd, & Ellis 1979)</cite>이나 공간 정보 기억 <cite>(Hole 1996)</cite>에서도 동일한 RI가 발생합니다. 이 간섭은 타겟 정보와 방해 정보가 작업기억 내에서 <strong>'서로 다른 구성요소(음운 vs 공간)'</strong>를 사용할 때만 줄이거나 없앨 수 있습니다 <cite>(Haelbig, Mecklinger, et al. 1998)</cite>.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 13 ══ -->
+<div class="slide-section" id="s13">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 13</span>
+    <h3>정보의 혼동(Confusion)과 디스플레이의 공간 분리</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">유사성에 의한 붕괴</div>
+    <div class="block-body">
+      작업기억의 항목들은 코드(언어/공간)가 같을 뿐만 아니라, 내용 자체의 형태나 소리가 비슷할 때 <strong>혼동(Confusion)</strong>되어 잊혀집니다. 항공 관제사가 호출 부호가 서로 비슷한 비행기들(예: AI3404, AI3402, AI3401)을 관리할 때, 이 유사성이 일으키는 엄청난 간섭 때문에 개별 항공기의 정체성을 유지하기가 극도로 어려워집니다 <cite>(Fowler 1980)</cite>.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">글자-숫자 결합의 간섭 감소</div>
+    <div class="block-body">
+      타겟과 이후/이전 정보가 공유하는 특징(features)이 많을수록 PI와 RI의 파괴력은 배가됩니다. 연속된 7자리 숫자(273 4728)보다 앞에 영문을 섞은 코드(HTR 4728)가 작업기억에서 훨씬 더 잘 살아남습니다. 앞의 문자 3개가 뒤의 숫자 4개에 미치는 PI를 획기적으로 줄여주기 때문입니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">공간 분리 디스플레이 실험</div>
+    <div class="block-body">
+      <cite>Hess, Detweiler, & Ellis(1999)</cite> 및 <cite>Hess & Detweiler(1996)</cite>의 실험에 따르면, 4대의 무인 로봇 상태를 '하나의 화면 창'에서 번갈아 보여주는 것보다 공간적으로 분리된 <strong>'4개의 개별 화면 창'</strong>에 각각 띄워주는 것(Spatially distributed display)이 공간적 위치라는 식별 단서를 만들어 내어 기억력을 크게 향상시켰습니다. 여기에 로봇 상태별로 다른 <strong>색상(Colors)</strong>까지 부여하면 차별성이 커져 작업기억 부하가 더욱 줄어듭니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ Slide 14 ══ -->
+<div class="slide-section" id="s14">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 14</span>
+    <h3>작업기억 부하를 최소화하는 설계 5원칙</h3>
+  </div>
+
+  <ol class="numbered-list">
+    <li><strong>유사성 최소화</strong> — 시스템 식별 코드를 만들 때 소리나 모양이 비슷한 글자들의 긴 나열을 절대 피해야 합니다.</li>
+    <li><strong>모달리티 분리</strong> — 작업자의 뇌가 정지하는 것을 막기 위해 공간 정보와 언어 정보에 서로 다른 코드(시각 vs 청각)를 배정해야 합니다.</li>
+    <li><strong>불필요한 활동 차단</strong> — 정보를 뇌에 담고, 유지하고, 인출하는 전 과정(before, during, after)에서 동일한 코드나 재질(예: 숫자 암기 중 또 다른 숫자 입력)을 사용하는 불필요한 활동을 완벽히 차단하여 간섭(PI/RI)을 막아야 합니다.</li>
+    <li><strong>시각적 차별화 강화</strong> — 디스플레이 상의 속성들을 서로 명확히 구분되게 다른 스케일이나 라벨을 사용하고, 모니터링해야 할 객체들의 공간적 위치를 분리하여 서로 섞이지 않게(혼동 방지) 해야 합니다.</li>
+    <li><strong>작업기억 분석 수행</strong> — 새로운 시스템 설계 초기 단계에서 반드시 '작업기억 분석(Working memory analysis)'을 수행하여, 작업자가 화면(visual backup) 없이 단 몇 초라도 자신의 기억에만 의존해 조작해야 하는 취약한 순간이 언제인지 철저히 색출해야 합니다.</li>
+  </ol>
+</div>
+
+<!-- ══ Slide 15 ══ -->
+<div class="slide-section" id="s15">
+  <div class="slide-heading">
+    <span class="slide-badge">Slide 15</span>
+    <h3>정적 디스플레이와 기억의 외부화</h3>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">디스플레이를 통한 뇌의 부담 완화</div>
+    <div class="block-body">
+      현대의 시스템 설계는 조작자의 작업기억에 전적으로 의존하는 가혹한 환경에서 벗어나고 있습니다. 예를 들어, 항공 관제사의 화면에는 항공기의 고도와 속도 상태가 계속해서 지속적으로(continuously) 띄워져 있습니다. 따라서 관제사는 외우는 <strong>'기억 데이터(memory data)'</strong>에 의존하는 대신 눈으로 보는 <strong>'지각 데이터(perceptual data)'</strong>를 바탕으로 여유롭게 의사결정을 내릴 수 있습니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">탑다운 처리의 촉진</div>
+    <div class="block-body">
+      (Chapter 6에서 논의된 것처럼) 최신 상태로 갱신되어 눈앞에 보이는 메모리(화면)는 하향식 처리(Top-down processing)를 통해 지각 과정을 훨씬 더 쉽게 만들어 주며, 조작자가 모니터를 떠나 다른 곳을 스캔할 때 뇌의 부담(unburden)을 엄청나게 덜어줍니다.
+    </div>
+  </div>
+
+  <div class="content-block">
+    <div class="block-title">시스템 고장 시의 최후 보루</div>
+    <div class="block-body">
+      그러나 이러한 훌륭한 시각적 백업(visual backup) 시스템도 기계 고장으로 인해 디스플레이 정보가 모두 날아가 버리는(항공 관제에서 결코 사소하지 않은 발생률) 최악의 상황을 맞이할 수 있습니다. 이 순간, 지금까지 우리가 배웠던 작업기억의 한계와 설계 원칙을 준수하여 훈련된 조작자의 빠르고 정확한 <strong>작업기억(Working memory) 자체</strong>가 단순히 유용한 수준을 넘어 <strong>200명의 목숨을 구하는 필수적인(essential) 생명줄</strong>이 됩니다.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
