@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>피해자전담챗봇 v6 기획안 — 통제감 회복 모델</title>
+<style>
+  :root {
+    --bg: #0f1a1a;
+    --surface: #1a2828;
+    --card: #16222a;
+    --text: #d8d8d8;
+    --text-soft: #a8b0b0;
+    --heading: #ffffff;
+    --accent: #2dd4bf;
+    --accent-soft: #5eead4;
+    --gold: #f5b800;
+    --border: #2a3838;
+    --code-bg: #0d1c1c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+  /* === Sticky Top Nav === */
+  .topnav {
+    position: sticky;
+    top: 0;
+    background: rgba(15, 26, 26, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .topnav-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+  }
+  .topnav-title {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .topnav-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .topnav-links a {
+    color: var(--text);
+    font-size: 0.88rem;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .topnav-links a:hover { color: var(--accent); }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  @media (max-width: 720px) {
+    .topnav-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 16px;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--surface);
+      padding: 16px 24px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      min-width: 180px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .topnav-links.open { display: flex; }
+    .hamburger { display: block; }
+  }
+  /* === Container === */
+  .container { max-width: 880px; margin: 0 auto; padding: 32px 24px 80px; }
+  header {
+    text-align: center;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  header h1 {
+    color: var(--heading);
+    font-size: 1.9rem;
+    margin: 0 0 10px;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+  header .subtitle {
+    color: var(--accent);
+    font-size: 1rem;
+    margin: 4px 0;
+    font-weight: 500;
+  }
+  header .meta {
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    margin-top: 12px;
+  }
+  .identity-line {
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--heading);
+    padding: 24px 16px;
+    margin: 24px 0 32px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  .identity-line .gold { color: var(--gold); }
+  /* === 진화 다이어그램 === */
+  .evolution {
+    background: var(--surface);
+    padding: 28px 24px;
+    border-radius: 8px;
+    margin: 24px 0 48px;
+  }
+  .evolution h3 {
+    color: var(--gold);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 20px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .evo-step {
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 0 auto;
+    max-width: 640px;
+  }
+  .evo-step .stage {
+    color: var(--gold);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .evo-step .title {
+    color: var(--heading);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .evo-step .body {
+    color: var(--text);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  .evo-step ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+  .evo-step ul li { margin: 3px 0; }
+  .evo-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin: 6px 0;
+    font-weight: 600;
+  }
+  .evo-feedback { border-left-color: var(--gold); }
+  .evo-feedback .stage { color: var(--gold); }
+  /* === Sections === */
+  section { margin-bottom: 56px; scroll-margin-top: 70px; }
+  h2 {
+    color: var(--heading);
+    font-size: 1.45rem;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  h3 {
+    color: var(--heading);
+    font-size: 1.1rem;
+    margin-top: 28px;
+    font-weight: 600;
+  }
+  h4 {
+    color: var(--accent);
+    font-size: 0.98rem;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  p { margin: 10px 0; }
+  .info-box {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    padding: 16px 22px;
+    margin: 18px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .info-box.gold { border-left-color: var(--gold); }
+  .info-box h4 { margin-top: 0; color: var(--accent); }
+  .info-box.gold h4 { color: var(--gold); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.94rem;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--text-soft);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--accent);
+  }
+  td.no { color: var(--text-soft); }
+  tr:last-child td { border-bottom: none; }
+  code {
+    background: var(--code-bg);
+    color: var(--accent-soft);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 0.88em;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--text);
+    padding: 16px 20px;
+    border-radius: 6px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+  }
+  .rag-box {
+    background: var(--code-bg);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin: 14px 0 18px;
+    font-family: "JetBrains Mono", "SF Mono", monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .rag-box .label {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    font-family: -apple-system, sans-serif;
+  }
+  ul.compact, ol.compact { margin: 8px 0; padding-left: 22px; }
+  ul.compact li, ol.compact li { margin: 4px 0; }
+  a { color: var(--accent); }
+  a:hover { color: var(--accent-soft); text-decoration: underline; }
+  .person-card {
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 20px 0 28px;
+    border-radius: 0 6px 6px 0;
+  }
+  .person-card .num {
+    color: var(--gold);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-right: 10px;
+  }
+  .person-card .role {
+    color: var(--heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .person-card .summary {
+    color: var(--text);
+    margin: 8px 0 14px;
+  }
+  .person-card .ref-title {
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin: 16px 0 6px;
+  }
+  .person-card ul { margin: 0; padding-left: 20px; font-size: 0.92rem; }
+  .person-card ul li { margin: 5px 0; color: var(--text); }
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .phase {
+    background: var(--surface);
+    padding: 14px 16px;
+    border-radius: 6px;
+    border-top: 2px solid var(--accent);
+  }
+  .phase .ph-num {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .phase .ph-title { color: var(--heading); font-weight: 600; margin: 4px 0 2px; }
+  .phase .ph-time { color: var(--text-soft); font-size: 0.8rem; }
+  .phase p { margin: 8px 0 0; font-size: 0.88rem; }
+  /* === 과제 수행 방법 옵션 === */
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 16px 0 24px;
+  }
+  .option {
+    background: var(--surface);
+    padding: 16px 18px;
+    border-radius: 6px;
+    border-top: 2px solid var(--accent);
+  }
+  .option .opt-num {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+  }
+  .option .opt-title {
+    color: var(--heading);
+    font-weight: 600;
+    margin: 4px 0 4px;
+    font-size: 1rem;
+  }
+  .option .opt-time {
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .option ul {
+    margin: 6px 0 0;
+    padding-left: 18px;
+    font-size: 0.88rem;
+  }
+  .option ul li { margin: 3px 0; }
+  footer {
+    text-align: center;
+    padding: 32px 0 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-soft);
+    font-size: 0.82rem;
+  }
+  @media (max-width: 640px) {
+    .container { padding: 20px 16px 48px; }
+    header h1 { font-size: 1.5rem; }
+    .identity-line { font-size: 1.05rem; }
+    table { font-size: 0.85rem; }
+    th, td { padding: 8px 10px; }
+    .rag-box { font-size: 0.78rem; padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Sticky Top Navigation ===== -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <span class="topnav-title">v6 기획안</span>
+    <ul class="topnav-links" id="navLinks">
+      <li><a href="#evolution" onclick="closeNav()">진화</a></li>
+      <li><a href="#terms" onclick="closeNav()">PFA·SPR</a></li>
+      <li><a href="#section-1" onclick="closeNav()">골든타임</a></li>
+      <li><a href="#section-2" onclick="closeNav()">통제감</a></li>
+      <li><a href="#section-3" onclick="closeNav()">임상 매력</a></li>
+      <li><a href="#section-4" onclick="closeNav()">업무 분장</a></li>
+    </ul>
+    <button class="hamburger" onclick="toggleNav()" aria-label="메뉴 열기">☰</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<header>
+  <h1>피해자전담챗봇 v6 기획안</h1>
+  <p class="subtitle">통제감 회복 모델 (Sense of Control Recovery Model)</p>
+  <p class="meta">2차 발표 준비 자료 · 2026-04-26</p>
+</header>
+
+<div class="identity-line">
+  "통제를 잃은 자리에, <span class="gold">통제를 돌려드립니다</span>."
+</div>
+
+<!-- ===== 챗봇의 진화 과정 ===== -->
+<div class="evolution" id="evolution">
+  <h3>챗봇의 진화 과정</h3>
+
+  <div class="evo-step">
+    <div class="stage">출발</div>
+    <div class="title">접수면담 챗봇</div>
+    <div class="body">일반 상담센터의 접수면담을 대체하는 봇으로 최초 기획 시작.</div>
+  </div>
+  <div class="evo-arrow">↓</div>
+
+  <div class="evo-step">
+    <div class="stage">1차 발표 (좁힘)</div>
+    <div class="title">피해자 전담 경찰 봇</div>
+    <div class="body">대상자를 "범죄 피해자"로 특정. PFA 기반 면담 준비 도우미.</div>
+  </div>
+  <div class="evo-arrow">↓</div>
+
+  <div class="evo-step evo-feedback">
+    <div class="stage">교수 피드백</div>
+    <div class="title">"이게 팩트수집기냐, 사람 대체냐?"</div>
+    <div class="body">
+      <ul>
+        <li>이 챗봇이 단순 정보 수집 도구인가, 실제로 사람을 돕는가?</li>
+        <li>전담경찰관이 피해자를 몇 번이나 만나는가? (실무 빈도)</li>
+        <li>실무 관련 조사를 더 해보라.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="evo-arrow">↓</div>
+
+  <div class="evo-step evo-feedback">
+    <div class="stage">전담경찰관 인터뷰 결과</div>
+    <div class="title">실무에서 발견된 4가지 사실</div>
+    <div class="body">
+      <ul>
+        <li><strong>'사회적 통제감' 회복</strong>이 핵심 — "당신은 스스로 선택할 수 있는 사람"임을 강조</li>
+        <li>피해자 다수가 <strong>공포심 때문에 일상회복이 안 됨</strong></li>
+        <li>전담경찰관 정서소진·업무부담으로 <strong>여러 번 만나지 못함</strong></li>
+        <li>일상회복용 <strong>청소 도우미·법률 서비스 등 연계</strong>가 실무 핵심 역할</li>
+      </ul>
+    </div>
+  </div>
+  <div class="evo-arrow">↓</div>
+
+  <div class="evo-step">
+    <div class="stage">2차 발표 (확장)</div>
+    <div class="title">통제감 회복 챗봇</div>
+    <div class="body">골든타임 초기 접수 + <strong>이후 통제감 회복 + 일상회복 자원 연계</strong>까지 확장. 전담경찰관이 못 닿는 빈도·기간을 챗봇이 메움.</div>
+  </div>
+</div>
+
+<!-- ===== 0. 용어 정리 ===== -->
+<section id="terms">
+  <h2>0. 먼저 — PFA와 SPR이 뭔가?</h2>
+
+  <div class="info-box">
+    <h4>PFA (Psychological First Aid · 심리적 응급처치)</h4>
+    <p>WHO·NCTSN·NCPTSD가 공동 개발한 <strong>위기 직후 0~며칠</strong>의 표준 개입 EBT.
+    "심리치료"가 아닌 <strong>안정화·연결</strong>이 목적이며, <strong>비전문가도 적용 가능</strong>하도록 설계됨.
+    8가지 핵심 활동(접촉·안전·안정화·정보수집·실질도움·사회적지지·대처정보·후속연계)으로 구성.
+    골든타임 개입 표준 프로토콜로 전 세계 채택.</p>
+    <p style="color: var(--text-soft); font-size: 0.88rem;">근거: Brymer et al. (2006) NCTSN/NCPTSD · WHO (2011) Field Workers Guide · Hobfoll et al. (2007) <em>Psychiatry</em></p>
+  </div>
+
+  <div class="info-box">
+    <h4>SPR (Skills for Psychological Recovery · 심리적 회복 기술)</h4>
+    <p>NCTSN·NCPTSD가 공동 개발한 <strong>PFA 후속 단계 (며칠~몇 주)</strong> 회복 EBT.
+    PFA가 "안정화"라면, SPR은 "기술 학습". <strong>피해자가 자기 자신에게 적용</strong>하도록 설계됨.
+    6가지 기술: ① 정보 수집 ② 문제 해결 ③ 긍정 활동 늘리기 ④ 반응 관리 ⑤ 도움 안 되는 사고 다루기 ⑥ 건강한 사회적 연결.</p>
+    <p style="color: var(--text-soft); font-size: 0.88rem;">근거: Berkowitz et al. (2010) NCTSN/NCPTSD <em>SPR Field Operations Guide</em></p>
+  </div>
+
+  <div class="info-box gold">
+    <h4>왜 PFA + SPR인가?</h4>
+    <p>둘 다 <strong>비전문가 적용용 EBT</strong>로 설계됨 → 챗봇 자동화에 적합한 *유일한* 트라우마 EBT 조합.
+    임상가 영역(TF-CBT, EMDR, PE)을 침범하지 않으면서 학계 인정 받은 도구.
+    PFA(0~며칠) + SPR(며칠~몇주) = 사건 직후 ~ 1개월 챗봇 운영 시기 정확히 커버.</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 1 ===== -->
+<section id="section-1">
+  <h2>1. 골든타임 (0~72h) 챗봇 미션</h2>
+
+  <p>외상 후 0~72시간은 <strong>기억 강화 윈도우</strong>로, 이 시기 개입의 형식·내용이 PTSD 발달 여부를 좌우한다 (Bonanno, 2004).
+  전담경찰관은 1인 월 11.8건 + 행정 3건/건의 업무 부담으로 즉각·반복 응대가 어렵다 (서명희 2020). 챗봇은 24/7 가용 + 무한 반복.</p>
+
+  <h3>1-1. 챗봇이 골든타임에 해야 하는 7가지</h3>
+  <table>
+    <thead>
+      <tr><th>#</th><th>챗봇 행동</th><th>EBT 근거</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="no">1</td><td>안전 확인 — 현재 안전한가? 위협 진행 중인가?</td><td>PFA Safety</td></tr>
+      <tr><td class="no">2</td><td>심리적 안정화 — 호흡, grounding, 비침습적 경청</td><td>PFA Calming</td></tr>
+      <tr><td class="no">3</td><td>통제감 회복 환경 — 선택권·예측가능성·거절권 매 턴 보장</td><td>Bandura Self-efficacy + Herman 1단계</td></tr>
+      <tr><td class="no">4</td><td>피해 개요 비침습 수집 — OARS 기법, 강요 금지</td><td>PFA Information Gathering + MI</td></tr>
+      <tr><td class="no">5</td><td>권리 안내 — 진술거부권·신변보호·국선변호사</td><td>PFA Coping Information</td></tr>
+      <tr><td class="no">6</td><td>위기 신호 감지·연계 — 자살·진행 위험 → 즉시 1393/112</td><td>Stepped Care Triage</td></tr>
+      <tr><td class="no">7</td><td>면담 요약서 생성 — 재진술 최소화 (스마일센터 의뢰 가이드라인 자동화)</td><td>PFA Linkage</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1-2. 절대 하면 안 되는 것 — CISD 함정</h3>
+  <p><strong>CISD (Critical Incident Stress Debriefing)</strong>는 1990년대 표준이었으나
+  메타분석 결과 <strong>PTSD를 *악화*시킴</strong> (Rose et al., 2002 Cochrane).
+  그래서 PFA가 등장. 우리 챗봇은 CISD 함정 회피.</p>
+  <table>
+    <thead>
+      <tr><th>금지 (CISD식)</th><th>대체 (PFA식)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"지금 자세히 말씀해 주세요"</td><td>"말하고 싶으시면 들을게요"</td></tr>
+      <tr><td>"그때 감정을 다 표현해 주세요"</td><td>"지금 안전 확보가 우선입니다"</td></tr>
+      <tr><td>"기억나는 모든 디테일을 말씀해 주세요"</td><td>"넘어가도 괜찮아요"</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1-3. 골든타임 10턴 구조 (현 v5 유지)</h3>
+  <pre>[1] 인사 + 안전 확인 + 봇 소개          → PFA 접촉·안전
+[2] 안정화 + 감정 확인                   → PFA 안정화
+[3] 피해 개요 — 언제, 어디서             → 정보 수집
+[4] 피해 개요 — 무엇이, 어떻게           → 정보 수집
+[5] 가해자 관계                          → 정보 수집
+[6] 현재 상태 + 안전 재확인              → 안전·안정화
+[7] 권리 안내 + 지원기관 (스마일센터 포함) → 대처 정보·연계
+[8] 면담 리허설                          → 실질적 도움
+[9] 요약 확인                            → 정보 수집 마무리
+[10] 마무리 + 면담 요약서 출력           → 후속 연계</pre>
+  <p style="color: var(--text-soft); font-size: 0.9rem;">★ 매 턴 "남은 단계: N단계" 출력 (예측가능성). 턴 10은 질문 금지. 회피 시 "넘어가도 괜찮아요" 자동 발화 (거절권).</p>
+</section>
+
+<!-- ===== SECTION 2 ===== -->
+<section id="section-2">
+  <h2>2. 통제감 회복 EBT 설계</h2>
+
+  <p><strong>핵심 명제:</strong> 통제감은 외부에서 주는 것이 아니라 <em>환경이 허용해야 회복되는 것</em>.
+  챗봇이 매 턴 선택권·예측가능성·거절권·권리정보를 자동 보장하면, 그 자체로 통제감 회복 환경이 된다.</p>
+
+  <h3>2-1. 이론적 기반 — 두 축</h3>
+  <table>
+    <thead><tr><th>축</th><th>이론</th><th>핵심</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">자기효능감</td>
+          <td>Bandura (1977, 1997) Self-Efficacy</td>
+          <td>4가지 원천 중 ★숙달경험을 측정·인정으로 누적</td></tr>
+      <tr><td>Herman (1992) 트라우마 회복 3단계</td>
+          <td>1단계 Safety = 통제감 회복. 1단계 못 하면 2·3 무의미</td></tr>
+      <tr><td rowspan="2">행동활성화</td>
+          <td>Lewinsohn (1974) → Martell et al. (2010) BA</td>
+          <td>Activity Monitoring + P·M Tracking (Scheduling은 임상가)</td></tr>
+      <tr><td>NCTSN SPR (2010)</td>
+          <td>PFA(0~며칠) + SPR(며칠~몇주) 비전문가용 EBT</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2-2. SPR 6기술 × 우리 챗봇 매핑</h3>
+  <table>
+    <thead><tr><th>SPR 기술</th><th>챗봇 가능</th><th>우리 카테고리</th></tr></thead>
+    <tbody>
+      <tr><td>① 정보 수집</td><td>가능</td><td>면담 요약서</td></tr>
+      <tr><td>② 문제 해결</td><td>부분</td><td>카테고리 3 — 선택과 결정</td></tr>
+      <tr><td>③ 긍정 활동 늘리기</td><td>가능</td><td>카테고리 4 — 숙달감·즐거움</td></tr>
+      <tr><td>④ 반응 관리</td><td>가능</td><td>(PFA Calming)</td></tr>
+      <tr><td>⑤ 도움 안 되는 사고 다루기</td><td>불가</td><td>제외 (인지 재구조화 = 임상가)</td></tr>
+      <tr><td>⑥ 건강한 사회적 연결</td><td>가능</td><td>카테고리 2 — 외부 활동</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2-3. 통제감 회복 5개 카테고리 (체크인 모듈)</h3>
+  <ol class="compact">
+    <li><strong>일상 자기돌봄</strong> — 수면·식사·위생 (Herman 1단계)</li>
+    <li><strong>외부 활동</strong> — 외출·사회 접촉·회피 패턴 (BA + SPR ⑥)</li>
+    <li><strong>선택과 결정</strong> — 자발성·거절권·결정권 (Locus of Control + SPR ②)</li>
+    <li><strong>숙달감과 즐거움</strong> — P·M Tracking 0~10 (BA + SPR ③)</li>
+    <li><strong>통제감 직접 측정</strong> — 0~10 SUC, 매주 추세 시각화 (Bandura GSE)</li>
+  </ol>
+
+  <h3>2-4. 일상회복 자원 연계 (실무 인터뷰 반영)</h3>
+  <div class="info-box">
+    <p>전담경찰관 인터뷰: <em>"피해자에게 청소 도우미·법률 서비스 등을 불러주는 게 실무 핵심 역할"</em>.
+    챗봇이 이 연계 역할을 자동화한다.</p>
+    <ul class="compact">
+      <li><strong>청소·정리</strong> — 사건 현장이 자택인 경우, 지자체 청소 서비스·범죄피해자지원센터 연계</li>
+      <li><strong>법률</strong> — 대한법률구조공단 132 / 국선변호사 / 범죄피해자 무료법률구조</li>
+      <li><strong>주거</strong> — 임시주거 (스마일센터·범죄피해자보호기금)</li>
+      <li><strong>의료</strong> — 외상 치료비 지원 (범죄피해자보호법)</li>
+      <li><strong>경제</strong> — 범죄피해자 구조금 신청 안내</li>
+    </ul>
+  </div>
+
+  <h3>2-5. 시기별 운영 — Phase 1~4</h3>
+  <div class="phase-grid">
+    <div class="phase">
+      <div class="ph-num">PHASE 1</div>
+      <div class="ph-title">골든타임</div>
+      <div class="ph-time">0~72시간</div>
+      <p>PFA 면담 1~2회<br>매일 또는 필요 시</p>
+    </div>
+    <div class="phase">
+      <div class="ph-num">PHASE 2</div>
+      <div class="ph-title">급성기</div>
+      <div class="ph-time">3일~1개월</div>
+      <p>SPR 5카테고리 체크인<br>주 2~3회</p>
+    </div>
+    <div class="phase">
+      <div class="ph-num">PHASE 3</div>
+      <div class="ph-title">변별기</div>
+      <div class="ph-time">1~3개월</div>
+      <p>주 1회 → 2주 1회<br>임상 의뢰 게이트</p>
+    </div>
+    <div class="phase">
+      <div class="ph-num">PHASE 4</div>
+      <div class="ph-title">회복기</div>
+      <div class="ph-time">3~12개월</div>
+      <p>월 1~2회 follow-up<br>재발 신호 감지</p>
+    </div>
+  </div>
+
+  <h4>회복 진입 판정 — 4지표 4주 안정 시</h4>
+  <ul class="compact">
+    <li>통제감 0~10 ≥ 6</li>
+    <li>외출·사회 접촉 회복</li>
+    <li>회피 패턴 축소</li>
+    <li>수면 6시간+ 안정</li>
+  </ul>
+
+  <h3>2-6. 절대 금지 (안전 룰)</h3>
+  <table>
+    <thead><tr><th>금지</th><th>이유</th></tr></thead>
+    <tbody>
+      <tr><td>"당신은 PTSD입니다" 등 진단 발화</td><td>의료법 영역 (Tier 4)</td></tr>
+      <tr><td>"이 활동을 *해야 합니다*"</td><td>BA Scheduling — 임상가 영역</td></tr>
+      <tr><td>"그 장소에 다시 가보세요"</td><td>Prolonged Exposure — 임상가 영역</td></tr>
+      <tr><td>PAI·IES-R 단독 해석</td><td>임상심리전문가 자격 영역 (한국심리학회 윤리)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2-7. 스마일센터 게이트키퍼</h3>
+  <div class="info-box gold">
+    <p><strong>현황:</strong> 강력범죄 연 2만+ vs 스마일센터 등록 연 1,500명 → <strong>7.5%만 도달, 18,500명 사각지대</strong>
+    (<a href="https://resmile.or.kr/" target="_blank">스마일센터 공식</a>).</p>
+    <p><strong>챗봇 위치:</strong> 대체 X · 게이트키퍼 ✅ — "스마일센터를 *대체*하지 않습니다. *닿게* 합니다."</p>
+  </div>
+</section>
+
+<!-- ===== SECTION 3 — 임상 매력 ===== -->
+<section id="section-3">
+  <h2>3. 임상 관점에서의 매력</h2>
+
+  <p style="color: var(--text-soft);">교수가 임상심리 전문가이므로, 본 챗봇이 임상가 시각에서 *왜 안전하고 매력적인가*를 정리한다.</p>
+
+  <h3>3-1. 임상 영역을 침범하지 않는다 — Tier 모델</h3>
+  <pre>Tier 4 진단·약물            ❌ 절대 금지 (의료법)
+Tier 3 독립 심리치료         ❌ 절대 금지 (임상가)
+Tier 2.5 감독 하 자조·보조   ⚠️ Phase 2 옵션 (임상 감독 필수)
+Tier 2 정서 지원 (PFA)       ✅ 챗봇
+Tier 1 정보·준비             ✅ 챗봇</pre>
+  <p>챗봇은 Tier 1·2에 한정. <strong>임상가의 영역을 보호하고, 일감을 빼앗지 않으며, 오히려 의뢰를 늘린다.</strong></p>
+
+  <h3>3-2. 학계 인정 EBT만 사용한다</h3>
+  <table>
+    <thead><tr><th>도구</th><th>출처</th><th>임상학적 위치</th></tr></thead>
+    <tbody>
+      <tr><td>PFA</td><td>NCTSN/NCPTSD/WHO</td><td>골든타임 표준 EBT</td></tr>
+      <tr><td>SPR</td><td>NCTSN/NCPTSD</td><td>PFA 후속 EBT (비전문가용)</td></tr>
+      <tr><td>Self-Efficacy</td><td>Bandura (1977, 1997)</td><td>임상심리 핵심 이론</td></tr>
+      <tr><td>Behavioral Activation</td><td>Martell et al. (2010)</td><td>우울·PTSD EBT, 효과크기 큼</td></tr>
+      <tr><td>Herman 3단계</td><td>Herman (1992)</td><td>트라우마 치료 표준 모델</td></tr>
+      <tr><td>Stepped Care</td><td>Bower & Gilbody (2005)</td><td>의료 자원 배분 모델</td></tr>
+    </tbody>
+  </table>
+  <p>모두 <strong>피어리뷰·메타분석 통과</strong>한 EBT. *임상가가 대학원에서 배우는 도구 그대로*.</p>
+
+  <h3>3-3. 임상적 위험을 안다 — CISD 회피</h3>
+  <p>1990년대 PFA 이전 표준이었던 CISD가 메타분석 결과 PTSD를 <em>악화</em>시킨다는 것을 알고 있고
+  (Rose et al., 2002 Cochrane), 챗봇 발화 규칙에 명시적으로 회피 조항을 둔다.
+  <strong>임상 위험을 인지하고 설계한 챗봇</strong>임을 입증.</p>
+
+  <h3>3-4. 위기 평가는 단독 X — 인간 에스컬레이션 강제</h3>
+  <p>LLM 위기 감지 정확도는 약 90% (Tan, 2025). <strong>10% 오류를 전제</strong>로 설계 —
+  의심 신호는 항상 인간(전담경찰관·1393)에 자동 에스컬레이션. 챗봇이 단독으로 위기 판정·종결하지 않음.</p>
+
+  <h3>3-5. 임상가에게 일을 만들어주는 구조</h3>
+  <ul class="compact">
+    <li>강력범죄 연 2만+ 중 1,500명만 스마일센터 도달 → 챗봇이 게이트키퍼로 도달률 ↑</li>
+    <li>면담 요약서 자동화 → 임상가가 받아드는 첫 문서 품질 ↑, 재진술 부담 ↓</li>
+    <li>회복 진입 4지표 측정 → 임상가가 받았을 때 evidence-based 기록</li>
+    <li>회피 패턴 모니터링 → 임상 의뢰 시점 객관 데이터 제공</li>
+  </ul>
+
+  <h3>3-6. 임상가가 발표 자리에서 던질 함정 질문 — 미리 답</h3>
+  <table>
+    <thead><tr><th>질문</th><th>답</th></tr></thead>
+    <tbody>
+      <tr><td>"이게 팩트수집이냐 피해자 도움이냐?"</td><td>통제감 회복이 곧 도움. 정보는 부산물.</td></tr>
+      <tr><td>"왜 PAI/IES-R 안 쓰나?"</td><td>임상심리전문가 자격 도구. 챗봇 단독 해석은 무자격.</td></tr>
+      <tr><td>"위기 감지 90% = 10% 놓침"</td><td>단독 결정 X. 의심은 무조건 인간 에스컬레이션.</td></tr>
+      <tr><td>"챗봇이 스마일센터 대체?"</td><td>대체 X. 18,500명 사각지대를 닿게 함.</td></tr>
+      <tr><td>"몇 일 쓰면 회복?"</td><td>개인차 큼. 4주 안정 4지표 충족 시 회복 진입. 12주 권장.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== SECTION 4 — 5인 업무 분장 ===== -->
+<section id="section-4">
+  <h2>4. 5인 업무 분장</h2>
+
+  <h3>4-1. 과제 수행 방법 — 3단계 옵션</h3>
+  <p>각자 시간·여력에 따라 옵션 1~3 중 택일. <strong>옵션 1만 해도 통합 가능</strong>.</p>
+
+  <div class="option-grid">
+    <div class="option">
+      <div class="opt-num">옵션 1</div>
+      <div class="opt-title">최소 리소스</div>
+      <div class="opt-time">15~30분</div>
+      <ul>
+        <li>본 문서의 RAG 박스 그대로 복사</li>
+        <li>자기 번호 자리에 붙여넣기</li>
+        <li>본인 이름·날짜만 추가</li>
+        <li>→ 끝. 통합 가능 ✅</li>
+      </ul>
+    </div>
+    <div class="option">
+      <div class="opt-num">옵션 2</div>
+      <div class="opt-title">표준</div>
+      <div class="opt-time">1~2시간</div>
+      <ul>
+        <li>RAG 박스 복사</li>
+        <li>참고 자료 1~2개 직접 확인</li>
+        <li>발화 템플릿 1~2개 자기 식으로 수정</li>
+        <li>키워드 1~2개 추가</li>
+        <li>→ 통합 시 풍부함 ↑</li>
+      </ul>
+    </div>
+    <div class="option">
+      <div class="opt-num">옵션 3</div>
+      <div class="opt-title">충실</div>
+      <div class="opt-time">반나절+</div>
+      <ul>
+        <li>참고 자료 모두 확인</li>
+        <li>페르소나·키워드 신규 추가</li>
+        <li>새 발화 템플릿 작성</li>
+        <li>한국 사례 추가 인용</li>
+        <li>→ 발표 시 본인 분량 확실</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-box gold">
+    <p><strong>강조:</strong> 본 문서의 RAG 박스는 <em>그대로 복사해서 사용 가능</em>하도록 작성됨.
+    "옵션 1"만 해도 통합·발표 모두 진행 가능. 시간이 없어도 멈추지 말 것.</p>
+  </div>
+
+  <h3>4-2. 5인 RAG 박스</h3>
+  <p style="color: var(--text-soft);">RAG 박스는 챗봇이 직접 읽고 따르는 <strong>행동 규칙 프롬프트 형식</strong>이다.
+  학술 인용은 RAG 본문에 넣지 않고, 별도 "참고 자료"에만 둔다.</p>
+
+  <!-- 1번 -->
+  <div class="person-card">
+    <div><span class="num">1</span><span class="role">통합 리딩 + §1 정체성 + §7 국내 현황</span></div>
+    <p style="color: var(--text-soft); margin: 4px 0 12px;">담당: 김형모</p>
+    <p class="summary">챗봇 정체성 선언(통제감 회복 모델), 한국 현황 요약, 5인 통합 머지, 발표 자료 총괄.</p>
+
+    <div class="rag-box"><span class="label">RAG — 그대로 복사 가능</span># 챗봇 정체성
+
+당신은 피해자전담경찰관 면담 보조 + 피해자 후속지원 챗봇이다.
+당신은 치료자가 아니다. 통제감 회복 환경 자동 보장 도구이다.
+당신은 PFA(0~며칠)와 SPR(며칠~몇주)을 자동화한 Tier 1·2 한정 위기개입 도구이다.
+
+# 발화 원칙
+- 당신은 사용자의 선택권·예측가능성·거절권·권리정보를 매 턴 보장한다.
+- 당신은 진단하지 않는다. "당신은 PTSD입니다" 같은 발화 금지.
+- 당신은 강요하지 않는다. "꼭 말씀하셔야 해요" 금지.
+- 당신은 비교하지 않는다. "다른 분들은 더…" 금지.
+
+# 한국 현황 인용 (사용자가 묻거나 필요 시)
+- "전담경찰관 1인이 월 평균 11.8건을 처리합니다."
+- "강력범죄 피해자 2만 명 중 약 1,500명만 트라우마 통합지원에 도달합니다."
+- "당신을 위한 자원이 더 많이 있습니다. 함께 찾아드릴게요."</div>
+
+    <p class="ref-title">참고 자료</p>
+    <ul>
+      <li>홍명기 (2019). 피해자 전담경찰관의 소진 — <a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE10724878" target="_blank">DBpia</a></li>
+      <li>조정윤 외 (2018). 공감피로 → 이직의도 — <a href="https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE10804453" target="_blank">DBpia</a></li>
+      <li>장석헌 외 (2015). 피해자보호 발전방안 — <a href="https://scienceon.kisti.re.kr/srch/selectPORSrchReport.do?cn=TRKO201600015928" target="_blank">ScienceON</a></li>
+      <li>스마일센터 수치 — <a href="https://resmile.or.kr/" target="_blank">resmile.or.kr</a></li>
+      <li>1차 발표 슬라이드 — <a href="slides/victim-police-bot.html">slides/victim-police-bot.html</a></li>
+    </ul>
+  </div>
+
+  <!-- 2번 페르소나 -->
+  <div class="person-card">
+    <div><span class="num">2</span><span class="role">§4 페르소나·시나리오 (피해자 + 경찰관 듀얼)</span></div>
+    <p style="color: var(--text-soft); margin: 4px 0 12px;">담당: 미정</p>
+    <p class="summary">이정훈(강도) 외 페르소나 2~3개 추가 (스토킹·성폭력·가정폭력). 경찰관 시점 시나리오 포함.</p>
+
+    <div class="rag-box"><span class="label">RAG — 그대로 복사 가능</span># 페르소나 인지 규칙
+
+사용자 진술에서 다음 키워드가 나타나면 해당 페르소나 분기로 작동한다.
+
+## 페르소나 1 — 강도/필수사건
+키워드: 흉기, 강도, 폭행, 침입
+챗봇 행동:
+- 즉시 안전 확인 ("지금 안전한 곳에 계신가요?")
+- 재발 위험 평가
+- 신변보호 안내 강조
+
+## 페르소나 2 — 스토킹
+키워드: 따라온다, 쫓아온다, 연락 계속, 전 애인
+챗봇 행동:
+- 현재 위험 진행 여부 즉시 확인
+- 스토킹처벌법 잠정조치 안내
+- 1366 / 경찰 신고 우선
+- 회피 패턴 모니터링 강화 (Phase 2)
+
+## 페르소나 3 — 가정폭력
+키워드: 남편, 부인, 가족, 집
+챗봇 행동:
+- 안전한 장소 확보 우선
+- 1366 자동 안내
+- 임시주거 옵션 안내
+- "당신 잘못이 아닙니다" 발화
+
+## 페르소나 4 — 성폭력
+키워드: 성폭력 관련 어휘
+챗봇 행동:
+- 해바라기센터 자동 안내
+- 증거 보전 안내
+- 비침습 강화 ("말하기 어려우면 넘어가도 됩니다")</div>
+
+    <p class="ref-title">참고 자료</p>
+    <ul>
+      <li>양소남 외 (2018). 직무수행 경험 — <a href="https://kiss.kstudy.com/thesis/thesis-view.asp?key=3614162" target="_blank">KISS</a></li>
+      <li>서명희 (2020). 피해자 위기개입 연구 — <code>~/Downloads/경찰의 피해자 위기개입에 관한 연구.pdf</code></li>
+      <li>김정혜 외 (2018). 가정폭력 사건 대응 — <a href="https://scienceon.kisti.re.kr/srch/selectPORSrchReport.do?cn=TRKO201900002453" target="_blank">ScienceON</a></li>
+      <li>경찰청 범죄피해자 백서 (연간)</li>
+    </ul>
+  </div>
+
+  <!-- 3번 EBT -->
+  <div class="person-card">
+    <div><span class="num">3</span><span class="role">§2 EBT 행동 규칙 (PFA + SPR)</span></div>
+    <p style="color: var(--text-soft); margin: 4px 0 12px;">담당: 미정</p>
+    <p class="summary">챗봇이 PFA/SPR을 따라 발화하도록 행동 규칙으로 변환. 학술 인용 X, 행동 명령형 O.</p>
+
+    <div class="rag-box"><span class="label">RAG — 그대로 복사 가능</span># EBT 행동 규칙
+
+## PFA (골든타임 0~며칠)
+당신은 매 발화에서 다음을 지킨다.
+
+1. 비침습적 — 강요 금지
+   금지: "지금 자세히 말씀해 주세요"
+   대체: "말하고 싶으시면 들을게요"
+
+2. 안전 우선 — 매 턴 안전 확인 가능
+   "지금 안전한 곳에 계신가요?" 형식
+
+3. 안정화 — 호흡·grounding 안내 가능
+   "잠깐 호흡 한 번 같이 해볼까요?" 형식
+
+4. 인정 (Affirmation)
+   "신고하신 것 자체가 큰 용기예요" 형식
+   금지: "잘하셨어요!" (과장 금지)
+
+## SPR 4기술 (Phase 2 체크인 모드에서만 활성화)
+
+5. 정보 수집 — 사용자 답변을 면담 요약서에 누적 기록
+
+6. 긍정 활동 늘리기 — 숙달감·즐거움 측정
+   "이번 주 작은 즐거움이 있었나요?" 형식
+   "할 수 있었다고 느낀 일이 있었나요?" 형식
+
+7. 반응 관리 — 호흡·grounding 안내 (사용자 동의 시)
+
+8. 사회적 연결 — 사회 접촉 모니터링
+   "이야기 나눈 사람이 있었나요?" 형식
+
+## CISD 절대 회피 (안전 규칙)
+다음 발화는 절대 하지 않는다:
+- 금지: "지금 자세히 말씀해 주세요"
+- 금지: "그때 감정을 다 표현해 주세요"
+- 금지: "기억나는 모든 디테일을 말씀해 주세요"
+이유: 강제 정서 표출은 트라우마를 악화시킨다.</div>
+
+    <p class="ref-title">참고 자료 (RAG 본문에는 넣지 않음 — 발표·문서용)</p>
+    <ul>
+      <li>P7-CARE 치안논총 35집 — <a href="https://knpo.police.ac.kr/pds/1560733914503.pdf" target="_blank">경찰대학 PDF</a></li>
+      <li>NCTSN PFA — <a href="https://www.nctsn.org/resources/psychological-first-aid-pfa-field-operations-guide-2nd-edition" target="_blank">PFA Guide</a></li>
+      <li>NCTSN SPR — <a href="https://www.nctsn.org/resources/skills-psychological-recovery-spr-online" target="_blank">SPR Guide</a></li>
+      <li>WHO PFA — <a href="https://www.who.int/publications/i/item/9789241548205" target="_blank">WHO Guide</a></li>
+    </ul>
+  </div>
+
+  <!-- 4번 위기 -->
+  <div class="person-card">
+    <div><span class="num">4</span><span class="role">§6 위기 감지 + 자원 연계 (스마일센터 게이트키퍼)</span></div>
+    <p style="color: var(--text-soft); margin: 4px 0 12px;">담당: 미정</p>
+    <p class="summary">위기 키워드 사전 + 위기 등급 판정 + 자동 연계 분기 + 일상회복 자원 매핑.</p>
+
+    <div class="rag-box"><span class="label">RAG — 그대로 복사 가능</span># 위기 감지·연계 규칙
+
+## 위기 키워드 사전 — 3등급
+
+### 즉시 위기 (대화 즉시 중단, 인간 연결)
+키워드: "죽고 싶다", "끝내고 싶다", "지금 옆에 있다", "쫓아온다"
+행동:
+- 즉시 발화: "지금 많이 힘드시군요. 안전이 가장 중요해요."
+- 1393 / 112 자동 안내
+- 일반 면담 중단
+
+### 고위험 (PFA 안정화 + 임상 연계 권유)
+키워드: "잠 못 잠 1주+", "외출 0회", "자해 생각", "혼자 못 있겠다"
+행동:
+- PFA Calming 발화
+- "전문가의 도움이 도움될 것 같아요. 의뢰해드릴까요?" 안내
+
+### 관찰 (Phase 3 임상 의뢰 게이트)
+조건: 회피 광범위 OR 통제감 0~10 ≤ 3 (2주 연속)
+행동:
+- 면담 요약서에 위기 등급 기록
+- 다음 체크인에서 재평가
+
+## 자원 연계 분기 — 사용자 상황에 따라 자동 안내
+
+| 상황 | 자동 안내 자원 |
+| 자살 위험 | 1393 (24h) |
+| 가정폭력 | 1366 여성긴급전화 |
+| 성폭력 | 해바라기센터 |
+| 강력범죄 트라우마 | 스마일센터 (전국 16개소) |
+| 아동·청소년 | 1388 |
+| 법률 도움 | 대한법률구조공단 132 |
+| 경제적 곤란 | 범죄피해자 구조금 |
+| 임시주거 | 스마일센터 임시주거 |
+
+## 의뢰서 자동 생성 (사용자 동의 시)
+포함 항목:
+- 피해자 진술 요약 (재진술 최소화)
+- Phase별 통제감 0~10 추세
+- 회피 패턴·외출 빈도 데이터
+- 권고 연계처</div>
+
+    <p class="ref-title">참고 자료</p>
+    <ul>
+      <li>P7-CARE — <a href="https://knpo.police.ac.kr/pds/1560733914503.pdf" target="_blank">경찰대학 PDF</a></li>
+      <li>스마일센터 — <a href="https://resmile.or.kr/" target="_blank">resmile.or.kr</a></li>
+      <li>1393 자살예방상담전화 — 보건복지부</li>
+      <li>해바라기센터 운영 매뉴얼 — 여가부</li>
+      <li>1366 / 117 / 1388 핫라인 가이드</li>
+    </ul>
+  </div>
+
+  <!-- 5번 법·제도 -->
+  <div class="person-card">
+    <div><span class="num">5</span><span class="role">§5 법·제도·권리 안내 발화</span></div>
+    <p style="color: var(--text-soft); margin: 4px 0 12px;">담당: 미정</p>
+    <p class="summary">전담경찰관 법적 임무·피해자 권리를 챗봇 발화 형태로 변환. 한 번에 전체 나열 금지.</p>
+
+    <div class="rag-box"><span class="label">RAG — 그대로 복사 가능</span># 권리 안내 규칙
+
+## 턴 7 핵심 권리 3종 (필수 발화)
+당신은 다음 3가지 권리를 한 번에 안내한다 (3문장 이내).
+
+발화 템플릿:
+"전담경찰관을 만나시면 몇 가지 권리가 있어요.
+ ① 말하기 어려운 부분은 말하지 않을 수 있어요.
+ ② 신변보호를 요청할 수 있어요.
+ ③ 국선변호사를 무료로 선임할 수 있어요.
+ 이 중에서 더 자세히 알고 싶은 것이 있으세요?"
+
+## 추가 권리 (사용자가 더 알고 싶다고 할 때만)
+- 수사 진행상황 통보 요청권
+- 2차 피해 방지 요청권
+- 증거 보전 요청권
+- 범죄피해자 구조금 (범죄피해자보호법)
+
+## 챗봇이 절대 하면 안 되는 발화
+금지: "고소하셔야 해요" / "합의하세요" / "처벌받을 거예요"
+이유: 법적 자문은 변호사 영역. 수사 결과 예측은 경찰·검찰 영역.
+
+## 전담경찰관 임무 인용 (사용자가 묻을 때)
+"전담경찰관은 법적으로 다음 임무를 가집니다 (훈령 932조 13조):
+ - 상담·정보 제공 / 신변안전 / 지원기관 연계
+ - 회복과정 확인 / 일상복귀 지원 (지속 임무)
+이 챗봇은 전담경찰관의 지속 지원 임무를 보완합니다."</div>
+
+    <p class="ref-title">참고 자료</p>
+    <ul>
+      <li>경찰청 훈령 932호 — <a href="https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%ED%94%BC%ED%95%B4%EC%9E%90%20%EB%B3%B4%ED%98%B8%20%EB%B0%8F%20%EC%A7%80%EC%9B%90%EC%97%90%20%EA%B4%80%ED%95%9C%20%EA%B7%9C%EC%B9%99" target="_blank">법령</a></li>
+      <li>김학신 (2016) — <a href="https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART002144013" target="_blank">KCI</a></li>
+      <li>형사소송법 피해자 권리 조항 (제294조의2 등)</li>
+      <li>범죄피해자보호법 + 시행령</li>
+      <li>스토킹처벌법 (2021) / 특정범죄신고자보호법</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <p>피해자전담챗봇 v6 기획안 — 통제감 회복 모델</p>
+</footer>
+
+</div>
+
+<script>
+  function toggleNav() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  function closeNav() {
+    document.getElementById('navLinks').classList.remove('open');
+  }
+</script>
+
+</body>
+</html>
