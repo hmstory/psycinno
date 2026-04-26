@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>중간고사 Q1~3 풀이 전략 - 인지공학심리학</title>
+  <style>
+    :root {
+      --bg: #f8f6f0; --surface: #f0ede6; --card: #e8e4dc;
+      --text: #222; --heading: #000; --accent: #111;
+      --accent2: #444; --accent-soft: #555;
+      --highlight-bg: rgba(0,0,0,0.08); --code-bg: #e8e8e8; --border: #ccc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); line-height: 1.85; font-size: 17px; }
+    .container { max-width: 820px; margin: 0 auto; padding: 20px 16px 100px; }
+
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    .nav a { color: var(--text); text-decoration: none; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap; }
+    .nav a:hover { border-color: var(--accent); color: var(--accent); }
+    .nav a.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .nav-label { color: var(--accent-soft); font-size: 0.8rem; font-weight: 600; margin-right: 4px; }
+
+    .page-header { margin: 2rem 0 2.5rem; padding-bottom: 1.2rem; border-bottom: 3px solid var(--accent); }
+    .page-header h1 { font-size: 1.7rem; color: var(--heading); margin-bottom: 0.4rem; }
+    .page-header .meta { color: var(--accent-soft); font-size: 0.88rem; }
+    .score-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 0.78rem; padding: 2px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
+
+    h2 { font-size: 1.4rem; color: var(--heading); margin: 3rem 0 1rem; padding: 14px 20px; background: var(--accent); color: #fff; border-radius: 10px; }
+    h3 { font-size: 1.15rem; color: var(--accent); margin: 2rem 0 0.8rem; padding: 12px 16px; background: var(--card); border-radius: 8px; border-left: 4px solid var(--accent); }
+    h4 { font-size: 1rem; font-weight: 700; color: var(--accent2); margin: 1.5rem 0 0.5rem; }
+    p { margin: 0.7rem 0; }
+    ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    li { margin: 0.35rem 0; }
+    strong { color: #000; font-weight: 700; }
+    em { color: var(--accent-soft); font-style: normal; background: var(--highlight-bg); padding: 1px 6px; border-radius: 3px; }
+    blockquote { border-left: 4px solid var(--accent); padding: 10px 18px; margin: 1rem 0; background: var(--surface); border-radius: 0 10px 10px 0; font-size: 0.95em; }
+    code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+    pre { background: var(--code-bg); padding: 16px; border-radius: 10px; overflow-x: auto; margin: 1rem 0; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+    pre code { background: none; padding: 0; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+    th { background: var(--surface); color: var(--accent); font-weight: 600; }
+    tr:nth-child(even) { background: rgba(255,255,255,0.4); }
+    hr { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+
+    .problem-box { background: #fff; border: 2px solid var(--border); border-radius: 12px; padding: 20px 24px; margin: 1.2rem 0; font-size: 0.93rem; line-height: 1.8; }
+    .problem-box .situation { color: var(--accent2); font-size: 0.88rem; margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px dashed var(--border); }
+    .problem-box .q-item { margin: 1rem 0; }
+    .problem-box .q-item strong { color: var(--accent); }
+
+    .strategy-box { background: var(--surface); border-radius: 12px; padding: 20px 24px; margin: 1rem 0; }
+
+    .insight-box { background: linear-gradient(135deg, var(--card), var(--surface)); border: 1px solid var(--accent); border-radius: 12px; padding: 16px 20px; margin: 1.2rem 0; font-size: 0.92rem; }
+    .insight-box .label { font-weight: 700; color: var(--accent); font-size: 0.85rem; margin-bottom: 6px; display: block; letter-spacing: 0.05em; }
+
+    .mental-model { background: #fff3cd; border-left: 4px solid #d4a017; border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 1rem 0; font-size: 0.91rem; }
+    .mental-model::before { content: "💡 심성모형 연결 | "; font-weight: 700; color: #8b6914; }
+
+    .checklist { background: var(--card); border-radius: 10px; padding: 16px 20px; margin: 1.5rem 0; }
+    .checklist h4 { margin-top: 0; color: var(--accent); margin-bottom: 0.8rem; }
+    .checklist li { margin: 0.4rem 0; font-size: 0.9rem; }
+
+    .toc { background: var(--surface); border-radius: 12px; padding: 16px 20px; margin: 1.5rem 0 2.5rem; }
+    .toc a { color: var(--accent-soft); text-decoration: none; font-size: 0.9rem; display: block; padding: 3px 0; }
+    .toc a:hover { color: var(--accent); }
+    .toc .toc-label { font-weight: 700; font-size: 0.85rem; color: var(--accent); margin-bottom: 8px; display: block; }
+
+    @media (max-width: 600px) {
+      body { font-size: 15px; }
+      .nav { padding: 8px 10px; gap: 5px; }
+      .nav a { font-size: 0.78rem; padding: 4px 9px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-label">인지공학심리학 |</span>
+  <a href="../w3-reports/prompt.html">프롬프트</a>
+  <a href="../ch1-reports/index.html">주교재 1장</a>
+  <a href="../w3-reports/index.html">W3 주교재 2장</a>
+  <a href="../w3-reports/sub-chapter8.html">W3 부교재 8장</a>
+  <a href="../w4-reports/index.html">W4 주교재 3장</a>
+  <a href="../w4-reports/sub-chapter7.html">W4 부교재 7장</a>
+  <a href="../w5-reports/index.html">W5 주교재 4장</a>
+  <a href="../w5-reports/sub-laws-ux-ch2.html">W5 부교재 Laws of UX 2장</a>
+  <a href="../w6-reports/index.html">W6 주교재 5장</a>
+  <a href="../w6-reports/w6-chapter6.html">W6 주교재 6장</a>
+  <a href="../w6-reports/w6-sub-laws-ux-ch5.html">W6 부교재 Laws of UX 5장</a>
+  <a href="../w7-reports/index.html">W7 주교재 7장</a>
+  <a href="index.html" class="active">중간고사 전략</a>
+</nav>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>중간고사 Q1~3 풀이 전략 <span class="score-badge">210점</span></h1>
+    <p class="meta">박중희 교수 · 2026-04-23~28 · Ch1-3 완독 기준 · 김형모</p>
+  </div>
+
+  <div class="toc">
+    <span class="toc-label">목차</span>
+    <a href="#q1">문제 1 — HIPM 병목 분석 + 실험 설계 (70점)</a>
+    <a href="#q2">문제 2 — SDT, d'/β, Likelihood Alarms (70점)</a>
+    <a href="#q3">문제 3 — SEEV 분석 + PCP 설계 (70점)</a>
+    <a href="#checklist">최종 체크리스트</a>
+  </div>
+
+  <!-- ===== Q1 ===== -->
+  <h2 id="q1">문제 1 · Ch1: HIPM &amp; Big Three <span style="font-size:0.85rem;font-weight:400;">(70점)</span></h2>
+
+  <div class="problem-box">
+    <p class="situation"><strong>상황</strong>: 최근 출시된 차량용 인포테인먼트 터치스크린 시스템 조작 중 전방 주시 태만으로 인한 추돌 사고가 급증하고 있다. 제조사는 터치 반응 속도를 높였음에도 사고율 감소 효과를 얻지 못했다. "내비게이션 조작 중 추돌"과 "음악 조작 중 추돌"은 조작 행위는 다르지만, 분석에서는 둘 다 <strong>시선 분산</strong>이라는 상위 범주로 묶을 수 있다.</p>
+    <div class="q-item"><strong>문항 1-1.</strong> 인간 정보 처리 모형(Human Information Processing Model; Wickens et al., 2022)의 4단계를 적용하여, 현재 시스템의 병목(Bottleneck)이 발생하는 단계를 특정하고 그 인지적 원인을 분석하시오. <em>(30점)</em></div>
+    <div class="q-item"><strong>문항 1-2.</strong> 해당 시스템의 UI를 인간 수행의 3대 지표 중 '정확성(Accuracy)'과 '주의 요구량(Attentional Demand)' 측면에서 정량적으로 평가하기 위한 실험 설계(독립변인, 종속변인, 측정 방법)를 구체적으로 제안하시오. <em>(40점)</em></div>
+  </div>
+
+  <h3>문항 1-1 전략 — 병목 단계 특정</h3>
+
+  <div class="strategy-box">
+    <p><strong>핵심 열쇠</strong>: "터치 반응속도를 높였는데 사고가 안 줄었다" → 제조사는 <em>Response Execution</em> 단계만 건드렸다. 병목은 훨씬 앞에 있다.</p>
+  </div>
+
+  <h4>HIPM 4단계 매핑표</h4>
+  <table>
+    <tr><th>단계</th><th>기능</th><th>이 시나리오에서</th></tr>
+    <tr><td>① 감각처리 + STSS</td><td>시각·청각 신호 수용 (~1초 유지)</td><td>전방 도로 + 화면 → 두 시각 신호 동시 입력</td></tr>
+    <tr><td>② 지각 (Perception)</td><td>감각 신호에 의미 부여 (LTM 기반)</td><td><strong>병목 ①</strong>: 전방 도로 지각과 화면 아이콘 지각이 동일 시각 자원 경쟁</td></tr>
+    <tr><td>③ 작업기억/인지</td><td>정보 일시 보관 + 의사결정 준비</td><td><strong>병목 ②</strong>: 내비 경로 + 운전 상황 동시 유지 → WM 용량 초과</td></tr>
+    <tr><td>④ 반응선택 → 반응실행</td><td>행동 선택 + 근육 제어</td><td>제조사가 개선한 부분 — 병목이 앞 단계에 있으면 무의미</td></tr>
+  </table>
+
+  <h4>병목 논증 구조</h4>
+  <pre>주장: 병목은 ② 지각(Perception) 단계의 Attention Filter 실패
+      + ③ 작업기억(WM) 자원 고갈
+
+논거:
+Attention = Filter(선택) + Fuel(자원) — Wickens &amp; McCarley (2008)
+운전 → 시각 공간적 주의를 지속 요구 → Filter가 전방 고정
+터치스크린 → 동일한 시각 공간 채널 요구
+⟹ 두 과제가 같은 Fuel을 경쟁 → 자원 고갈 → 지각 오류 발생
+Response Execution 개선은 이 자원 경쟁을 해결하지 못함</pre>
+
+  <div class="mental-model">형모님이 챗봇 UI를 설계할 때 "경찰관이 피해자 면담을 하면서 챗봇 화면도 봐야 한다"는 상황과 동일한 병목이다. 면담(청각)과 챗봇(시각)은 모달리티가 달라 덜 심각하지만, 운전+터치스크린은 <strong>시각 vs 시각</strong>이라 치명적이다.</div>
+
+  <h3>문항 1-2 전략 — 실험 설계</h3>
+  <p>Accuracy와 Attentional Demand는 측정법이 다르다. 각각 IV·DV·측정법을 명확히 분리해서 서술해야 한다.</p>
+
+  <table>
+    <tr><th>설계 요소</th><th>정확성(Accuracy)</th><th>주의요구량(Attentional Demand)</th></tr>
+    <tr><td><strong>독립변인(IV)</strong></td><td>UI 복잡도 (단순 3버튼 / 계층 메뉴), 과제 유형 (내비 / 음악 / 에어컨)</td><td>동일</td></tr>
+    <tr><td><strong>종속변인(DV)</strong></td><td>오조작 횟수, 정확 조작률, 완료 시간</td><td>차선 이탈 빈도, 앞차 거리 변동, 이중과제 RT 증가량</td></tr>
+    <tr><td><strong>측정 방법</strong></td><td>드라이빙 시뮬레이터 + 조작 로그 자동 기록</td><td>Eye-tracking (시선 이탈 지속시간), NASA-TLX, 보조과제 청각 RT</td></tr>
+    <tr><td><strong>기대 결과</strong></td><td>복잡 UI → 오조작률 증가</td><td>복잡 UI → 차선이탈↑, Attentional Demand 증가</td></tr>
+  </table>
+
+  <div class="insight-box">
+    <span class="label">★ 답안 구조 제안 (1-2)</span>
+    실험 목적 1문장 → 참가자 기준 → <strong>Accuracy 설계</strong>(IV/DV/측정법) → <strong>Attentional Demand 설계</strong>(IV/DV/측정법) → 두 지표 간 trade-off 언급으로 마무리
+  </div>
+
+  <hr>
+
+  <!-- ===== Q2 ===== -->
+  <h2 id="q2">문제 2 · Ch2: SDT, d'/β, Likelihood Alarms <span style="font-size:0.85rem;font-weight:400;">(70점)</span></h2>
+
+  <div class="problem-box">
+    <p class="situation"><strong>상황</strong>: A 기업은 AI 기반 보안 모니터링 시스템을 도입하였다. 미탐(Miss) 방지를 위해 매우 낮은 임계값을 유지하도록 설계되어 빈번한 오경보(False Alarm)를 발생시키고 있다. 보안 관리자는 초기에 엄격히 대응했으나, 오경보 누적으로 경보를 불신하게 되었으며, 긴급한 실제 위협 경보조차 "단순 오류"로 무시하는 <strong>양치기 소년 효과(Cry wolf syndrome; Wickens et al., 2022)</strong>를 보이고 있다.</p>
+    <div class="q-item"><strong>문항 2-1.</strong> 관리자의 행동 변화를 신호 탐지 이론(SDT)의 민감도(d')와 판단 기준(β) 개념을 설명하고 이를 활용하여 수리적·인지적 기제로 설명하시오. 특히 오경보 남발이 <strong>d'를 변화</strong>시킨 것인지, 아니면 <strong>β의 이동</strong>을 유발한 것인지 핵심 기제를 명확히 논하시오. <em>(35점)</em></div>
+    <div class="q-item"><strong>문항 2-2.</strong> Sorkin(1989)의 연구에 기반하여 이분법적(Binary) AI 알람 방식을 대체할 수 있는 <strong>우도 알람(Likelihood Alarms)</strong>의 개념을 정의하시오. 또한 AI 분석 위험 확률에 따라 관리자가 직관적으로 대응 우선순위를 판단할 수 있도록, 시각적·청각적 요소를 결합한 구체적인 <strong>'AI 보안 관제 인터페이스'</strong> 설계안을 제시하시오. <em>(35점)</em></div>
+  </div>
+
+  <h3>문항 2-1 전략 — 핵심 논쟁: d' vs β</h3>
+
+  <div class="strategy-box">
+    <p><strong>결론 먼저:</strong> 오경보 남발이 변화시킨 것은 <strong>β(판단 기준)의 이동</strong>이다. d'는 변하지 않는다.</p>
+  </div>
+
+  <h4>개념 정의</h4>
+  <table>
+    <tr><th>개념</th><th>정의</th><th>이 시나리오에서</th></tr>
+    <tr><td><strong>d' (민감도)</strong></td><td>신호 분포와 잡음 분포의 평균 거리 (표준편차 단위)</td><td>AI 경보 시스템의 신호 품질 — 시스템이 설계된 이상 관리자 경험으로 바뀌지 않음</td></tr>
+    <tr><td><strong>β (판단 기준)</strong></td><td>X_C 지점에서 신호분포 높이 / 잡음분포 높이의 비율</td><td>관리자가 "경보에 반응할 것인지" 결정하는 내부 임계값 → 학습으로 이동 가능</td></tr>
+  </table>
+
+  <h4>d'는 변하지 않는다 — 논거</h4>
+  <p>d'는 AI 시스템이 진짜 위협과 정상 업무 활동을 통계적으로 구분하는 물리적 품질이다. 관리자의 경험 축적과 무관하게, 시스템의 임계값(threshold)이 낮게 설정된 이상 신호/잡음 분포의 분리도 자체는 변하지 않는다 (Wickens et al., 2022).</p>
+
+  <h4>β가 이동하는 수리적·인지적 기제</h4>
+  <pre>초기 (오경보 드묾):
+  관리자 β 낮음 (liberal) → 경보 울리면 즉각 대응
+
+오경보 누적 후:
+  P(실제위협 | 경보) 가 매우 낮다고 학습됨
+  → 주관적 P(S) ↓
+  → β_opt = P(N)/P(S) × [V(CR)+C(FA)] / [V(H)+C(M)]
+  → P(N)/P(S) 급증 → β_opt 상승
+  → 관리자 β 우측 이동 (conservative)
+  → 진짜 위협 경보도 기준 아래 → Miss 발생
+
+ROC 곡선 해석:
+  d' 동일한 등감도선(isosensitivity curve) 위에서
+  오른쪽으로 이동 → P(H)↓ P(FA)↓ 동시 발생
+  (각성이론의 beta 증가 패턴과 동일한 표면 현상)</pre>
+
+  <div class="mental-model">형모님의 피해자전담경찰봇 Tier 모델 — "Tier 4 위반 금지"를 설정한 것이 바로 β 관리 전략이다. 챗봇이 위기를 너무 자주 탐지하면 경찰관이 무시하기 시작한다. 동일한 Cry wolf 메커니즘.</div>
+
+  <h3>문항 2-2 전략 — Likelihood Alarms 설계</h3>
+
+  <table>
+    <tr><th></th><th>Binary 방식</th><th>Likelihood Alarms (Sorkin, 1989)</th></tr>
+    <tr><td><strong>정보 형태</strong></td><td>경보 / 비경보 (0 또는 1)</td><td>위험 확률 연속값 (예: 20%, 60%, 95%)</td></tr>
+    <tr><td><strong>관리자 행동</strong></td><td>β 하나로만 반응 → 최적 대응 불가</td><td>확률 수준별로 다른 β 적용 → 최적 행동 가능</td></tr>
+    <tr><td><strong>Cry wolf 해결</strong></td><td>낮은 임계값 → 모든 경보 동일 취급 → 무시</td><td>낮은 확률 경보는 무시, 높은 확률만 대응</td></tr>
+  </table>
+
+  <h4>AI 보안 관제 인터페이스 설계안</h4>
+  <pre>시각 요소:
+  - 색상 그라디언트: 녹색(~20%) → 황색(20~50%) → 주황(50~80%) → 적색(80%+)
+  - 경보 카드 크기: 위협 확률 비례하여 증가
+  - 확률 수치 명시: "위협 확률 87%" 직접 표시
+  - 히스토리 표시: 동일 IP 반복 이상 행동 이력 병기
+
+청각 요소:
+  - 20% 미만 → 무음
+  - 50% 이상 → 낮은 단음 알림
+  - 80% 이상 → 높은 주파수 반복 경고음 + 음성("즉각 확인 요망")
+
+레이아웃:
+  - 높은 확률 경보 → 화면 중앙/상단 (Salience↑, Effort↓)
+  - 낮은 확률 경보 → 사이드바 격리</pre>
+
+  <hr>
+
+  <!-- ===== Q3 ===== -->
+  <h2 id="q3">문제 3 · Ch3: SEEV, PCP <span style="font-size:0.85rem;font-weight:400;">(70점)</span></h2>
+
+  <div class="problem-box">
+    <p class="situation"><strong>상황</strong>: 연세대학교의 learnUs 플랫폼은 강의 자료 공유, 과제 제출, 실시간 알림 등 방대한 기능을 제공하고 있다. 그러나 최근 대학원생과 교수들이 중요한 학사 경고나 과제 마감 알림, 긴급 공지사항을 확인하지 못해 행정적 차질을 빚는 사례가 빈번하다. 사용자들은 "화면에 정보가 너무 많아 무엇이 중요한지 모르겠다"거나 "알림이 떴는지조차 몰랐다"는 피드백을 제시하고 있다.</p>
+    <div class="q-item"><strong>문항 3-1.</strong> 공학심리학 전공자로서 learnUs의 인터페이스를 LMS로서 UX와 기능을 분석 평가하시오. 또한 사용자가 "중요 알람을 놓치는 현상"을 <strong>SEEV(Salience, Effort, Expectancy, Value)</strong> 모델의 4가지 요인을 기준으로 분석하고, 이를 <strong>상향식(Bottom-up)과 하향식(Top-down)</strong> 기제로 분류하여 논리적으로 설명하시오. <em>(35점)</em></div>
+    <div class="q-item"><strong>문항 3-2.</strong> Wickens와 Carswell(1995)이 제안한 <strong>근접 호환성 원칙(PCP)</strong>에 근거하여, 사용자가 학습 콘텐츠에 집중하고 있는 전방 주시(Focused attention) 상태를 방해하지 않으면서도 시스템 경고를 즉각 인지할 수 있도록 돕는 '시각적 유도 및 디스플레이 설계 방안'을 구체적으로 제시하시오. UX, UI 디자인을 고려하여 기능을 어떻게 업그레이드하는 게 대학원생들에게 활용을 잘하게 만드는지 의견을 제시하시오. <em>(35점)</em></div>
+  </div>
+
+  <h3>문항 3-1 전략 — SEEV 분석</h3>
+
+  <div class="strategy-box">
+    <p><strong>SEEV 공식 먼저 제시:</strong><br>
+    <code>SEEV = wS·Salience + wE·(−Effort) + wEx·Expectancy + wV·Value</code></p>
+  </div>
+
+  <h4>Bottom-up / Top-down 분류 — 채점 핵심</h4>
+  <table>
+    <tr><th>요인</th><th>방향</th><th>learnUs 문제</th></tr>
+    <tr><td><strong>S (Salience)</strong></td><td>Bottom-up</td><td>알림 배지 작음, 깜빡임 없음, 강의 콘텐츠와 색상 대비 낮음 → 시각적 돌출 실패</td></tr>
+    <tr><td><strong>E (Effort)</strong></td><td>Bottom-up</td><td>알림 아이콘 위치 = 화면 우상단 → 시선 중심(콘텐츠)에서 각도 이탈 큼 → 이동 비용↑</td></tr>
+    <tr><td><strong>Ex (Expectancy)</strong></td><td>Top-down</td><td>평소 알림이 드물고 대부분 덜 중요 → 중요 알림이 올 것이라는 기대 낮음</td></tr>
+    <tr><td><strong>V (Value)</strong></td><td>Top-down</td><td>이전 알림 클릭 시 "별 내용 없었다"는 반복 경험 → 알림에 할당하는 주관적 가치 낮음</td></tr>
+  </table>
+
+  <blockquote>learnUs UX 서두 추천: "learnUs는 강의자료 열람, 과제 제출, 공지 알림을 단일 플랫폼에 통합한 LMS로서 기능적 완결성은 높으나, 정보 밀도 과다(information overload)와 알림 계층 미분화로 인해 다음과 같은 인지공학적 문제를 보인다."</blockquote>
+
+  <div class="mental-model">형모님은 learnUs 대학원생 사용자다. "과제 마감 하루 전, 공지사항 5개 중 어느 것이 마감 알림인지 바로 보이지 않았다" — 이것이 S(Salience) 실패 + V(Value) 저하의 실제 사례다. 직접 경험 쓰면 된다.</div>
+
+  <h3>문항 3-2 전략 — PCP 설계</h3>
+
+  <div class="strategy-box">
+    <p><strong>PCP 원리 먼저 정의:</strong> 동시에 처리해야 하는 정보는 디스플레이 상에서 근접하게 배치해야 한다. 전방 주시 과제에서는, 경고 정보를 초점 영역에 통합하거나 주변시(peripheral vision)로 인지 가능하게 설계해야 한다 (Wickens &amp; Carswell, 1995).</p>
+  </div>
+
+  <h4>구체 설계 방안</h4>
+  <pre>1. 콘텐츠 근접 경고 오버레이 (PCP 핵심)
+   강의 영상/PDF 화면 모서리에 긴박도 바 삽입
+   → 초점 이동 없이 주변시로 경고 수준 인지
+   → "마감 2시간 전" → 상단 가장자리 오렌지 바 등장
+
+2. Ambient 주변시 알림 (Focal 방해 없이)
+   화면 전체 테두리가 서서히 색 변화 (무채색 → 주황 → 적색)
+   → 초점 콘텐츠 유지 + 주변시가 변화 감지
+   → Salience↑, Effort 최소화
+
+3. 중요도 계층 분리 (Value 신뢰 회복)
+   긴급(학사경고, 24h 이내 마감) vs 일반(강의자료 업로드) 완전 분리
+   → 긴급 = 전체화면 팝업 / 일반 = 사이드바
+   → 알림 클릭 = 항상 중요한 내용 → Value 기대 상승</pre>
+
+  <h4>대학원생 활용도 향상 UX 의견</h4>
+  <ul>
+    <li><strong>맞춤 알림 설정</strong>: 수강 과목별 마감일 자동 캘린더 연동</li>
+    <li><strong>행동 기반 우선순위</strong>: 사용자가 자주 놓치는 카테고리 학습 → 자동 Salience 부스트</li>
+    <li><strong>모바일 연동 강화</strong>: 푸시 알림 → desktop보다 눈에 잘 띔, Effort 최소화</li>
+    <li><strong>원클릭 확인 처리</strong>: 현재 3단계 클릭 → 1단계로 축소 (Effort 비용 절감)</li>
+    <li><strong>알림 신호음 개인화</strong>: 긴급 공지만 소리 알림, 나머지 무음 → Expectancy 교정</li>
+  </ul>
+
+  <div class="mental-model">챗봇 UI에서 경찰관에게 "긴급 면담 필요" 알림을 전달하는 문제와 동일하다. 전문가 사용자(경찰관, 대학원생)는 핵심 작업 중 방해 싫어하지만 중요 신호는 놓치면 안 된다 — 이 긴장이 PCP 설계의 핵심이다.</div>
+
+  <hr>
+
+  <!-- ===== CHECKLIST ===== -->
+  <h2 id="checklist">최종 체크리스트</h2>
+
+  <div class="checklist">
+    <h4>반드시 포함할 것</h4>
+    <table>
+      <tr><th>문항</th><th>필수 내용</th><th>인용</th></tr>
+      <tr><td>1-1</td><td>HIPM 4단계 이름 명시 + <strong>병목 단계 특정</strong> + "반응속도 개선이 왜 효과 없는가" 논증</td><td>Wickens et al. (2022), Wickens &amp; McCarley (2008)</td></tr>
+      <tr><td>1-2</td><td>Accuracy / Attentional Demand <strong>각각 IV·DV·측정법 분리</strong></td><td>드라이빙 시뮬레이터, eye-tracking, NASA-TLX</td></tr>
+      <tr><td>2-1</td><td>d'·β 정의 후 <strong>"β 이동이 핵심"</strong> 명시 + d' 불변 논거</td><td>Wickens et al. (2022), Cry wolf syndrome</td></tr>
+      <tr><td>2-2</td><td>Likelihood Alarms 정의 + <strong>시각·청각 구체 설계</strong></td><td>Sorkin (1989)</td></tr>
+      <tr><td>3-1</td><td>SEEV 공식 제시 + <strong>S·E → Bottom-up, Ex·V → Top-down</strong> 명시</td><td>SEEV 모델</td></tr>
+      <tr><td>3-2</td><td>PCP 정의 + <strong>Focused attention 유지하며 경고 인지</strong> 설계 + 대학원생 UX</td><td>Wickens &amp; Carswell (1995)</td></tr>
+    </table>
+  </div>
+
+  <div class="insight-box">
+    <span class="label">★ 전략 요약</span>
+    Q1은 "반응속도 개선이 왜 실패했나"로 병목 논증 / Q2는 "d' 아닌 β 이동"이 핵심 논증 / Q3은 SEEV 4요인을 Bottom-up·Top-down으로 분류하는 것이 채점 포인트. 세 문제 모두 결론을 먼저 쓰고 근거를 서술하는 deductive 구조로 작성.
+  </div>
+
+</div>
+</body>
+</html>
