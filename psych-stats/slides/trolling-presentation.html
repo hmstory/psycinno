@@ -241,6 +241,69 @@ td { padding: 8px 12px; color: #444; border-bottom: 1px solid #eee; }
 .dot.d1.active { background: #e74c3c; }
 .dot.d2.active { background: #27ae60; }
 .dot.d3.active { background: #e67e22; }
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 820px) {
+  body { padding: 14px 10px; }
+
+  .row { flex-direction: column; gap: 12px; }
+
+  .slide-panel { flex: none; width: 100%; }
+  .slide {
+    padding: 28px 20px 36px;
+    min-height: unset;
+    border-radius: 8px;
+  }
+
+  .note-panel {
+    flex: none;
+    width: 100%;
+    min-height: unset;
+    border-radius: 8px;
+    padding: 18px 16px;
+  }
+
+  h2 { font-size: 18px; }
+  .sub { font-size: 12px; margin-bottom: 12px; }
+  p, li { font-size: 13px; }
+
+  /* 슬라이드 내부 2열 → 1열 */
+  .two { flex-direction: column; gap: 12px; }
+
+  /* IV-DV 도식 세로 정렬 */
+  .iv-dv { flex-direction: column; align-items: center; gap: 8px; }
+  .arrow-zone { flex-direction: row; padding: 0; }
+  .arrow-line { font-size: 22px; }
+  .iv-box, .dv-box { min-width: unset; width: 100%; max-width: 320px; }
+
+  /* 결과 도식 행 정렬 */
+  .rd-row { flex-wrap: wrap; gap: 6px; }
+  .rd-iv { width: auto; flex: 1 1 100%; text-align: left; }
+  .rd-arrow { width: 32px; font-size: 10px; }
+
+  /* 결과 카드 행 */
+  .res-row { flex-wrap: wrap; gap: 8px; }
+  .res-name { min-width: unset; width: 100%; }
+
+  /* 카드 그리드 */
+  .cards { gap: 8px; }
+  .card { min-width: 120px; padding: 10px 12px; }
+  .card-val { font-size: 20px; }
+
+  /* 테이블 작은 폰트 */
+  table { font-size: 11px; }
+  th, td { padding: 6px 8px; }
+
+  /* 네비게이션 */
+  .nav-bar { gap: 10px; }
+  .nav-bar button { padding: 10px 22px; font-size: 14px; }
+
+  /* 발표자 배지 위치 조정 */
+  .badge { top: 12px; right: 14px; font-size: 10px; padding: 2px 9px; }
+
+  /* 슬라이드 번호 */
+  .snum { font-size: 10px; bottom: 10px; right: 14px; }
+}
 </style>
 </head>
 <body>
