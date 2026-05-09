@@ -306,8 +306,6 @@
           .then(data => { if (data && data.items && data.items.length) renderPrequiz(data); })
           .catch(() => {});
 
-        // knowledge blocks
-        transformKnowledgeBlocks().catch(() => {});
       })
       .catch(() => {
         document.getElementById('content').innerHTML = '<p style="color:red;">Failed to load content.</p>';
