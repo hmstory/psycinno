@@ -1,5 +1,28 @@
 # PROGRESS.md
 
+## 2026-05-09 — 심리통계입문 논문발표 슬라이드 제작 및 배포
+
+### 완료한 것
+- `psych-stats/slides/trolling-presentation.html` 신규 생성 (psych-stats 폴더 신설)
+- 총 19장 슬라이드 구성 (역할분담 / 서론 / 연구방법 / 결과 / 논의)
+- 통계 원리 슬라이드 3개 추가: Cronbach's α / VIF 다중공선성 / 로지스틱 회귀
+  - 각 슬라이드: 개념 + 왜필요 + 계산공식 + 이 논문 실제 수치
+- 발표자 노트 사이드패널 (슬라이드별, 말할 내용 + 예상질문 + 전환 멘트)
+- 슬라이드 renumbering 18→19 (Python 스크립트, 역순 치환)
+- 모바일 반응형 CSS (`@media max-width: 820px`) 추가
+- GitHub Pages 배포 완료
+
+### 배포 URL
+https://hmstory.github.io/psycinno/psych-stats/slides/trolling-presentation.html
+
+### 발견한 문제 / 해결
+- renumbering 중 `id="s11"` 중복 발생 → 역순 Python 치환으로 해결
+- 발표자 본인이 통계 원리 이해 못함 → 슬라이드에 계산 원리·공식 직접 추가
+
+### 결정 사항
+- psych-stats/ 폴더를 psycinno 레포 독립 섹션으로 운영
+- 발표자 노트는 HTML 인라인 관리 (단일 파일 배포 유지)
+
 ## 2026-04-27
 - 인지공학심리학 중간고사 v1.1 문제지 메모리 업데이트 (project_cog_eng_midterm_2026.md)
   - 교재 범위 Ch1-6 → Ch1-7 정정, Q3-2 대학원생 UX 의견 추가, Q4-1 풀이 프로세스 명시
