@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { chromium as playwrightChromium } from "playwright-core";
 import chromiumMin from "@sparticuz/chromium-min";
 
+export const maxDuration = 60;
+export const runtime = "nodejs";
+
 const IS_VERCEL = !!process.env.VERCEL;
 
 async function getBrowser() {
