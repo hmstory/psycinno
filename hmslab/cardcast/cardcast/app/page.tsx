@@ -134,6 +134,23 @@ export default function Home() {
     a.click();
   }
 
+  async function renderVideo(idx: number) {
+    if (!result) return;
+    const card = result.cards[idx];
+    const res = await fetch("/api/render-video", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ card, total: result.cards.length, author: `@${author}` }),
+    });
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `card_${String(idx + 1).padStart(2, "0")}.mp4`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function downloadAll() {
     if (!result) return;
     for (let i = 0; i < result.cards.length; i++) {
@@ -531,7 +548,13 @@ export default function Home() {
                     onClick={() => downloadSingle(currentCard)}
                     className="bg-gray-900 text-white font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors"
                   >
-                    ⬇ 저장
+                    ⬇ PNG
+                  </button>
+                  <button
+                    onClick={() => renderVideo(currentCard)}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg text-sm transition-colors"
+                  >
+                    🎬 MP4
                   </button>
                 </div>
               </div>

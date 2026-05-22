@@ -9,13 +9,16 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
+    "@remotion/bundler": "^4.0.465",
+    "@remotion/renderer": "^4.0.465",
     "@sparticuz/chromium-min": "^148.0.0",
     "html-to-image": "^1.11.13",
     "next": "16.2.6",
     "playwright": "^1.60.0",
     "playwright-core": "^1.60.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "remotion": "^4.0.465"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
