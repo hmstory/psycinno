@@ -21,18 +21,42 @@ type Card = {
 };
 type CardsResult = { title: string; cards: Card[] };
 
+const STORAGE_KEY = "cardcast_draft";
+
+function loadDraft() {
+  if (typeof window === "undefined") return null;
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null"); } catch { return null; }
+}
+
 export default function Home() {
-  const [step, setStep] = useState(1);
-  const [text, setText] = useState("");
-  const [author, setAuthor] = useState("kim_hyeong_mo");
+  const draft = loadDraft();
+  const [step, setStep] = useState(draft ? 2 : 1);
+  const [text, setText] = useState(draft?.text ?? "");
+  const [author, setAuthor] = useState(draft?.author ?? "kim_hyeong_mo");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<CardsResult | null>(null);
+  const [result, setResult] = useState<CardsResult | null>(draft?.result ?? null);
   const [images, setImages] = useState<{ index: number; png: string }[]>([]);
   const [selectedSlot, setSelectedSlot] = useState(0);
   const [currentCard, setCurrentCard] = useState(0);
   const [rendering, setRendering] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  function saveDraft(newResult: CardsResult | null, newText: string, newAuthor: string) {
+    if (typeof window === "undefined") return;
+    if (newResult) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ result: newResult, text: newText, author: newAuthor }));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  function clearDraft() {
+    localStorage.removeItem(STORAGE_KEY);
+    setResult(null);
+    setText("");
+    setStep(1);
+  }
 
   async function handleSplit() {
     if (!text.trim()) return;
@@ -45,6 +69,7 @@ export default function Home() {
       });
       const data = await res.json();
       setResult(data);
+      saveDraft(data, text, author);
       setSelectedSlot(0);
       setStep(2);
     } finally {
@@ -91,7 +116,9 @@ export default function Home() {
     const updated = result.cards.map((c, i) =>
       i === idx ? { ...c, [field]: value } : c
     );
-    setResult({ ...result, cards: updated });
+    const next = { ...result, cards: updated };
+    setResult(next);
+    saveDraft(next, text, author);
   }
 
   function addCard() {
@@ -113,7 +140,9 @@ export default function Home() {
     const updated = result.cards.map((c, i) =>
       i === cardIdx ? { ...c, data: { ...c.data, ...patch } } : c
     );
-    setResult({ ...result, cards: updated });
+    const next = { ...result, cards: updated };
+    setResult(next);
+    saveDraft(next, text, author);
   }
 
   function updateCell(cardIdx: number, cellIdx: number, field: keyof Cell, value: string) {
@@ -190,6 +219,18 @@ export default function Home() {
         {/* ── STEP 1 ── */}
         {step === 1 && (
           <div className="max-w-2xl mx-auto">
+            {loadDraft() && (
+              <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-5">
+                <div>
+                  <div className="text-sm font-bold text-amber-700">이전 작업이 저장돼 있어요</div>
+                  <div className="text-xs text-amber-500 mt-0.5">"{loadDraft()?.result?.title}"</div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setStep(2)} className="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">이어서 편집 →</button>
+                  <button onClick={clearDraft} className="text-xs text-amber-400 hover:text-amber-600 px-2">새로 시작</button>
+                </div>
+              </div>
+            )}
             <h1 className="text-2xl font-black tracking-tight mb-1">칼럼을 붙여넣으세요</h1>
             <p className="text-sm text-gray-400 mb-6">AI가 카드 단위로 나눠드릴게요. 이후 직접 편집할 수 있어요.</p>
             <div className="bg-white rounded-2xl p-7 shadow-sm">
