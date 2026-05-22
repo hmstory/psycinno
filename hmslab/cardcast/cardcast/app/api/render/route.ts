@@ -1,5 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { chromium } from "playwright";
+import { chromium as playwrightChromium } from "playwright-core";
+import chromiumMin from "@sparticuz/chromium-min";
+
+const IS_VERCEL = !!process.env.VERCEL;
+
+async function getBrowser() {
+  if (IS_VERCEL) {
+    const executablePath = await chromiumMin.executablePath(
+      "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
+    );
+    return playwrightChromium.launch({
+      args: chromiumMin.args,
+      executablePath,
+      headless: true,
+    });
+  }
+  return playwrightChromium.launch();
+}
 
 function buildTableCells(data: Record<string, unknown>, accent: string): string {
   const colHeaders = (data.col_headers as string[]) ?? ["", ""];
@@ -108,7 +125,7 @@ export async function POST(req: NextRequest) {
   const total = cards.length;
   const results: { index: number; png: string }[] = [];
 
-  const browser = await chromium.launch();
+  const browser = await getBrowser();
   const page = await browser.newPage({ viewport: { width: 1080, height: 1080 } });
 
   for (const card of cards) {
