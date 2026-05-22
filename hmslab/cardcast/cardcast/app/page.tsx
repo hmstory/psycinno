@@ -108,6 +108,22 @@ export default function Home() {
     setSelectedSlot(result.cards.length);
   }
 
+  function updateCardData(cardIdx: number, patch: Partial<CardData>) {
+    if (!result) return;
+    const updated = result.cards.map((c, i) =>
+      i === cardIdx ? { ...c, data: { ...c.data, ...patch } } : c
+    );
+    setResult({ ...result, cards: updated });
+  }
+
+  function updateCell(cardIdx: number, cellIdx: number, field: keyof Cell, value: string) {
+    if (!result) return;
+    const card = result.cards[cardIdx];
+    const cells = [...(card.data?.cells ?? [])];
+    cells[cellIdx] = { ...cells[cellIdx], [field]: value };
+    updateCardData(cardIdx, { cells });
+  }
+
   function deleteCard(idx: number) {
     if (!result || result.cards.length <= 2) return;
     const updated = result.cards
@@ -282,8 +298,65 @@ export default function Home() {
                         className="w-full text-sm text-gray-600 border border-gray-200 rounded-lg p-3 resize-none h-20 outline-none focus:border-red-400 transition-colors leading-relaxed"
                       />
                       {card.type === "table" && card.data && (
-                        <div className="mt-2 p-2.5 bg-gray-50 rounded-lg text-xs text-gray-400">
-                          📊 표 카드 — 셀 편집은 곧 지원 예정
+                        <div className="mt-3 space-y-3">
+                          {/* 열 헤더 */}
+                          <div className="flex gap-2">
+                            <div className="w-20 flex-shrink-0" />
+                            {[0, 1].map((ci) => (
+                              <input
+                                key={ci}
+                                value={card.data!.col_headers?.[ci] ?? ""}
+                                onChange={(e) => {
+                                  const h = [...(card.data!.col_headers ?? ["", ""])];
+                                  h[ci] = e.target.value;
+                                  updateCardData(i, { col_headers: h });
+                                }}
+                                className="flex-1 text-xs font-bold text-center border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-red-400 bg-gray-50"
+                                placeholder={`열 ${ci + 1}`}
+                              />
+                            ))}
+                          </div>
+                          {/* 행 */}
+                          {[0, 1].map((ri) => (
+                            <div key={ri} className="flex gap-2">
+                              <input
+                                value={card.data!.row_headers?.[ri] ?? ""}
+                                onChange={(e) => {
+                                  const h = [...(card.data!.row_headers ?? ["", ""])];
+                                  h[ri] = e.target.value;
+                                  updateCardData(i, { row_headers: h });
+                                }}
+                                className="w-20 flex-shrink-0 text-xs font-bold text-center border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-red-400 bg-gray-50"
+                                placeholder={`행 ${ri + 1}`}
+                              />
+                              {[0, 1].map((ci) => {
+                                const cellIdx = ri * 2 + ci;
+                                const cell = card.data!.cells?.[cellIdx] ?? { label: "", desc: "", color: "#f5f5f5", text_color: "#333" };
+                                return (
+                                  <div key={ci} className="flex-1 border border-gray-200 rounded-lg p-2 space-y-1" style={{ background: cell.color + "33" }}>
+                                    <input
+                                      value={cell.label}
+                                      onChange={(e) => updateCell(i, cellIdx, "label", e.target.value)}
+                                      className="w-full text-xs font-black text-center border border-gray-200 rounded px-1 py-0.5 outline-none focus:border-red-400 bg-white"
+                                      placeholder="제목"
+                                    />
+                                    <input
+                                      value={cell.desc}
+                                      onChange={(e) => updateCell(i, cellIdx, "desc", e.target.value)}
+                                      className="w-full text-xs text-center border border-gray-200 rounded px-1 py-0.5 outline-none focus:border-red-400 bg-white"
+                                      placeholder="설명"
+                                    />
+                                    <div className="flex items-center gap-1">
+                                      <label className="text-[10px] text-gray-400">배경</label>
+                                      <input type="color" value={cell.color} onChange={(e) => updateCell(i, cellIdx, "color", e.target.value)} className="w-6 h-5 cursor-pointer rounded border-none" />
+                                      <label className="text-[10px] text-gray-400 ml-1">글자</label>
+                                      <input type="color" value={cell.text_color} onChange={(e) => updateCell(i, cellIdx, "text_color", e.target.value)} className="w-6 h-5 cursor-pointer rounded border-none" />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
