@@ -131,16 +131,16 @@ export default function Home() {
 
       {/* 스텝 바 */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-5xl mx-auto px-6 flex">
+        <div className="max-w-5xl mx-auto px-2 sm:px-6 flex">
           {[
             { n: 1, label: "글 붙여넣기" },
             { n: 2, label: "카드 구성" },
-            { n: 3, label: "미리보기 & 다운로드" },
+            { n: 3, label: "다운로드" },
           ].map(({ n, label }, i, arr) => (
-            <div key={n} className="flex items-center">
+            <div key={n} className="flex items-center flex-1 sm:flex-none">
               <button
                 onClick={() => n < step && setStep(n)}
-                className={`flex items-center gap-2 px-5 h-12 text-sm font-semibold border-b-2 transition-all ${
+                className={`flex items-center gap-1.5 px-2 sm:px-5 h-12 text-xs sm:text-sm font-semibold border-b-2 transition-all w-full justify-center sm:justify-start ${
                   step === n
                     ? "text-red-600 border-red-600"
                     : step > n
@@ -149,7 +149,7 @@ export default function Home() {
                 }`}
               >
                 <span
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 ${
                     step === n
                       ? "bg-red-600 text-white"
                       : step > n
@@ -210,8 +210,8 @@ export default function Home() {
         {/* ── STEP 2 ── */}
         {step === 2 && result && (
           <div className="flex gap-7">
-            {/* 원문 패널 */}
-            <div className="w-72 flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm self-start sticky top-20">
+            {/* 원문 패널 — 모바일 숨김 */}
+            <div className="hidden md:block w-72 flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm self-start sticky top-20">
               <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">원문</div>
               <div className="text-xs leading-relaxed text-gray-500 max-h-[500px] overflow-y-auto whitespace-pre-wrap">
                 {text}
@@ -311,22 +311,22 @@ export default function Home() {
 
         {/* ── STEP 3 ── */}
         {step === 3 && result && (
-          <div className="flex gap-7">
-            {/* 미니 목록 */}
-            <div className="w-48 flex-shrink-0 flex flex-col gap-2">
+          <div className="flex flex-col md:flex-row gap-5">
+            {/* 미니 목록 — 모바일: 가로 스크롤 */}
+            <div className="flex md:flex-col gap-2 overflow-x-auto pb-1 md:w-48 md:flex-shrink-0">
               {result.cards.map((card, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentCard(i)}
-                  className={`flex items-center gap-2 bg-white rounded-xl px-3 py-2.5 border-2 text-left transition-all shadow-sm ${
+                  className={`flex items-center gap-2 bg-white rounded-xl px-3 py-2.5 border-2 text-left transition-all shadow-sm flex-shrink-0 ${
                     currentCard === i ? "border-red-500" : "border-transparent hover:border-gray-200"
                   }`}
                 >
-                  <span className={`text-xs font-black w-5 ${currentCard === i ? "text-red-500" : "text-gray-300"}`}>
+                  <span className={`text-xs font-black w-5 flex-shrink-0 ${currentCard === i ? "text-red-500" : "text-gray-300"}`}>
                     {String(card.index).padStart(2, "0")}
                   </span>
                   <span className="text-base">{card.emoji}</span>
-                  <span className="text-xs font-bold text-gray-600 truncate">{card.title}</span>
+                  <span className="text-xs font-bold text-gray-600 truncate md:max-w-none max-w-[80px]">{card.title}</span>
                 </button>
               ))}
             </div>
