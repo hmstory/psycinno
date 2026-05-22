@@ -117,19 +117,6 @@ export default function Home() {
     setSelectedSlot(Math.min(selectedSlot, updated.length - 1));
   }
 
-  function downloadPng(index: number) {
-    const img = images.find((i) => i.index === index);
-    if (!img) return;
-    const a = document.createElement("a");
-    a.href = `data:image/png;base64,${img.png}`;
-    a.download = `card_${String(index).padStart(2, "0")}.png`;
-    a.click();
-  }
-
-  function downloadAll() {
-    images.forEach((img) => downloadPng(img.index));
-  }
-
   return (
     <div className="min-h-screen bg-[#f5f4f0]">
       {/* 헤더 */}
