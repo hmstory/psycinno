@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardCast — Step-by-Step</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #f5f4f0;
+    color: #111;
+    min-height: 100vh;
+  }
+
+  /* ── 헤더 ── */
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e8e8e4;
+    padding: 0 40px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 200;
+  }
+  .logo { font-size: 18px; font-weight: 900; letter-spacing: -0.04em; }
+  .logo span { color: #e53935; }
+
+  /* ── 스텝 바 ── */
+  .step-bar {
+    background: #fff;
+    border-bottom: 1px solid #e8e8e4;
+    padding: 0 40px;
+    height: 52px;
+    display: flex; align-items: center; gap: 0;
+  }
+  .step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 20px; height: 100%;
+    font-size: 13px; font-weight: 600; color: #bbb;
+    cursor: pointer; border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .step.active { color: #e53935; border-bottom-color: #e53935; }
+  .step.done { color: #43a047; }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #eee; color: #aaa;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; flex-shrink: 0;
+  }
+  .step.active .step-num { background: #e53935; color: #fff; }
+  .step.done .step-num { background: #43a047; color: #fff; }
+  .step-arrow { color: #ddd; margin: 0 4px; font-size: 16px; }
+
+  /* ── 컨테이너 ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+
+  /* ════════════════════════════
+     STEP 1: 텍스트 입력
+  ════════════════════════════ */
+  .step1-wrap { max-width: 680px; margin: 0 auto; }
+  .section-title {
+    font-size: 22px; font-weight: 900; margin-bottom: 6px;
+    letter-spacing: -0.03em;
+  }
+  .section-sub { font-size: 14px; color: #888; margin-bottom: 24px; }
+
+  .paste-box {
+    background: #fff; border-radius: 16px;
+    padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  textarea {
+    width: 100%; height: 280px;
+    border: 1.5px solid #e0e0da; border-radius: 10px;
+    padding: 16px 18px; font-size: 15px; line-height: 1.75;
+    font-family: inherit; color: #333; resize: none; outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: #e53935; }
+  .paste-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 14px;
+  }
+  .char-count { font-size: 13px; color: #bbb; }
+  .btn-next {
+    background: #e53935; color: #fff; border: none;
+    border-radius: 8px; padding: 11px 32px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    letter-spacing: -0.02em; transition: background 0.15s;
+  }
+  .btn-next:hover { background: #c62828; }
+  .btn-next:disabled { background: #ddd; cursor: not-allowed; }
+
+  /* ════════════════════════════
+     STEP 2: 카드 슬롯 편집
+  ════════════════════════════ */
+  .step2-layout { display: flex; gap: 28px; }
+
+  /* 왼쪽: 원문 패널 */
+  .source-panel {
+    width: 320px; flex-shrink: 0;
+    background: #fff; border-radius: 16px;
+    padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    height: fit-content; position: sticky; top: 120px;
+  }
+  .panel-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    color: #999; text-transform: uppercase; margin-bottom: 12px;
+  }
+  .source-text {
+    font-size: 13px; line-height: 1.8; color: #555;
+    max-height: 520px; overflow-y: auto;
+  }
+  .source-text .highlight {
+    background: #fff3e0; border-radius: 3px; padding: 1px 2px;
+  }
+
+  /* 오른쪽: 카드 슬롯 목록 */
+  .slots-panel { flex: 1; }
+  .slots-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .slots-info { font-size: 13px; color: #888; }
+  .btn-add-slot {
+    border: 1.5px dashed #ccc; background: #fff;
+    border-radius: 8px; padding: 7px 16px;
+    font-size: 13px; color: #888; cursor: pointer;
+    transition: all 0.12s;
+  }
+  .btn-add-slot:hover { border-color: #e53935; color: #e53935; }
+
+  /* 카드 슬롯 */
+  .slot {
+    background: #fff; border-radius: 14px;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 12px;
+    transition: all 0.15s;
+    overflow: hidden;
+  }
+  .slot:hover { border-color: #e0e0da; }
+  .slot.selected { border-color: #e53935; }
+
+  .slot-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+  }
+  .slot-drag {
+    color: #ccc; font-size: 16px; cursor: grab;
+    flex-shrink: 0;
+  }
+  .slot-num {
+    font-size: 12px; font-weight: 800; color: #ccc;
+    width: 24px; flex-shrink: 0;
+  }
+  .slot.selected .slot-num { color: #e53935; }
+  .slot-emoji-input {
+    font-size: 24px; border: none; outline: none;
+    width: 36px; cursor: pointer; background: transparent;
+  }
+  .slot-title-input {
+    flex: 1; font-size: 15px; font-weight: 700;
+    border: none; outline: none; color: #222;
+    background: transparent;
+  }
+  .slot-actions { display: flex; gap: 6px; margin-left: auto; }
+  .slot-btn {
+    border: 1px solid #eee; background: #fafaf8;
+    border-radius: 6px; padding: 4px 10px;
+    font-size: 11px; color: #888; cursor: pointer;
+    transition: all 0.12s; white-space: nowrap;
+  }
+  .slot-btn:hover { border-color: #ccc; color: #444; }
+  .slot-btn.danger:hover { border-color: #e53935; color: #e53935; }
+
+  .slot-body {
+    padding: 0 18px 16px 70px;
+    display: none;
+  }
+  .slot.selected .slot-body { display: block; }
+  .slot-body-input {
+    width: 100%; font-size: 14px; line-height: 1.7; color: #555;
+    border: 1.5px solid #e8e8e4; border-radius: 8px;
+    padding: 10px 14px; font-family: inherit;
+    outline: none; resize: none; height: 80px;
+    transition: border-color 0.12s;
+  }
+  .slot-body-input:focus { border-color: #e53935; }
+  .slot-meta {
+    display: flex; gap: 10px; margin-top: 10px; align-items: center;
+  }
+  .slot-type-select {
+    border: 1px solid #e0e0da; border-radius: 6px;
+    padding: 4px 10px; font-size: 12px; color: #555;
+    background: #fff; outline: none; cursor: pointer;
+  }
+  .accent-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid #e0e0da; cursor: pointer;
+    flex-shrink: 0;
+  }
+  .slot-char { font-size: 11px; color: #bbb; margin-left: auto; }
+
+  /* 스텝2 하단 버튼 */
+  .step2-footer {
+    display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;
+  }
+  .btn-back {
+    border: 1.5px solid #e0e0da; background: #fff;
+    border-radius: 8px; padding: 10px 24px;
+    font-size: 14px; font-weight: 600; color: #666; cursor: pointer;
+  }
+
+  /* ════════════════════════════
+     STEP 3: 미리보기
+  ════════════════════════════ */
+  .step3-layout { display: flex; gap: 28px; }
+  .mini-list {
+    width: 200px; flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .mini-card {
+    background: #fff; border-radius: 10px;
+    padding: 10px 12px; cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    display: flex; align-items: center; gap: 8px;
+    transition: all 0.12s;
+  }
+  .mini-card:hover { border-color: #e0e0da; }
+  .mini-card.active { border-color: #e53935; }
+  .mini-card-num { font-size: 11px; font-weight: 800; color: #ccc; width: 18px; }
+  .mini-card.active .mini-card-num { color: #e53935; }
+  .mini-card-emoji { font-size: 18px; }
+  .mini-card-title { font-size: 12px; font-weight: 700; color: #333; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .preview-area { flex: 1; }
+  .card-preview-outer {
+    background: #fff; border-radius: 16px;
+    padding: 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .card-preview-wrap {
+    width: 100%; aspect-ratio: 1/1; max-width: 480px;
+    margin: 0 auto; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12); position: relative;
+  }
+  .card-preview { width: 1080px; height: 1080px; transform-origin: top left; position: absolute; }
+  .card-inner {
+    width: 100%; height: 100%; background: #fff;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px; position: relative;
+  }
+  .card-side-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 12px; }
+  .card-num-badge { position: absolute; top: 56px; right: 72px; font-size: 28px; font-weight: 700; color: #ccc; }
+  .card-emoji-big { font-size: 96px; margin-bottom: 40px; line-height: 1; }
+  .card-title-big { font-size: 64px; font-weight: 900; color: #111; text-align: center; line-height: 1.2; margin-bottom: 36px; letter-spacing: -0.03em; }
+  .card-divider { width: 80px; height: 5px; border-radius: 3px; margin-bottom: 36px; }
+  .card-body-big { font-size: 38px; color: #444; text-align: center; line-height: 1.65; letter-spacing: -0.01em; max-width: 860px; }
+  .card-progress-wrap { position: absolute; bottom: 0; left: 12px; right: 0; height: 7px; background: #f0f0f0; }
+  .card-progress-fill { height: 100%; border-radius: 0 4px 4px 0; }
+  .card-author-tag { position: absolute; bottom: 32px; right: 60px; font-size: 26px; color: #bbb; font-weight: 600; }
+
+  .preview-actions-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 20px;
+  }
+  .prev-next { display: flex; gap: 8px; }
+  .btn-pn {
+    border: 1.5px solid #e0e0da; background: #fff;
+    border-radius: 7px; padding: 7px 16px;
+    font-size: 13px; font-weight: 600; color: #555; cursor: pointer;
+  }
+  .btn-pn:hover { border-color: #888; }
+  .btn-dl-single {
+    background: #111; color: #fff; border: none;
+    border-radius: 7px; padding: 8px 18px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+
+  .step3-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; border-radius: 14px;
+    padding: 18px 24px; margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .step3-info { font-size: 13px; color: #888; }
+  .btn-zip {
+    background: #e53935; color: #fff; border: none;
+    border-radius: 8px; padding: 11px 28px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .btn-zip:hover { background: #c62828; }
+
+  /* hidden */
+  .step-page { display: none; }
+  .step-page.active { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Card<span>Cast</span></div>
+  <div style="font-size:13px;color:#999;font-weight:600">@kim_hyeong_mo</div>
+</header>
+
+<!-- 스텝 바 -->
+<div class="step-bar">
+  <div class="step active" id="stepTab1" onclick="goStep(1)">
+    <div class="step-num">1</div> 글 붙여넣기
+  </div>
+  <div class="step-arrow">›</div>
+  <div class="step" id="stepTab2" onclick="goStep(2)">
+    <div class="step-num">2</div> 카드 구성
+  </div>
+  <div class="step-arrow">›</div>
+  <div class="step" id="stepTab3" onclick="goStep(3)">
+    <div class="step-num">3</div> 미리보기 &amp; 다운로드
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ── STEP 1 ── -->
+  <div class="step-page active" id="page1">
+    <div class="step1-wrap">
+      <div class="section-title">칼럼을 붙여넣으세요</div>
+      <div class="section-sub">AI가 카드 단위로 나눠드릴게요. 이후 직접 편집할 수 있어요.</div>
+      <div class="paste-box">
+        <textarea id="colText" placeholder="여기에 칼럼 전문을 붙여넣으세요...">요즘 시대에 연애 하기 어렵다는 말이 들린다. 언제는 쉬웠냐고 되묻고 싶지만, 그래도 미천한 이 글이 연애의 시작이 어려운 너희에게 조금은 환기가 되기를 바라며 글을 쓴다.
+
+연애를 시작하려면, 우선 상대방이 나를 좋아하는 신호를 읽어야 한다. 그리고 그 신호에 맞춰서 대응을 해야한다. 편의상 나를 좋아하는 신호를 알아차리는 이론을 신호탐지이론이라고 하자.
+
+저 사람이 나를 좋아할 때, 내가 그것을 알아차리면 히트(Hit). 반대로 나에게 관심이 없는데도, 나 혼자 좋아한다고 착각할 때 폴스 알람(False Alarm)이라고 한다. 반대로, 상대방이 나를 좋아함에도, 그걸 모르고 지나치면 미스(Miss). 그래 저사람 나한테 관심이 없지, 라는 현실 자각이 되면 정기각(Correct Rejection)이라고 한다.</textarea>
+        <div class="paste-footer">
+          <span class="char-count" id="charCount">0자</span>
+          <button class="btn-next" onclick="goStep(2)">AI로 카드 나누기 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2 ── -->
+  <div class="step-page" id="page2">
+    <div class="step2-layout">
+
+      <!-- 원문 -->
+      <div class="source-panel">
+        <div class="panel-label">원문</div>
+        <div class="source-text" id="sourceText"></div>
+      </div>
+
+      <!-- 슬롯 -->
+      <div class="slots-panel">
+        <div class="slots-header">
+          <div>
+            <div class="section-title" style="font-size:18px">카드 구성 편집</div>
+            <div class="slots-info">클릭해서 제목·본문 수정 · 드래그해서 순서 변경</div>
+          </div>
+          <button class="btn-add-slot" onclick="addSlot()">+ 카드 추가</button>
+        </div>
+
+        <div id="slotList"></div>
+
+        <div class="step2-footer">
+          <button class="btn-back" onclick="goStep(1)">← 다시 쓰기</button>
+          <button class="btn-next" onclick="goStep(3)">미리보기 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 3 ── -->
+  <div class="step-page" id="page3">
+    <div class="step3-layout">
+
+      <!-- 미니 목록 -->
+      <div class="mini-list" id="miniList"></div>
+
+      <!-- 미리보기 -->
+      <div class="preview-area">
+        <div class="card-preview-outer">
+          <div class="card-preview-wrap" id="previewWrap">
+            <div class="card-preview" id="cardPreview"></div>
+          </div>
+          <div class="preview-actions-row">
+            <div class="prev-next">
+              <button class="btn-pn" onclick="moveCard(-1)">← 이전</button>
+              <button class="btn-pn" onclick="moveCard(1)">다음 →</button>
+            </div>
+            <button class="btn-dl-single">⬇ 이 카드 PNG</button>
+          </div>
+        </div>
+
+        <div class="step3-footer">
+          <div>
+            <div style="font-size:15px;font-weight:700" id="step3Count"></div>
+            <div class="step3-info">편집하려면 Step 2로 돌아가세요</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn-back" onclick="goStep(2)">← 카드 편집</button>
+            <button class="btn-zip" onclick="alert('실제 앱에서는 ZIP 다운로드!')">⬇ 전체 ZIP</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── 데이터 ──
+const CARDS = [
+  { emoji:"🎯", title:"연애가 어려운 이유",   body:"신호를 못 읽어서가 아니라\n학습이 안 됐기 때문이다",      accent:"#e53935" },
+  { emoji:"📡", title:"신호탐지이론이란?",    body:"Hit / Miss / False Alarm /\n정기각 — 연애도 같다",         accent:"#1e88e5" },
+  { emoji:"✅", title:"Hit — 신호 포착",      body:"좋아하는 신호를\n정확히 알아챘다",                         accent:"#43a047" },
+  { emoji:"⚠️", title:"False Alarm",         body:"혼자 착각해\n고백 난사하는 상태",                          accent:"#f4511e" },
+  { emoji:"😶", title:"Miss — 기회를 날림",   body:"상대가 좋아하는데\n모르고 지나쳤다",                       accent:"#c62828" },
+  { emoji:"🧘", title:"정기각",              body:"관심 없다는 걸 알고\n에너지 낭비 없음",                     accent:"#1565c0" },
+  { emoji:"📈", title:"d' — 민감도",         body:"연애 고수는 d'가 높다\n이건 학습의 결과다",                 accent:"#6a1b9a" },
+  { emoji:"🧠", title:"무의식에 쌓아라",     body:"유튜브 강의보다\n직접 눈 마주치고 대화해라",                accent:"#00838f" },
+  { emoji:"👁",  title:"시각·청각 정보",     body:"표정, 눈빛, 목소리 떨림이\n무의식에 기록된다",              accent:"#e65100" },
+  { emoji:"💌", title:"그때, 고백해라",      body:"고백하는 마음에는\n설명할 수 없는 고귀함이 있다",            accent:"#ad1457" },
+];
+
+let currentCard = 0;
+let selectedSlot = 0;
+
+// ── 글자 수 ──
+const ta = document.getElementById('colText');
+function updateCount() {
+  document.getElementById('charCount').textContent = ta.value.length + '자';
+}
+ta.addEventListener('input', updateCount);
+updateCount();
+
+// ── 스텝 이동 ──
+function goStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('page'+i).classList.toggle('active', i===n);
+    const tab = document.getElementById('stepTab'+i);
+    tab.classList.remove('active','done');
+    if(i===n) tab.classList.add('active');
+    else if(i<n) tab.classList.add('done');
+  });
+  if(n===2) renderSlots();
+  if(n===3) renderStep3();
+}
+
+// ── Step 2: 슬롯 렌더링 ──
+function renderSlots() {
+  document.getElementById('sourceText').textContent = ta.value.slice(0, 400) + '...';
+  const list = document.getElementById('slotList');
+  list.innerHTML = '';
+  CARDS.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'slot' + (i===selectedSlot ? ' selected' : '');
+    el.innerHTML = `
+      <div class="slot-header" onclick="selectSlot(${i})">
+        <span class="slot-drag">⠿</span>
+        <span class="slot-num">${String(i+1).padStart(2,'0')}</span>
+        <input class="slot-emoji-input" value="${c.emoji}" onclick="event.stopPropagation()">
+        <input class="slot-title-input" value="${c.title}" onclick="event.stopPropagation()"
+               oninput="CARDS[${i}].title=this.value">
+        <div class="slot-actions">
+          <button class="slot-btn" onclick="event.stopPropagation();splitSlot(${i})">분할</button>
+          <button class="slot-btn" onclick="event.stopPropagation();mergeSlot(${i})">병합↓</button>
+          <button class="slot-btn danger" onclick="event.stopPropagation();deleteSlot(${i})">✕</button>
+        </div>
+      </div>
+      <div class="slot-body">
+        <textarea class="slot-body-input" oninput="CARDS[${i}].body=this.value">${c.body}</textarea>
+        <div class="slot-meta">
+          <select class="slot-type-select"><option>text</option><option>table</option><option>chart</option></select>
+          <div class="accent-dot" style="background:${c.accent}" title="색상 변경"></div>
+          <span class="slot-char">${c.body.replace(/\n/g,'').length}자</span>
+        </div>
+      </div>
+    `;
+    list.appendChild(el);
+  });
+}
+function selectSlot(i) {
+  selectedSlot = i;
+  renderSlots();
+}
+function addSlot() {
+  CARDS.push({ emoji:"✨", title:"새 카드", body:"내용을 입력하세요", accent:"#888" });
+  selectedSlot = CARDS.length-1;
+  renderSlots();
+}
+function deleteSlot(i) {
+  if(CARDS.length<=2) return alert('최소 2장은 있어야 해요');
+  CARDS.splice(i,1);
+  selectedSlot = Math.min(selectedSlot, CARDS.length-1);
+  renderSlots();
+}
+function splitSlot(i) { alert('분할: 해당 카드를 2장으로 나눕니다 (목업)'); }
+function mergeSlot(i) { alert('병합: 아래 카드와 합칩니다 (목업)'); }
+
+// ── Step 3: 미리보기 ──
+function renderStep3() {
+  currentCard = 0;
+  renderMiniList();
+  renderPreview();
+  document.getElementById('step3Count').textContent = `전체 ${CARDS.length}장 준비됨`;
+}
+function renderMiniList() {
+  const ml = document.getElementById('miniList');
+  ml.innerHTML = '';
+  CARDS.forEach((c,i) => {
+    const el = document.createElement('div');
+    el.className = 'mini-card' + (i===currentCard?' active':'');
+    el.innerHTML = `
+      <div class="mini-card-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="mini-card-emoji">${c.emoji}</div>
+      <div class="mini-card-title">${c.title}</div>
+    `;
+    el.onclick = () => { currentCard=i; renderMiniList(); renderPreview(); };
+    ml.appendChild(el);
+  });
+}
+function renderPreview() {
+  const card = CARDS[currentCard];
+  const total = CARDS.length;
+  const pct = Math.round(((currentCard+1)/total)*100);
+  const wrap = document.getElementById('previewWrap');
+  const scale = wrap.offsetWidth / 1080;
+  const preview = document.getElementById('cardPreview');
+  preview.style.transform = `scale(${scale})`;
+  preview.innerHTML = `
+    <div class="card-inner">
+      <div class="card-side-bar" style="background:${card.accent}"></div>
+      <div class="card-num-badge">${currentCard+1}/${total}</div>
+      <div class="card-emoji-big">${card.emoji}</div>
+      <div class="card-title-big">${card.title}</div>
+      <div class="card-divider" style="background:${card.accent}"></div>
+      <div class="card-body-big">${card.body.replace(/\n/g,'<br>')}</div>
+      <div class="card-progress-wrap">
+        <div class="card-progress-fill" style="width:${pct}%;background:${card.accent}"></div>
+      </div>
+      <div class="card-author-tag">@kim_hyeong_mo</div>
+    </div>
+  `;
+}
+function moveCard(dir) {
+  currentCard = Math.max(0, Math.min(CARDS.length-1, currentCard+dir));
+  renderMiniList();
+  renderPreview();
+}
+window.addEventListener('resize', () => { if(document.getElementById('page3').classList.contains('active')) renderPreview(); });
+</script>
+</body>
+</html>

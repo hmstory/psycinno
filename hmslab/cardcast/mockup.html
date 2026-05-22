@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CardCast — 목업</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: #f4f4f0;
+    color: #111;
+    min-height: 100vh;
+  }
+
+  /* ── 헤더 ── */
+  header {
+    background: #fff;
+    border-bottom: 1px solid #e8e8e4;
+    padding: 0 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-size: 20px; font-weight: 900; letter-spacing: -0.04em; }
+  .logo span { color: #e53935; }
+  .header-id { font-size: 13px; color: #999; font-weight: 600; }
+
+  /* ── 메인 레이아웃 ── */
+  .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px; }
+
+  /* ── 입력 섹션 ── */
+  .input-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 32px;
+  }
+  .input-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    color: #999; text-transform: uppercase; margin-bottom: 10px;
+  }
+  textarea {
+    width: 100%; height: 160px;
+    border: 1.5px solid #e0e0da;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-size: 15px; line-height: 1.7;
+    font-family: inherit; color: #333;
+    resize: none; outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: #e53935; }
+  .input-row {
+    display: flex; gap: 12px; margin-top: 14px; align-items: center;
+  }
+  .id-input {
+    flex: 1; max-width: 220px;
+    border: 1.5px solid #e0e0da; border-radius: 8px;
+    padding: 10px 14px; font-size: 14px; font-family: inherit;
+    outline: none; transition: border-color 0.15s;
+  }
+  .id-input:focus { border-color: #e53935; }
+  .id-prefix {
+    font-size: 14px; color: #aaa; margin-left: -4px; margin-right: -8px;
+  }
+  .id-wrap { display: flex; align-items: center; gap: 4px; }
+  .btn-generate {
+    background: #e53935; color: #fff;
+    border: none; border-radius: 8px;
+    padding: 10px 28px; font-size: 15px; font-weight: 700;
+    cursor: pointer; letter-spacing: -0.02em;
+    transition: background 0.15s;
+  }
+  .btn-generate:hover { background: #c62828; }
+  .char-count { font-size: 12px; color: #bbb; margin-left: auto; }
+
+  /* ── 결과 섹션 ── */
+  .result-section { display: flex; gap: 24px; }
+
+  /* ── 카드 썸네일 띠 ── */
+  .cards-panel {
+    width: 280px; flex-shrink: 0;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    height: fit-content;
+  }
+  .cards-panel-title {
+    font-size: 12px; font-weight: 700; color: #999;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 14px; padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0ec;
+  }
+  .cards-panel-title span { color: #111; font-size: 14px; }
+  .card-thumb-list { display: flex; flex-direction: column; gap: 8px; }
+  .card-thumb {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: 10px;
+    cursor: pointer; transition: background 0.12s;
+    border: 2px solid transparent;
+  }
+  .card-thumb:hover { background: #f9f7f4; }
+  .card-thumb.active {
+    background: #fff5f5;
+    border-color: #e53935;
+  }
+  .thumb-num {
+    font-size: 11px; font-weight: 800; color: #ccc;
+    width: 22px; flex-shrink: 0;
+  }
+  .card-thumb.active .thumb-num { color: #e53935; }
+  .thumb-emoji { font-size: 20px; flex-shrink: 0; }
+  .thumb-info { flex: 1; min-width: 0; }
+  .thumb-title {
+    font-size: 13px; font-weight: 700; color: #222;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .thumb-type {
+    font-size: 11px; color: #bbb; margin-top: 2px;
+  }
+
+  /* ── 미리보기 패널 ── */
+  .preview-panel {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .preview-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .preview-title {
+    font-size: 14px; font-weight: 700; color: #444;
+  }
+  .preview-actions { display: flex; gap: 8px; }
+  .btn-edit {
+    border: 1.5px solid #e0e0da; background: #fff;
+    border-radius: 7px; padding: 6px 14px;
+    font-size: 13px; font-weight: 600; color: #555;
+    cursor: pointer; transition: all 0.12s;
+  }
+  .btn-edit:hover { border-color: #888; color: #222; }
+  .btn-dl {
+    border: none; background: #111; color: #fff;
+    border-radius: 7px; padding: 6px 14px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 0.12s;
+  }
+  .btn-dl:hover { background: #333; }
+
+  /* ── 카드 미리보기 (실제 비율 축소) ── */
+  .card-preview-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 460px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    position: relative;
+  }
+  .card-preview {
+    width: 1080px; height: 1080px;
+    transform-origin: top left;
+    position: absolute; top: 0; left: 0;
+  }
+
+  /* 카드 내부 스타일 */
+  .card-inner {
+    width: 100%; height: 100%;
+    background: #fff;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 80px;
+    position: relative;
+  }
+  .card-side-bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 12px;
+  }
+  .card-num-badge {
+    position: absolute; top: 56px; right: 72px;
+    font-size: 28px; font-weight: 700; color: #ccc;
+  }
+  .card-emoji { font-size: 96px; margin-bottom: 40px; line-height: 1; }
+  .card-title {
+    font-size: 64px; font-weight: 900; color: #111;
+    text-align: center; line-height: 1.2;
+    margin-bottom: 36px; letter-spacing: -0.03em;
+  }
+  .card-divider {
+    width: 80px; height: 5px; border-radius: 3px;
+    margin-bottom: 36px;
+  }
+  .card-body {
+    font-size: 38px; color: #444;
+    text-align: center; line-height: 1.65;
+    letter-spacing: -0.01em; max-width: 860px;
+  }
+  .card-progress-wrap {
+    position: absolute; bottom: 0; left: 12px; right: 0;
+    height: 7px; background: #f0f0f0;
+  }
+  .card-progress-fill { height: 100%; border-radius: 0 4px 4px 0; }
+  .card-author {
+    position: absolute; bottom: 32px; right: 60px;
+    font-size: 26px; color: #bbb; font-weight: 600;
+  }
+
+  /* ── 하단 다운로드 ── */
+  .download-bar {
+    background: #fff; border-radius: 16px;
+    padding: 20px 28px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-top: 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .download-bar-label { font-size: 13px; color: #888; flex: 1; }
+  .btn-zip {
+    background: #111; color: #fff; border: none;
+    border-radius: 8px; padding: 10px 24px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: background 0.12s;
+  }
+  .btn-zip:hover { background: #333; }
+
+  .badge-mock {
+    display: inline-block;
+    background: #fff3e0; color: #e65100;
+    font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 4px;
+    margin-left: 8px; letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Card<span>Cast</span></div>
+  <div class="header-id">@kim_hyeong_mo</div>
+</header>
+
+<div class="container">
+
+  <!-- 입력 섹션 -->
+  <div class="input-section">
+    <div class="input-label">칼럼 텍스트</div>
+    <textarea placeholder="여기에 칼럼을 붙여넣으세요...&#10;&#10;요즘 시대에 연애 하기 어렵다는 말이 들린다..."></textarea>
+    <div class="input-row">
+      <div class="id-wrap">
+        <span class="id-prefix">@</span>
+        <input class="id-input" type="text" placeholder="인스타 아이디" value="kim_hyeong_mo">
+      </div>
+      <button class="btn-generate" onclick="alert('실제 앱에서는 여기서 Claude API 호출!')">카드뉴스 만들기 →</button>
+      <span class="char-count">1,204자</span>
+    </div>
+  </div>
+
+  <!-- 결과 섹션 -->
+  <div class="result-section">
+
+    <!-- 카드 목록 -->
+    <div class="cards-panel">
+      <div class="cards-panel-title">
+        신호탐지이론으로 읽는 연애<br>
+        <span>10장 생성됨</span>
+      </div>
+      <div class="card-thumb-list" id="thumbList"></div>
+    </div>
+
+    <!-- 미리보기 -->
+    <div class="preview-panel">
+      <div class="preview-header">
+        <div class="preview-title" id="previewTitle">카드 01 미리보기</div>
+        <div class="preview-actions">
+          <button class="btn-edit">✏️ 수정</button>
+          <button class="btn-dl">⬇ PNG</button>
+        </div>
+      </div>
+
+      <div class="card-preview-wrap" id="previewWrap">
+        <div class="card-preview" id="cardPreview"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 다운로드 바 -->
+  <div class="download-bar">
+    <div class="download-bar-label">
+      전체 10장 준비됨
+      <span class="badge-mock">MOCK</span>
+    </div>
+    <button class="btn-zip" onclick="alert('실제 앱에서는 ZIP 다운로드!')">⬇ 전체 ZIP 다운로드</button>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { index:1,  emoji:"🎯", title:"연애가 어려운 이유",    body:"신호를 못 읽어서가 아니라\n학습이 안 됐기 때문이다",      accent:"#e53935" },
+  { index:2,  emoji:"📡", title:"신호탐지이론이란?",     body:"Hit / Miss / False Alarm /\n정기각 — 연애도 같다",         accent:"#1e88e5" },
+  { index:3,  emoji:"✅", title:"Hit",                  body:"좋아하는 신호를\n정확히 알아챘다",                         accent:"#43a047" },
+  { index:4,  emoji:"⚠️", title:"False Alarm",          body:"혼자 착각해\n고백 난사하는 상태",                          accent:"#f4511e" },
+  { index:5,  emoji:"😶", title:"Miss",                 body:"기회를 알아채지 못하고\n그냥 날려버렸다",                   accent:"#c62828" },
+  { index:6,  emoji:"🧘", title:"정기각",               body:"관심 없다는 걸 알고\n에너지 낭비 없음",                     accent:"#1565c0" },
+  { index:7,  emoji:"📈", title:"d' — 민감도",          body:"연애 고수는 d'가 높다\n학습의 결과다",                      accent:"#6a1b9a" },
+  { index:8,  emoji:"🧠", title:"무의식에 쌓아라",      body:"유튜브 강의보다\n직접 눈 마주치고 대화해라",                accent:"#00838f" },
+  { index:9,  emoji:"👁", title:"시각·청각 정보",       body:"표정, 눈빛, 목소리 떨림이\n무의식에 기록된다",              accent:"#e65100" },
+  { index:10, emoji:"💌", title:"그때, 고백해라",       body:"고백하는 마음에는\n설명할 수 없는 고귀함이 있다",            accent:"#ad1457" },
+];
+
+let currentIdx = 0;
+
+function renderThumb(card, idx) {
+  const el = document.createElement('div');
+  el.className = 'card-thumb' + (idx === 0 ? ' active' : '');
+  el.innerHTML = `
+    <div class="thumb-num">${String(card.index).padStart(2,'0')}</div>
+    <div class="thumb-emoji">${card.emoji}</div>
+    <div class="thumb-info">
+      <div class="thumb-title">${card.title}</div>
+      <div class="thumb-type">text</div>
+    </div>
+  `;
+  el.onclick = () => selectCard(idx);
+  return el;
+}
+
+function selectCard(idx) {
+  currentIdx = idx;
+  document.querySelectorAll('.card-thumb').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  renderPreview(CARDS[idx]);
+  document.getElementById('previewTitle').textContent =
+    `카드 ${String(CARDS[idx].index).padStart(2,'0')} 미리보기`;
+}
+
+function renderPreview(card) {
+  const total = CARDS.length;
+  const pct = Math.round((card.index / total) * 100);
+  const wrap = document.getElementById('previewWrap');
+  const scale = wrap.offsetWidth / 1080;
+
+  const preview = document.getElementById('cardPreview');
+  preview.style.transform = `scale(${scale})`;
+
+  preview.innerHTML = `
+    <div class="card-inner">
+      <div class="card-side-bar" style="background:${card.accent}"></div>
+      <div class="card-num-badge">${card.index}/${total}</div>
+      <div class="card-emoji">${card.emoji}</div>
+      <div class="card-title">${card.title}</div>
+      <div class="card-divider" style="background:${card.accent}"></div>
+      <div class="card-body">${card.body.replace(/\n/g,'<br>')}</div>
+      <div class="card-progress-wrap">
+        <div class="card-progress-fill" style="width:${pct}%;background:${card.accent}"></div>
+      </div>
+      <div class="card-author">@kim_hyeong_mo</div>
+    </div>
+  `;
+}
+
+// 초기화
+const list = document.getElementById('thumbList');
+CARDS.forEach((c, i) => list.appendChild(renderThumb(c, i)));
+renderPreview(CARDS[0]);
+
+// 리사이즈 대응
+window.addEventListener('resize', () => renderPreview(CARDS[currentIdx]));
+</script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+"use client";
+
+import { useState, useRef } from "react";
+
+type Cell = { label: string; desc: string; color: string; text_color: string };
+type CardData = {
+  col_headers?: string[];
+  row_headers?: string[];
+  cells?: Cell[];
+};
+type Card = {
+  index: number;
+  type: string;
+  emoji: string;
+  title: string;
+  body: string;
+  accent: string;
+  data?: CardData;
+};
+type CardsResult = { title: string; cards: Card[] };
+
+export default function Home() {
+  const [step, setStep] = useState(1);
+  const [text, setText] = useState("");
+  const [author, setAuthor] = useState("kim_hyeong_mo");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<CardsResult | null>(null);
+  const [images, setImages] = useState<{ index: number; png: string }[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState(0);
+  const [currentCard, setCurrentCard] = useState(0);
+  const [rendering, setRendering] = useState(false);
+  const textRef = useRef<HTMLTextAreaElement>(null);
+
+  async function handleSplit() {
+    if (!text.trim()) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/split", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      setResult(data);
+      setSelectedSlot(0);
+      setStep(2);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleRender() {
+    if (!result) return;
+    setRendering(true);
+    try {
+      const res = await fetch("/api/render", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cards: result.cards, author: `@${author}` }),
+      });
+      const data = await res.json();
+      setImages(data.images);
+      setCurrentCard(0);
+      setStep(3);
+    } finally {
+      setRendering(false);
+    }
+  }
+
+  function updateCard(idx: number, field: keyof Card, value: string) {
+    if (!result) return;
+    const updated = result.cards.map((c, i) =>
+      i === idx ? { ...c, [field]: value } : c
+    );
+    setResult({ ...result, cards: updated });
+  }
+
+  function addCard() {
+    if (!result) return;
+    const newCard: Card = {
+      index: result.cards.length + 1,
+      type: "text",
+      emoji: "✨",
+      title: "새 카드",
+      body: "내용을 입력하세요",
+      accent: "#888888",
+    };
+    setResult({ ...result, cards: [...result.cards, newCard] });
+    setSelectedSlot(result.cards.length);
+  }
+
+  function deleteCard(idx: number) {
+    if (!result || result.cards.length <= 2) return;
+    const updated = result.cards
+      .filter((_, i) => i !== idx)
+      .map((c, i) => ({ ...c, index: i + 1 }));
+    setResult({ ...result, cards: updated });
+    setSelectedSlot(Math.min(selectedSlot, updated.length - 1));
+  }
+
+  function downloadPng(index: number) {
+    const img = images.find((i) => i.index === index);
+    if (!img) return;
+    const a = document.createElement("a");
+    a.href = `data:image/png;base64,${img.png}`;
+    a.download = `card_${String(index).padStart(2, "0")}.png`;
+    a.click();
+  }
+
+  function downloadAll() {
+    images.forEach((img) => downloadPng(img.index));
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f5f4f0]">
+      {/* 헤더 */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="text-lg font-black tracking-tight">
+            Card<span className="text-red-600">Cast</span>
+          </div>
+          <div className="text-sm text-gray-400 font-semibold">@{author}</div>
+        </div>
+      </header>
+
+      {/* 스텝 바 */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-5xl mx-auto px-6 flex">
+          {[
+            { n: 1, label: "글 붙여넣기" },
+            { n: 2, label: "카드 구성" },
+            { n: 3, label: "미리보기 & 다운로드" },
+          ].map(({ n, label }, i, arr) => (
+            <div key={n} className="flex items-center">
+              <button
+                onClick={() => n < step && setStep(n)}
+                className={`flex items-center gap-2 px-5 h-12 text-sm font-semibold border-b-2 transition-all ${
+                  step === n
+                    ? "text-red-600 border-red-600"
+                    : step > n
+                    ? "text-green-600 border-green-500 cursor-pointer"
+                    : "text-gray-300 border-transparent cursor-default"
+                }`}
+              >
+                <span
+                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-black ${
+                    step === n
+                      ? "bg-red-600 text-white"
+                      : step > n
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-100 text-gray-400"
+                  }`}
+                >
+                  {step > n ? "✓" : n}
+                </span>
+                {label}
+              </button>
+              {i < arr.length - 1 && (
+                <span className="text-gray-200 mx-1">›</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 py-8">
+
+        {/* ── STEP 1 ── */}
+        {step === 1 && (
+          <div className="max-w-2xl mx-auto">
+            <h1 className="text-2xl font-black tracking-tight mb-1">칼럼을 붙여넣으세요</h1>
+            <p className="text-sm text-gray-400 mb-6">AI가 카드 단위로 나눠드릴게요. 이후 직접 편집할 수 있어요.</p>
+            <div className="bg-white rounded-2xl p-7 shadow-sm">
+              <textarea
+                ref={textRef}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="여기에 칼럼 전문을 붙여넣으세요..."
+                className="w-full h-64 border border-gray-200 rounded-xl p-4 text-sm leading-relaxed resize-none outline-none focus:border-red-400 transition-colors"
+              />
+              <div className="flex items-center gap-3 mt-4">
+                <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-3 py-2">
+                  <span className="text-sm text-gray-400">@</span>
+                  <input
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    className="text-sm outline-none w-36"
+                    placeholder="인스타 아이디"
+                  />
+                </div>
+                <span className="text-xs text-gray-300 flex-1">{text.length}자</span>
+                <button
+                  onClick={handleSplit}
+                  disabled={!text.trim() || loading}
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-200 text-white font-bold px-7 py-2.5 rounded-lg text-sm transition-colors"
+                >
+                  {loading ? "AI 분석 중..." : "카드뉴스 만들기 →"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 2 ── */}
+        {step === 2 && result && (
+          <div className="flex gap-7">
+            {/* 원문 패널 */}
+            <div className="w-72 flex-shrink-0 bg-white rounded-2xl p-5 shadow-sm self-start sticky top-20">
+              <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">원문</div>
+              <div className="text-xs leading-relaxed text-gray-500 max-h-[500px] overflow-y-auto whitespace-pre-wrap">
+                {text}
+              </div>
+            </div>
+
+            {/* 슬롯 목록 */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-black tracking-tight">{result.title}</h2>
+                  <p className="text-xs text-gray-400">클릭해서 수정 · 카드를 추가하거나 삭제할 수 있어요</p>
+                </div>
+                <button
+                  onClick={addCard}
+                  className="border border-dashed border-gray-300 hover:border-red-400 hover:text-red-500 text-gray-400 text-sm rounded-lg px-4 py-2 transition-colors"
+                >
+                  + 카드 추가
+                </button>
+              </div>
+
+              {result.cards.map((card, i) => (
+                <div
+                  key={i}
+                  className={`bg-white rounded-2xl mb-3 shadow-sm border-2 transition-all ${
+                    selectedSlot === i ? "border-red-500" : "border-transparent hover:border-gray-200"
+                  }`}
+                >
+                  <div
+                    className="flex items-center gap-3 px-5 py-3.5 cursor-pointer"
+                    onClick={() => setSelectedSlot(selectedSlot === i ? -1 : i)}
+                  >
+                    <span className="text-gray-300 text-lg select-none">⠿</span>
+                    <span className={`text-xs font-black w-6 ${selectedSlot === i ? "text-red-500" : "text-gray-300"}`}>
+                      {String(card.index).padStart(2, "0")}
+                    </span>
+                    <input
+                      value={card.emoji}
+                      onChange={(e) => updateCard(i, "emoji", e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xl w-8 bg-transparent border-none outline-none"
+                    />
+                    <input
+                      value={card.title}
+                      onChange={(e) => updateCard(i, "title", e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex-1 font-bold text-sm bg-transparent border-none outline-none"
+                    />
+                    <div
+                      className="w-4 h-4 rounded-full border border-gray-200 flex-shrink-0"
+                      style={{ background: card.accent }}
+                    />
+                    <span className="text-xs text-gray-300 bg-gray-50 px-2 py-0.5 rounded-full">{card.type}</span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); deleteCard(i); }}
+                      className="text-gray-300 hover:text-red-500 text-sm transition-colors ml-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {selectedSlot === i && (
+                    <div className="px-5 pb-4 pl-16">
+                      <textarea
+                        value={card.body}
+                        onChange={(e) => updateCard(i, "body", e.target.value)}
+                        className="w-full text-sm text-gray-600 border border-gray-200 rounded-lg p-3 resize-none h-20 outline-none focus:border-red-400 transition-colors leading-relaxed"
+                      />
+                      {card.type === "table" && card.data && (
+                        <div className="mt-2 p-2.5 bg-gray-50 rounded-lg text-xs text-gray-400">
+                          📊 표 카드 — 셀 편집은 곧 지원 예정
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              <div className="flex justify-end gap-3 mt-5">
+                <button
+                  onClick={() => setStep(1)}
+                  className="border border-gray-200 bg-white text-gray-500 font-semibold px-5 py-2.5 rounded-lg text-sm hover:border-gray-400 transition-colors"
+                >
+                  ← 다시 쓰기
+                </button>
+                <button
+                  onClick={handleRender}
+                  disabled={rendering}
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-200 text-white font-bold px-7 py-2.5 rounded-lg text-sm transition-colors"
+                >
+                  {rendering ? "PNG 생성 중..." : "미리보기 →"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── STEP 3 ── */}
+        {step === 3 && images.length > 0 && result && (
+          <div className="flex gap-7">
+            {/* 미니 목록 */}
+            <div className="w-48 flex-shrink-0 flex flex-col gap-2">
+              {result.cards.map((card, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentCard(i)}
+                  className={`flex items-center gap-2 bg-white rounded-xl px-3 py-2.5 border-2 text-left transition-all shadow-sm ${
+                    currentCard === i ? "border-red-500" : "border-transparent hover:border-gray-200"
+                  }`}
+                >
+                  <span className={`text-xs font-black w-5 ${currentCard === i ? "text-red-500" : "text-gray-300"}`}>
+                    {String(card.index).padStart(2, "0")}
+                  </span>
+                  <span className="text-base">{card.emoji}</span>
+                  <span className="text-xs font-bold text-gray-600 truncate">{card.title}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* 미리보기 */}
+            <div className="flex-1">
+              <div className="bg-white rounded-2xl p-7 shadow-sm">
+                {images[currentCard] && (
+                  <div className="w-full max-w-md mx-auto aspect-square rounded-xl overflow-hidden shadow-lg">
+                    <img
+                      src={`data:image/png;base64,${images[currentCard].png}`}
+                      alt={`card ${currentCard + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex items-center justify-between mt-5">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setCurrentCard(Math.max(0, currentCard - 1))}
+                      className="border border-gray-200 rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:border-gray-400 transition-colors"
+                    >
+                      ← 이전
+                    </button>
+                    <button
+                      onClick={() => setCurrentCard(Math.min(result.cards.length - 1, currentCard + 1))}
+                      className="border border-gray-200 rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:border-gray-400 transition-colors"
+                    >
+                      다음 →
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => downloadPng(result.cards[currentCard].index)}
+                    className="bg-gray-900 text-white font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors"
+                  >
+                    ⬇ 이 카드 PNG
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-5 shadow-sm mt-5 flex items-center justify-between">
+                <div>
+                  <div className="font-bold">전체 {result.cards.length}장 완성</div>
+                  <div className="text-xs text-gray-400 mt-0.5">편집하려면 카드 구성으로 돌아가세요</div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setImages([]); setStep(2); }}
+                    className="border border-gray-200 bg-white text-gray-500 font-semibold px-4 py-2.5 rounded-lg text-sm hover:border-gray-400 transition-colors"
+                  >
+                    ← 카드 편집
+                  </button>
+                  <button
+                    onClick={downloadAll}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-lg text-sm transition-colors"
+                  >
+                    ⬇ 전체 다운로드
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
