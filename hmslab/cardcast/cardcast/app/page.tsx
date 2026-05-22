@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
+import { toPng } from "html-to-image";
+import CardView from "./CardView";
 
 type Cell = { label: string; desc: string; color: string; text_color: string };
 type CardData = {
@@ -30,6 +32,7 @@ export default function Home() {
   const [currentCard, setCurrentCard] = useState(0);
   const [rendering, setRendering] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   async function handleSplit() {
     if (!text.trim()) return;
@@ -52,18 +55,34 @@ export default function Home() {
   async function handleRender() {
     if (!result) return;
     setRendering(true);
-    try {
-      const res = await fetch("/api/render", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cards: result.cards, author: `@${author}` }),
-      });
-      const data = await res.json();
-      setImages(data.images);
-      setCurrentCard(0);
-      setStep(3);
-    } finally {
-      setRendering(false);
+    setStep(3);
+    setCurrentCard(0);
+    // 이미지는 Step 3 마운트 후 캡처
+    setImages([]);
+    setRendering(false);
+  }
+
+  const captureCard = useCallback(async (idx: number): Promise<string | null> => {
+    const el = cardRefs.current[idx];
+    if (!el) return null;
+    return toPng(el, { width: 1080, height: 1080, pixelRatio: 1 });
+  }, []);
+
+  async function downloadSingle(idx: number) {
+    const dataUrl = await captureCard(idx);
+    if (!dataUrl) return;
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `card_${String(idx + 1).padStart(2, "0")}.png`;
+    a.click();
+  }
+
+  async function downloadAll() {
+    if (!result) return;
+    for (let i = 0; i < result.cards.length; i++) {
+      setCurrentCard(i);
+      await new Promise((r) => setTimeout(r, 300));
+      await downloadSingle(i);
     }
   }
 
@@ -304,7 +323,7 @@ export default function Home() {
         )}
 
         {/* ── STEP 3 ── */}
-        {step === 3 && images.length > 0 && result && (
+        {step === 3 && result && (
           <div className="flex gap-7">
             {/* 미니 목록 */}
             <div className="w-48 flex-shrink-0 flex flex-col gap-2">
@@ -328,15 +347,21 @@ export default function Home() {
             {/* 미리보기 */}
             <div className="flex-1">
               <div className="bg-white rounded-2xl p-7 shadow-sm">
-                {images[currentCard] && (
-                  <div className="w-full max-w-md mx-auto aspect-square rounded-xl overflow-hidden shadow-lg">
-                    <img
-                      src={`data:image/png;base64,${images[currentCard].png}`}
-                      alt={`card ${currentCard + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+                {/* 실제 카드 DOM — html-to-image로 PNG 캡처 */}
+                <div className="w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-lg"
+                  style={{ position: "relative", height: 0, paddingBottom: "100%" }}>
+                  <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", overflow: "hidden" }}>
+                    <div style={{ width: 1080, height: 1080, transform: "scale(0.37)", transformOrigin: "top left" }}>
+                      <CardView
+                        card={result.cards[currentCard]}
+                        total={result.cards.length}
+                        author={`@${author}`}
+                        ref={(el) => { cardRefs.current[currentCard] = el; }}
+                      />
+                    </div>
                   </div>
-                )}
+                </div>
+
                 <div className="flex items-center justify-between mt-5">
                   <div className="flex gap-2">
                     <button
@@ -353,7 +378,7 @@ export default function Home() {
                     </button>
                   </div>
                   <button
-                    onClick={() => downloadPng(result.cards[currentCard].index)}
+                    onClick={() => downloadSingle(currentCard)}
                     className="bg-gray-900 text-white font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors"
                   >
                     ⬇ 이 카드 PNG
@@ -363,12 +388,12 @@ export default function Home() {
 
               <div className="bg-white rounded-2xl p-5 shadow-sm mt-5 flex items-center justify-between">
                 <div>
-                  <div className="font-bold">전체 {result.cards.length}장 완성</div>
+                  <div className="font-bold">전체 {result.cards.length}장</div>
                   <div className="text-xs text-gray-400 mt-0.5">편집하려면 카드 구성으로 돌아가세요</div>
                 </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => { setImages([]); setStep(2); }}
+                    onClick={() => setStep(2)}
                     className="border border-gray-200 bg-white text-gray-500 font-semibold px-4 py-2.5 rounded-lg text-sm hover:border-gray-400 transition-colors"
                   >
                     ← 카드 편집

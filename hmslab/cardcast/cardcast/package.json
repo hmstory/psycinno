@@ -10,6 +10,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",
     "@sparticuz/chromium-min": "^148.0.0",
+    "html-to-image": "^1.11.13",
     "next": "16.2.6",
     "playwright": "^1.60.0",
     "playwright-core": "^1.60.0",
