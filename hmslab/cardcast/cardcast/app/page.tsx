@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { toPng } from "html-to-image";
 import CardView from "./CardView";
 
@@ -41,6 +41,18 @@ export default function Home() {
   const [rendering, setRendering] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+  const [cardScale, setCardScale] = useState(0.37);
+
+  useEffect(() => {
+    const el = previewContainerRef.current;
+    if (!el) return;
+    const obs = new ResizeObserver(([entry]) => {
+      setCardScale(entry.contentRect.width / 1080);
+    });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [step]);
 
   function saveDraft(newResult: CardsResult | null, newText: string, newAuthor: string) {
     if (typeof window === "undefined") return;
@@ -96,9 +108,21 @@ export default function Home() {
   async function downloadSingle(idx: number) {
     const dataUrl = await captureCard(idx);
     if (!dataUrl) return;
+    const filename = `card_${String(idx + 1).padStart(2, "0")}.png`;
+
+    // iOS Safari: Web Share API로 앨범 저장 유도
+    if (navigator.canShare) {
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], filename, { type: "image/png" });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        return;
+      }
+    }
+    // fallback: 일반 다운로드
     const a = document.createElement("a");
     a.href = dataUrl;
-    a.download = `card_${String(idx + 1).padStart(2, "0")}.png`;
+    a.download = filename;
     a.click();
   }
 
@@ -448,12 +472,12 @@ export default function Home() {
 
             {/* 미리보기 */}
             <div className="flex-1">
-              <div className="bg-white rounded-2xl p-7 shadow-sm">
-                {/* 실제 카드 DOM — html-to-image로 PNG 캡처 */}
-                <div className="w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-lg"
+              <div className="bg-white rounded-2xl p-4 sm:p-7 shadow-sm">
+                {/* 미리보기 — 컨테이너 너비 기반 동적 scale */}
+                <div ref={previewContainerRef} className="w-full rounded-xl overflow-hidden shadow-lg"
                   style={{ position: "relative", height: 0, paddingBottom: "100%" }}>
                   <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", overflow: "hidden" }}>
-                    <div style={{ width: 1080, height: 1080, transform: "scale(0.37)", transformOrigin: "top left" }}>
+                    <div style={{ width: 1080, height: 1080, transform: `scale(${cardScale})`, transformOrigin: "top left" }}>
                       <CardView
                         card={result.cards[currentCard]}
                         total={result.cards.length}
@@ -464,26 +488,25 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-5">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setCurrentCard(Math.max(0, currentCard - 1))}
-                      className="border border-gray-200 rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:border-gray-400 transition-colors"
-                    >
-                      ← 이전
-                    </button>
-                    <button
-                      onClick={() => setCurrentCard(Math.min(result.cards.length - 1, currentCard + 1))}
-                      className="border border-gray-200 rounded-lg px-4 py-2 text-sm font-semibold text-gray-500 hover:border-gray-400 transition-colors"
-                    >
-                      다음 →
-                    </button>
-                  </div>
+                <div className="flex items-center gap-2 mt-4">
+                  <button
+                    onClick={() => setCurrentCard(Math.max(0, currentCard - 1))}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold text-gray-500 hover:border-gray-400 transition-colors"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={() => setCurrentCard(Math.min(result.cards.length - 1, currentCard + 1))}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold text-gray-500 hover:border-gray-400 transition-colors"
+                  >
+                    →
+                  </button>
+                  <span className="text-xs text-gray-400 flex-1 text-center">{currentCard + 1} / {result.cards.length}</span>
                   <button
                     onClick={() => downloadSingle(currentCard)}
                     className="bg-gray-900 text-white font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-700 transition-colors"
                   >
-                    ⬇ 이 카드 PNG
+                    ⬇ 저장
                   </button>
                 </div>
               </div>
