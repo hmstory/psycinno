@@ -184,21 +184,22 @@ export default function Home() {
                 placeholder="여기에 칼럼 전문을 붙여넣으세요..."
                 className="w-full h-64 border border-gray-200 rounded-xl p-4 text-sm leading-relaxed resize-none outline-none focus:border-red-400 transition-colors"
               />
-              <div className="flex items-center gap-3 mt-4">
-                <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-3 py-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-4">
+                <div className="flex items-center gap-1 border border-gray-200 rounded-lg px-3 py-2 w-full sm:w-auto">
                   <span className="text-sm text-gray-400">@</span>
                   <input
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className="text-sm outline-none w-36"
+                    className="text-sm outline-none flex-1 sm:w-36"
                     placeholder="인스타 아이디"
                   />
+                  <span className="text-xs text-gray-300 sm:hidden">{text.length}자</span>
                 </div>
-                <span className="text-xs text-gray-300 flex-1">{text.length}자</span>
+                <span className="text-xs text-gray-300 hidden sm:block flex-1">{text.length}자</span>
                 <button
                   onClick={handleSplit}
                   disabled={!text.trim() || loading}
-                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-200 text-white font-bold px-7 py-2.5 rounded-lg text-sm transition-colors"
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-gray-200 text-white font-bold px-7 py-3 rounded-lg text-sm transition-colors w-full sm:w-auto"
                 >
                   {loading ? "AI 분석 중..." : "카드뉴스 만들기 →"}
                 </button>
