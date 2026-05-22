@@ -137,16 +137,20 @@ export default function Home() {
   async function renderVideo(idx: number) {
     if (!result) return;
     const card = result.cards[idx];
+    const isRoc = card.type === "roc";
+    const body = isRoc
+      ? { type: "roc", accent: card.accent, title: card.title, targetDPrime: (card.data as unknown as { d_prime?: number })?.d_prime ?? 1.5 }
+      : { card, total: result.cards.length, author: `@${author}` };
     const res = await fetch("/api/render-video", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ card, total: result.cards.length, author: `@${author}` }),
+      body: JSON.stringify(body),
     });
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `card_${String(idx + 1).padStart(2, "0")}.mp4`;
+    a.download = isRoc ? "roc.mp4" : `card_${String(idx + 1).padStart(2, "0")}.mp4`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -179,6 +183,22 @@ export default function Home() {
       title: "새 카드",
       body: "내용을 입력하세요",
       accent: "#888888",
+    };
+    setResult({ ...result, cards: [...result.cards, newCard] });
+    setSelectedSlot(result.cards.length);
+  }
+
+  function addRocCard() {
+    if (!result) return;
+    const accent = result.cards[0]?.accent ?? "#e53e3e";
+    const newCard: Card = {
+      index: result.cards.length + 1,
+      type: "roc",
+      emoji: "📈",
+      title: "수신자조작특성 곡선",
+      body: "d′이 클수록 탐지 성능이 높아집니다",
+      accent,
+      data: { d_prime: 1.5 } as unknown as CardData,
     };
     setResult({ ...result, cards: [...result.cards, newCard] });
     setSelectedSlot(result.cards.length);
@@ -332,12 +352,20 @@ export default function Home() {
                   <h2 className="text-lg font-black tracking-tight">{result.title}</h2>
                   <p className="text-xs text-gray-400">클릭해서 수정 · 카드를 추가하거나 삭제할 수 있어요</p>
                 </div>
-                <button
-                  onClick={addCard}
-                  className="border border-dashed border-gray-300 hover:border-red-400 hover:text-red-500 text-gray-400 text-sm rounded-lg px-4 py-2 transition-colors"
-                >
-                  + 카드 추가
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={addCard}
+                    className="border border-dashed border-gray-300 hover:border-red-400 hover:text-red-500 text-gray-400 text-sm rounded-lg px-4 py-2 transition-colors"
+                  >
+                    + 카드 추가
+                  </button>
+                  <button
+                    onClick={addRocCard}
+                    className="border border-dashed border-blue-300 hover:border-blue-500 hover:text-blue-600 text-blue-400 text-sm rounded-lg px-4 py-2 transition-colors"
+                  >
+                    📈 ROC 추가
+                  </button>
+                </div>
               </div>
 
               {result.cards.map((card, i) => (

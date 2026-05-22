@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
+import { rocPoints, rocKeyPoints } from "./remotion/rocMath";
 
 type Cell = { label: string; desc: string; color: string; text_color: string };
 type CardData = { col_headers?: string[]; row_headers?: string[]; cells?: Cell[] };
@@ -133,6 +134,71 @@ const CardView = forwardRef<HTMLDivElement, Props>(({ card, total, author }, ref
           <div style={{ height: "100%", width: `${pct}%`, background: card.accent, borderRadius: "0 4px 4px 0" }} />
         </div>
         {author && <div style={{ position: "absolute", bottom: 32, right: 60, fontSize: 26, color: "#bbb", fontWeight: 600 }}>{author}</div>}
+      </div>
+    );
+  }
+
+  // ── ROC ──
+  if (card.type === "roc") {
+    const dPrime = (card.data as unknown as { d_prime?: number })?.d_prime ?? 1.5;
+    const pts = rocPoints(dPrime);
+    const { conservative, liberal, optimal } = rocKeyPoints(dPrime);
+    const S = 680; // SVG 크기
+    const pad = 80;
+    const toX = (fa: number) => pad + fa * S;
+    const toY = (hit: number) => pad + (1 - hit) * S;
+    const pathD = pts.map((([fa, hit], i) => `${i === 0 ? "M" : "L"}${toX(fa).toFixed(1)},${toY(hit).toFixed(1)}`)).join(" ");
+    const diagD = `M${pad},${pad+S} L${pad+S},${pad}`;
+
+    const Dot = ({ fa, hit, label, color }: { fa: number; hit: number; label: string; color: string }) => (
+      <g>
+        <circle cx={toX(fa)} cy={toY(hit)} r={14} fill={color} stroke="white" strokeWidth={4} />
+        <text x={toX(fa) + 20} y={toY(hit) + 6} fontSize={26} fill={color} fontWeight={700}>{label}</text>
+        <text x={toX(fa) + 20} y={toY(hit) + 36} fontSize={20} fill="#888">{`FA=${(fa*100).toFixed(0)}%  Hit=${(hit*100).toFixed(0)}%`}</text>
+      </g>
+    );
+
+    return (
+      <div ref={ref} style={{
+        width: 1080, height: 1080, background: "#fff", fontFamily: "'Apple SD Gothic Neo','Noto Sans KR',sans-serif",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+        padding: "60px 60px 40px", position: "relative", boxSizing: "border-box",
+      }}>
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 12, background: card.accent }} />
+        <div style={{ position: "absolute", top: 52, right: 68, fontSize: 26, fontWeight: 700, color: "#ccc" }}>{card.index}/{total}</div>
+        <div style={{ fontSize: 48, fontWeight: 900, color: "#111", textAlign: "center", marginBottom: 8, letterSpacing: "-0.03em" }}>
+          {card.emoji} {card.title}
+        </div>
+        <div style={{ fontSize: 26, color: "#888", marginBottom: 16, textAlign: "center" }}>{card.body}</div>
+        <svg width={S + pad*2} height={S + pad*2} style={{ overflow: "visible" }}>
+          {/* 대각선 (찍어 찍) */}
+          <path d={diagD} stroke="#e0e0e0" strokeWidth={2} strokeDasharray="8,6" fill="none" />
+          {/* ROC 곡선 */}
+          <path d={pathD} stroke={card.accent} strokeWidth={5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          {/* 축 */}
+          <line x1={pad} y1={pad} x2={pad} y2={pad+S} stroke="#333" strokeWidth={3} />
+          <line x1={pad} y1={pad+S} x2={pad+S} y2={pad+S} stroke="#333" strokeWidth={3} />
+          {/* 축 레이블 */}
+          <text x={pad + S/2} y={pad+S+60} textAnchor="middle" fontSize={28} fill="#555" fontWeight={600}>오경보율 (False Alarm Rate)</text>
+          <text x={pad-60} y={pad + S/2} textAnchor="middle" fontSize={28} fill="#555" fontWeight={600} transform={`rotate(-90, ${pad-60}, ${pad+S/2})`}>탐지율 (Hit Rate)</text>
+          {/* 눈금 */}
+          {[0, 0.25, 0.5, 0.75, 1].map(v => (
+            <g key={v}>
+              <text x={toX(v)} y={pad+S+36} textAnchor="middle" fontSize={22} fill="#aaa">{v}</text>
+              <text x={pad-12} y={toY(v)+8} textAnchor="end" fontSize={22} fill="#aaa">{v}</text>
+            </g>
+          ))}
+          {/* d' 표기 */}
+          <text x={pad+S-20} y={pad+40} textAnchor="end" fontSize={28} fill={card.accent} fontWeight={700}>d′ = {dPrime.toFixed(1)}</text>
+          {/* 3개 기준점 */}
+          <Dot {...conservative} />
+          <Dot {...liberal} />
+          <Dot {...optimal} />
+        </svg>
+        <div style={{ position: "absolute", bottom: 0, left: 12, right: 0, height: 7, background: "#f0f0f0" }}>
+          <div style={{ height: "100%", width: `${pct}%`, background: card.accent, borderRadius: "0 4px 4px 0" }} />
+        </div>
+        {author && <div style={{ position: "absolute", bottom: 28, right: 56, fontSize: 24, color: "#bbb", fontWeight: 600 }}>{author}</div>}
       </div>
     );
   }
