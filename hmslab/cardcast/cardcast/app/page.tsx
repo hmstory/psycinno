@@ -18,7 +18,15 @@ type Card = {
   body: string;
   accent: string;
   data?: CardData;
+  template?: string;
 };
+
+const TEMPLATES = [
+  { id: "classic", label: "Classic", bg: "#fff", fg: "#111" },
+  { id: "dark",    label: "Dark",    bg: "#111", fg: "#fff" },
+  { id: "gradient",label: "Gradient",bg: "linear-gradient(135deg,#e0f0ff,#fff)", fg: "#111" },
+  { id: "quote",   label: "Quote",   bg: "#fff", fg: "#111" },
+];
 type CardsResult = { title: string; cards: Card[] };
 
 const STORAGE_KEY = "cardcast_draft";
@@ -357,6 +365,23 @@ export default function Home() {
 
                   {selectedSlot === i && (
                     <div className="px-5 pb-4 pl-16">
+                      {/* 템플릿 선택 */}
+                      <div className="flex gap-2 mb-3">
+                        {TEMPLATES.map((t) => (
+                          <button
+                            key={t.id}
+                            onClick={() => updateCard(i, "template" as keyof Card, t.id)}
+                            className={`flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${
+                              (card.template ?? "classic") === t.id
+                                ? "border-red-500 text-red-600"
+                                : "border-gray-200 text-gray-400 hover:border-gray-400"
+                            }`}
+                            style={{ background: t.bg }}
+                          >
+                            <span style={{ color: t.fg === "#fff" ? "#fff" : undefined }}>{t.label}</span>
+                          </button>
+                        ))}
+                      </div>
                       <textarea
                         value={card.body}
                         onChange={(e) => updateCard(i, "body", e.target.value)}
