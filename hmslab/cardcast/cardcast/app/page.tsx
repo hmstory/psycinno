@@ -174,34 +174,35 @@ export default function Home() {
     saveDraft(next, text, author);
   }
 
+  function insertCardAt(newCard: Omit<Card, "index">, afterIdx: number) {
+    if (!result) return;
+    const insertAt = afterIdx + 1;
+    const updated = [
+      ...result.cards.slice(0, insertAt),
+      { ...newCard, index: insertAt + 1 },
+      ...result.cards.slice(insertAt),
+    ].map((c, i) => ({ ...c, index: i + 1 }));
+    const next = { ...result, cards: updated };
+    setResult(next);
+    saveDraft(next, text, author);
+    setSelectedSlot(insertAt);
+  }
+
   function addCard() {
     if (!result) return;
-    const newCard: Card = {
-      index: result.cards.length + 1,
-      type: "text",
-      emoji: "✨",
-      title: "새 카드",
-      body: "내용을 입력하세요",
-      accent: "#888888",
-    };
-    setResult({ ...result, cards: [...result.cards, newCard] });
-    setSelectedSlot(result.cards.length);
+    insertCardAt({
+      type: "text", emoji: "✨", title: "새 카드", body: "내용을 입력하세요", accent: "#888888",
+    }, selectedSlot);
   }
 
   function addRocCard() {
     if (!result) return;
     const accent = result.cards[0]?.accent ?? "#e53e3e";
-    const newCard: Card = {
-      index: result.cards.length + 1,
-      type: "roc",
-      emoji: "📈",
-      title: "수신자조작특성 곡선",
-      body: "d′이 클수록 탐지 성능이 높아집니다",
-      accent,
+    insertCardAt({
+      type: "roc", emoji: "📈", title: "수신자조작특성 곡선",
+      body: "d′이 클수록 탐지 성능이 높아집니다", accent,
       data: { d_prime: 1.5 } as unknown as CardData,
-    };
-    setResult({ ...result, cards: [...result.cards, newCard] });
-    setSelectedSlot(result.cards.length);
+    }, selectedSlot);
   }
 
   function updateCardData(cardIdx: number, patch: Partial<CardData>) {
