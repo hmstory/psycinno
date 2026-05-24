@@ -348,6 +348,71 @@ body {
 </div>
 
 
+<!-- RAG 구조 슬라이드 -->
+<div class="slide" style="font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;">
+  <div class="hd">
+    <span class="badge" style="background:#e8f0fe;color:#1a56db;border:1.5px solid #1a56db;">RAG 구조</span>
+    <span class="hd-title">챗봇 작동 흐름 — 7개 블록</span>
+    <span class="hd-sub">Prompt Engineering 기반 모의설계</span>
+  </div>
+  <div class="bd" style="padding:18px 28px;align-items:center;justify-content:center;">
+    <div style="width:100%;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:160px;background:#f0f4ff;border:2px solid #1a56db;border-radius:10px;padding:10px 14px;flex-shrink:0;">
+          <div style="font-size:10px;font-weight:800;color:#1a56db;letter-spacing:1px;">GREETING</div>
+          <div style="font-size:14px;font-weight:700;color:#111;margin-top:2px;">그리팅_통제감</div>
+          <div style="font-size:11px;color:#555;margin-top:3px;">소개 + LOC 외부링크</div>
+        </div>
+        <svg width="28" height="16"><path d="M2 8 L22 8 M16 3 L22 8 L16 13" stroke="#999" stroke-width="2" fill="none"/></svg>
+        <div style="flex:1;background:#fff8e1;border:2px solid #f59e0b;border-radius:10px;padding:10px 14px;">
+          <div style="font-size:10px;font-weight:800;color:#b45309;letter-spacing:1px;">RAG 1</div>
+          <div style="font-size:14px;font-weight:700;color:#111;margin-top:2px;">첫발화 · 위기선별</div>
+          <div style="font-size:11px;color:#555;margin-top:3px;">위기 키워드 감지 → RAG_6 분기</div>
+        </div>
+        <svg width="28" height="16"><path d="M2 8 L22 8 M16 3 L22 8 L16 13" stroke="#999" stroke-width="2" fill="none"/></svg>
+        <div style="flex:1;background:#f0fdf4;border:2px solid #16a34a;border-radius:10px;padding:10px 14px;">
+          <div style="font-size:10px;font-weight:800;color:#15803d;letter-spacing:1px;">RAG 2</div>
+          <div style="font-size:14px;font-weight:700;color:#111;margin-top:2px;">체크인</div>
+          <div style="font-size:11px;color:#555;margin-top:3px;">일상 + SUC 0~10 수집</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding-left:198px;">
+        <svg width="16" height="28" style="flex-shrink:0;"><path d="M8 2 L8 22 M3 16 L8 22 L13 16" stroke="#999" stroke-width="2" fill="none"/></svg>
+        <div style="flex:1;display:flex;gap:10px;">
+          <div style="flex:1;background:#fdf2f8;border:2px solid #a855f7;border-radius:10px;padding:10px 14px;">
+            <div style="font-size:10px;font-weight:800;color:#7e22ce;letter-spacing:1px;">RAG 3</div>
+            <div style="font-size:13px;font-weight:700;color:#111;margin-top:2px;">행동설계</div>
+            <div style="font-size:11px;color:#555;margin-top:3px;">Behavioral Experiment<br>SMART-Tiny 실험</div>
+          </div>
+          <div style="flex:1;background:#fff1f2;border:2px solid #f43f5e;border-radius:10px;padding:10px 14px;">
+            <div style="font-size:10px;font-weight:800;color:#be123c;letter-spacing:1px;">RAG 4</div>
+            <div style="font-size:13px;font-weight:700;color:#111;margin-top:2px;">인지재구성</div>
+            <div style="font-size:11px;color:#555;margin-top:3px;">CPT Stuck Point<br>소크라테스식 질문</div>
+          </div>
+          <div style="flex:1;background:#f0f9ff;border:2px solid #0ea5e9;border-radius:10px;padding:10px 14px;">
+            <div style="font-size:10px;font-weight:800;color:#0369a1;letter-spacing:1px;">RAG 5</div>
+            <div style="font-size:13px;font-weight:700;color:#111;margin-top:2px;">정서조율</div>
+            <div style="font-size:11px;color:#555;margin-top:3px;">Validation<br>Normalization</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding-left:198px;">
+        <div style="width:90px;flex-shrink:0;"></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="font-size:11px;color:#c0392b;font-weight:700;">⚠ 위기 감지 시</div>
+          <svg width="22" height="16"><path d="M2 8 L18 8 M13 3 L18 8 L13 13" stroke="#c0392b" stroke-width="2" fill="none"/></svg>
+          <div style="background:#fde8e8;border:2px solid #e74c3c;border-radius:10px;padding:8px 14px;">
+            <div style="font-size:10px;font-weight:800;color:#c0392b;letter-spacing:1px;">RAG 6</div>
+            <div style="font-size:13px;font-weight:700;color:#111;margin-top:2px;">위기대응</div>
+            <div style="font-size:11px;color:#555;margin-top:3px;">1393 · 1577-1700 · 스마일센터</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">모의설계 — 실제 서비스 미배포 · 플랫폼: 165.132.92.61/mh_class/</div>
+</div>
+
 <!-- ════ SLIDE 1: AS-IS ════ -->
 <div class="slide">
   <div class="hd">
@@ -641,6 +706,7 @@ body {
   </div>
   <div class="footer">Resick & Schnicke (1992) CPT · Linehan (1993) DBT · Beck (1979) ABC</div>
 </div>
+
 
 </body>
 </html>
