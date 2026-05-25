@@ -1,5 +1,23 @@
 # PROGRESS.md
 
+## 2026-05-25
+
+### 완료
+- /extract-figures 스킬 — Ch.10 멀티태스킹 PDF에서 fig10.1~10.6 추출 (PyMuPDF 벡터 크롭)
+- /weekly-report 스킬 — W12 주교재 Ch.10 Decision Making 보고서 배포 (notebooklm 모드)
+  - w12-reports/ 폴더 생성, index.html + w12-chapter10.md + 이미지 6개
+  - 기존 HTML 14개 페이지 nav 누적 업데이트 후 커밋·푸시 완료
+- RAG 7블록 전체 작성 완료 (피해자전담경찰봇 CBT 설계)
+- 플랫폼 출력 규칙 확정: 봇 발화만 출력, JSON/분석 텍스트 화면 노출 금지
+
+### 결정 사항
+- RAG_4 소크라테스 질문 단순화 백로그로 이관 (현재 너무 길고 학술적 → 15자 이내)
+- CBT + RAG 슬라이드 배포 완료, CSE/PACT 척도 교수 자문 예정
+
+### 배포
+- W12 인지공학심리학 보고서: https://hmstory.github.io/psycinno/cognitive-engineering/w12-reports/
+- CBT + RAG 슬라이드: https://hmstory.github.io/psycinno/psychology-ai/slides/cbt-asis-tobe.html
+
 ## 2026-05-13~14 — 연구 프로포절 2차 보강 + 팟미니멀 UI 프로토타입 배포
 
 ### 완료한 것
