@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피해자전담경찰봇 CBT 설계 문서</title>
+  <style>
+    :root {
+      --bg: #f8f6f0;
+      --surface: #f0ede6;
+      --card: #e8e4dc;
+      --text: #222222;
+      --heading: #000000;
+      --accent: #111111;
+      --accent2: #444444;
+      --accent-soft: #555555;
+      --highlight-bg: rgba(0,0,0,0.08);
+      --code-bg: #e8e8e8;
+      --border: #cccccc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 300; transition: width 0.1s linear; width: 0%;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.85; font-size: 17px;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px 16px 80px; }
+
+    #content h1 {
+      font-size: 1.6rem; color: var(--heading); margin: 2.5rem 0 1rem;
+      padding-bottom: 10px; border-bottom: 2px solid var(--accent);
+    }
+    #content h2 { font-size: 1.35rem; color: var(--accent); margin: 2rem 0 0.8rem; }
+    #content h3 {
+      font-size: 1.15rem; color: var(--accent-soft); margin: 2rem 0 0.8rem;
+      background: var(--card); padding: 14px 18px; border-radius: 10px;
+      border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    #content p { margin: 0.7rem 0; }
+    #content ul, #content ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    #content li { margin: 0.35rem 0; }
+    #content strong { color: #000; font-weight: 700; }
+    #content img {
+      max-width: 100%; height: auto; display: block; margin: 1.2rem auto;
+      border-radius: 10px; background: #fff; padding: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3); cursor: zoom-in; transition: transform 0.2s;
+    }
+    #content img:hover { transform: scale(1.02); }
+    #content blockquote {
+      border-left: 4px solid var(--accent); padding: 10px 18px; margin: 1rem 0;
+      background: var(--surface); border-radius: 0 10px 10px 0; font-size: 0.95em;
+    }
+    #content table {
+      width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;
+      display: block; overflow-x: auto;
+    }
+    #content th, #content td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+    #content th { background: var(--surface); color: var(--accent); font-weight: 600; }
+    #content tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+    #content hr { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+
+    .tbd {
+      display: inline-block; background: #e0e0e0; color: #888;
+      font-size: 0.75rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 4px; margin-left: 8px; vertical-align: middle;
+    }
+
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 1.2rem 0;
+    }
+    .info-card {
+      background: var(--card); border-radius: 10px; padding: 16px 20px;
+      border-left: 4px solid var(--accent);
+    }
+    .info-card .label { font-size: 0.8rem; color: var(--accent-soft); font-weight: 600; margin-bottom: 4px; }
+    .info-card .value { font-size: 1rem; color: var(--heading); font-weight: 600; }
+
+    .alert-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px; margin: 1.2rem 0;
+      border-left: 4px solid #888;
+    }
+
+    .nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+    }
+    .nav a {
+      color: var(--text); text-decoration: none; font-size: 0.85rem; padding: 6px 14px;
+      border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap;
+    }
+    .nav a:hover { border-color: var(--accent); color: var(--accent); }
+    .nav a.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .top-btn {
+      position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; display: none; align-items: center;
+      justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 200;
+    }
+
+    .lightbox {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9); z-index: 500; justify-content: center; align-items: center;
+      cursor: zoom-out; padding: 20px;
+    }
+    .lightbox.show { display: flex; }
+    .lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 8px; }
+    .lightbox-close {
+      position: fixed; top: 16px; right: 20px; color: #fff; font-size: 32px;
+      cursor: pointer; z-index: 501; opacity: 0.7;
+    }
+    .lightbox-close:hover { opacity: 1; }
+
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <a href="#overview" class="active">개요</a>
+  <a href="#persona">페르소나 <span class="tbd">TBD</span></a>
+  <a href="#design">CBT 설계 <span class="tbd">TBD</span></a>
+  <a href="#rag">RAG 구조 <span class="tbd">TBD</span></a>
+  <a href="#scenario">세션 흐름 <span class="tbd">TBD</span></a>
+  <a href="#safety">안전 규칙 <span class="tbd">TBD</span></a>
+  <a href="#backlog">백로그 <span class="tbd">TBD</span></a>
+</nav>
+
+<div class="container">
+  <div id="content">
+
+    <h1 id="overview">피해자전담경찰봇 — CBT 설계 문서</h1>
+    <p>작성일: 2026-05-26 · 심리학기반AI 수업 (정경미 교수)</p>
+
+    <hr>
+
+    <h2>개요</h2>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="label">대상</div>
+        <div class="value">범죄 피해자</div>
+      </div>
+      <div class="info-card">
+        <div class="label">목적</div>
+        <div class="value">범죄 피해 후 상실된 통제감 회복</div>
+      </div>
+      <div class="info-card">
+        <div class="label">챗봇 개입 위치</div>
+        <div class="value">전담경찰관 면담 후 → 챗봇 → 후속지원</div>
+      </div>
+      <div class="info-card">
+        <div class="label">세션 형태</div>
+        <div class="value">1회성 CBT 쇼케이스</div>
+      </div>
+    </div>
+
+    <h3>현황 — 피해자 지원 사각지대</h3>
+
+    <img src="support-process.png" alt="범죄피해자 심리지원 절차">
+
+    <div class="alert-box">
+      <p>현재 범죄피해자 심리지원은 <strong>피해자가 직접 신청할 경우에만</strong> 2~3차례 상담을 제공하는 구조입니다.</p>
+      <p>이로 인해 <strong>중대 범죄 피해자나 응급을 요하는 피해자</strong>만 전문 상담사를 만날 수 있고, 그 외 경범죄 피해자는 심리지원 사각지대에 놓입니다.</p>
+    </div>
+
+  </div>
+</div>
+
+<button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close" onclick="closeLightbox()">×</span>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+  // 진행 바
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progressBar');
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    el.style.width = pct + '%';
+    document.getElementById('topBtn').style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+
+  // 라이트박스
+  document.querySelectorAll('#content img').forEach(img => {
+    img.addEventListener('click', () => {
+      document.getElementById('lightboxImg').src = img.src;
+      document.getElementById('lightbox').classList.add('show');
+    });
+  });
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('show');
+  }
+
+  // 네비 활성화
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    navLinks.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
