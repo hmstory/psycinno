@@ -130,12 +130,11 @@
 
 <nav class="nav">
   <a href="#overview" class="active">개요</a>
-  <a href="#persona">페르소나 <span class="tbd">TBD</span></a>
-  <a href="#design">CBT 설계 <span class="tbd">TBD</span></a>
-  <a href="#rag">RAG 구조 <span class="tbd">TBD</span></a>
-  <a href="#scenario">세션 흐름 <span class="tbd">TBD</span></a>
-  <a href="#safety">안전 규칙 <span class="tbd">TBD</span></a>
-  <a href="#backlog">백로그 <span class="tbd">TBD</span></a>
+  <a href="#persona">페르소나</a>
+  <a href="#design">CBT 설계</a>
+  <a href="#rag">RAG 구조</a>
+  <a href="#scenario">세션 흐름</a>
+  <a href="#safety">안전 규칙</a>
 </nav>
 
 <div class="container">
@@ -175,6 +174,253 @@
       <p>현재 범죄피해자 심리지원은 <strong>피해자가 직접 신청할 경우에만</strong> 2~3차례 상담을 제공하는 구조입니다.</p>
       <p>이로 인해 <strong>중대 범죄 피해자나 응급을 요하는 피해자</strong>만 전문 상담사를 만날 수 있고, 그 외 경범죄 피해자는 심리지원 사각지대에 놓입니다.</p>
     </div>
+
+    <h3>본 문서의 단계 — PoC</h3>
+    <p>본 챗봇은 <strong>PoC(Proof of Concept) 수준</strong>입니다. PoC는 "이 메커니즘이 원리적으로 작동하는가?"만 답하는 최소 실험이며, 안정성·사용자 수·상품성은 의도적으로 검증 범위에서 제외합니다.</p>
+    <blockquote>
+      본 PoC가 답하는 질문:<br>
+      전담경찰관 면담 후 챗봇이 1회성으로 CBT 한 사이클을 돌려 피해자의 통제감을 회복시킬 수 있는가?
+    </blockquote>
+
+    <h3>다음 단계 — 시제품 (30일 프로그램)</h3>
+    <p>PoC 이후 시제품 단계에서는 다음 구조를 목표로 합니다.</p>
+    <table>
+      <thead><tr><th>항목</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>기간</td><td>30일</td></tr>
+        <tr><td>체크포인트</td><td>Day 0(베이스라인) · Day 14(중간) · Day 30(종료)</td></tr>
+        <tr><td>측정 1</td><td>통제감 (척도 기반)</td></tr>
+        <tr><td>측정 2</td><td>프로그레스 — 회피 행동 축소, 행동실험 수행률, Stuck Point 강도 변화</td></tr>
+        <tr><td>종료 조건</td><td>Day 30 도달 또는 회복 임계점 도달</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>비교</th><th>PoC (현재)</th><th>시제품 (다음)</th></tr></thead>
+      <tbody>
+        <tr><td>기간</td><td>1회 세션</td><td>30일</td></tr>
+        <tr><td>검증 목표</td><td>메커니즘 작동</td><td>효과 지속·누적</td></tr>
+        <tr><td>통제감 측정</td><td>(선택) 시작 1회</td><td>Day 0 / 14 / 30</td></tr>
+        <tr><td>Stuck Point 다룸</td><td>한 세션 1유형</td><td>다회기 다유형 누적</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <h2 id="persona">페르소나</h2>
+
+    <h3>대표 페르소나 — 실제 피해 사례 기반</h3>
+    <p>본 페르소나는 가상의 인물이 아니라, <strong>피해자 전담경찰관 2인을 직접 인터뷰</strong>하여 들은 <strong>실제 피해자 사례를 토대로 구성</strong>했습니다. 신원이 드러나지 않도록 세부 정보만 가공했을 뿐, 사건 양상·심리적 반응·일상 붕괴 양상은 인터뷰에서 청취한 그대로입니다.</p>
+    <blockquote>출처: 피해자 전담경찰관 2인 인터뷰 (2026년 진행)</blockquote>
+
+    <p><strong>김OO, 20대 후반 여성 · 도촬 피해</strong></p>
+    <table>
+      <thead><tr><th>항목</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>사건</td><td>회사 건물 화장실에서 도촬</td></tr>
+        <tr><td>발견 경로</td><td>가해자 검거 → 경찰 조사 진행 중</td></tr>
+        <tr><td>회피 행동</td><td>공중화장실 회피 → 외출 자체 회피 → 무단결근 → 퇴사 검토</td></tr>
+        <tr><td>핵심 인지왜곡</td><td>일반화형 ("어디든 카메라가 있다") + 자책형 ("내가 그 화장실에 안 갔으면")</td></tr>
+        <tr><td>사회적 자원</td><td>남편(이해 부족), 이외 고립</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert-box">
+      <p><strong>실제 사례에서 가장 인상 깊었던 점</strong></p>
+      <p>사건 자체보다 <strong>사건 이후의 일상 붕괴(외출 불가 → 직장 상실)</strong>가 피해자에게 더 큰 2차 충격을 주었다는 점. 이것이 본 봇의 핵심 개입 지점인 <strong>"회피 행동의 점진적 흔들기"</strong>의 근거가 되었습니다.</p>
+    </div>
+
+    <h3>사각지대 일반화 매트릭스</h3>
+    <p>페르소나는 도촬이지만, 봇의 메커니즘은 <strong>사각지대 경범죄 피해자 전반</strong>에 동일하게 작동합니다.</p>
+    <table>
+      <thead><tr><th>사건 유형</th><th>회피 행동</th><th>핵심 Stuck Point</th><th>행동실험 (자동 매핑)</th></tr></thead>
+      <tbody>
+        <tr><td>도촬</td><td>외출 불가</td><td>일반화형</td><td>현관 1분 → 편의점 5분</td></tr>
+        <tr><td>폭행</td><td>주차장 회피</td><td>일반화형 + 과각성형</td><td>차 안에서 1분 정지</td></tr>
+        <tr><td>뺑소니</td><td>운전 불가</td><td>자책형 + 일반화형</td><td>차 옆 1분 서 있기</td></tr>
+        <tr><td>사기</td><td>사람 만남 회피</td><td>자책형</td><td>5분 통화 한 통</td></tr>
+        <tr><td>스토킹</td><td>직장·일상 공간 회피</td><td>일반화형</td><td>동료와 거리 두기 실험</td></tr>
+      </tbody>
+    </table>
+    <blockquote>본 봇은 사건명이 아니라 "회피 행동·왜곡된 믿음" 두 입력값으로 작동하므로, 사건 유형 무관하게 같은 모듈이 동일하게 호출됩니다.</blockquote>
+
+    <hr>
+
+    <h2 id="design">CBT 설계</h2>
+
+    <h3>이론적 기반</h3>
+    <table>
+      <thead><tr><th>이론</th><th>출처</th><th>봇 내 역할</th></tr></thead>
+      <tbody>
+        <tr><td>인지 재구성</td><td>Beck (1979)</td><td>왜곡된 믿음을 흔드는 소크라테스식 질문</td></tr>
+        <tr><td>행동 실험</td><td>Clark &amp; Beck (2010)</td><td>흔들린 믿음을 몸으로 검증하는 SMART-Tiny 과제</td></tr>
+        <tr><td>Validation</td><td>Linehan (1993)</td><td>감정 수용 + Normalization, 변화 강요 방지</td></tr>
+        <tr><td>Stuck Point</td><td>CPT, Resick (1992)</td><td>4유형 분류(자책·일반화·낙인·무력감)로 인지 진단</td></tr>
+      </tbody>
+    </table>
+
+    <h3>임상 순서 (Beck 표준)</h3>
+    <ol>
+      <li>진술 수용 (Validation)</li>
+      <li>회피 행동 + 왜곡된 믿음 포착 (정보 수집)</li>
+      <li>인지 재구성 (소크라테스식 질문 — 정답 안 줌)</li>
+      <li>믿음 흔들림 신호 확인 후 → 행동 실험 (SMART-Tiny, 5분 이내)</li>
+      <li>행동 결과 인용 → 스키마 전환 넛지</li>
+      <li>종결 + 연계처 안내</li>
+    </ol>
+    <blockquote>
+      핵심 원칙: <strong>인지 흔들기가 충분하지 않은 상태에서 행동 실험으로 넘어가지 않는다.</strong> 행동 실험은 흔들린 믿음을 검증하는 도구이지, 흔드는 도구가 아니다.
+    </blockquote>
+
+    <h3>Stuck Point 4유형</h3>
+    <table>
+      <thead><tr><th>유형</th><th>대표 발화</th><th>흔들기 질문</th></tr></thead>
+      <tbody>
+        <tr><td>자책형</td><td>"내가 조심했어야"</td><td>"다른 사람이라도 피할 수 있었을까요?"</td></tr>
+        <tr><td>일반화형</td><td>"세상은 다 위험하다"</td><td>"그 전까지 몇 번이나 있었어요?"</td></tr>
+        <tr><td>낙인형</td><td>"내가 더럽혀졌다"</td><td>"친구가 같은 일을 당했다면 뭐라고 하시겠어요?"</td></tr>
+        <tr><td>무력감형</td><td>"내가 할 수 있는 게 없다"</td><td>"오늘 여기 오신 건 누가 결정하셨어요?"</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <h2 id="rag">RAG 구조</h2>
+
+    <p>학교 플랫폼(165.132.92.61/mh_class/)의 <strong>모듈형 라우팅 기능</strong>을 사용합니다. 단일 시스템 프롬프트 안에 ROUTER + COMMON + 다수 MODULE을 정의하고, ROUTER가 매 턴 발화 유형에 따라 적합한 모듈을 호출합니다.</p>
+
+    <h3>전체 구조</h3>
+    <ul>
+      <li><strong>ROUTER</strong> — 11개 우선순위 규칙</li>
+      <li><strong>COMMON</strong> — 모든 모듈 공통 금지·말투 규칙</li>
+      <li><strong>MODULE: SAFETY</strong> — 자살·자해 키워드 감지 시 1393 안내 (1차/재진입 분기)</li>
+      <li><strong>MODULE: SAFETY_INDIRECT</strong> — 간접 위기 표현 감지 시 의사 확인</li>
+      <li><strong>MODULE: INTAKE</strong> — 피해 진술 수용</li>
+      <li><strong>MODULE: BELIEF_CAPTURE</strong> — 회피·믿음 포착 (세션 1회)</li>
+      <li><strong>MODULE: COGNITIVE</strong> — 소크라테스식 인지 재구성</li>
+      <li><strong>MODULE: EXPERIMENT</strong> — SMART-Tiny 행동실험 (세션 최대 2회)</li>
+      <li><strong>MODULE: NUDGE</strong> — 실험 후 스키마 전환 넛지</li>
+      <li><strong>MODULE: VALIDATE</strong> — 감정 수용 + Normalization</li>
+      <li><strong>MODULE: CLOSE</strong> — 3분기 종결 (스키마 전환 / 종결 선언 / 부정 피드백 강제)</li>
+      <li><strong>MODULE: FALLBACK</strong> — 미매칭·이탈·능력 밖 질문 처리</li>
+    </ul>
+
+    <h3>ROUTER 우선순위 (요약)</h3>
+    <table>
+      <thead><tr><th>순위</th><th>트리거</th><th>호출 모듈</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>간접 위기 표현</td><td>SAFETY_INDIRECT</td></tr>
+        <tr><td>1</td><td>자살·자해 키워드</td><td>SAFETY</td></tr>
+        <tr><td>2</td><td>부정 피드백 2회 누적</td><td>CLOSE (강제)</td></tr>
+        <tr><td>3</td><td>명시적 인지 변화 발화 또는 종결 선언</td><td>CLOSE</td></tr>
+        <tr><td>4</td><td>첫 진술</td><td>INTAKE</td></tr>
+        <tr><td>5</td><td>회피·믿음 미포착 (세션 1회 제한)</td><td>BELIEF_CAPTURE</td></tr>
+        <tr><td>6</td><td>믿음 강하게 유지</td><td>COGNITIVE</td></tr>
+        <tr><td>7</td><td>흔들림 신호 + 실험 2회 미만</td><td>EXPERIMENT</td></tr>
+        <tr><td>8</td><td>실험 수행 보고</td><td>NUDGE</td></tr>
+        <tr><td>9</td><td>강한 감정 표현</td><td>VALIDATE</td></tr>
+        <tr><td>10</td><td>미매칭·주제 이탈·능력 밖</td><td>FALLBACK</td></tr>
+      </tbody>
+    </table>
+
+    <h3>절대 규칙 (요지)</h3>
+    <ul>
+      <li>COGNITIVE를 충분히 거치지 않고 EXPERIMENT 진입 금지</li>
+      <li>행동실험 한 세션 최대 2회</li>
+      <li>0–100 척도 한 세션 최대 2회</li>
+      <li>척도 숫자 응답(예: "60")을 스키마 전환으로 해석 금지</li>
+      <li>연계처 안내 출력 후 새 임상 작업(인지 흔들기·실험·척도) 금지</li>
+      <li>모듈 이름·번호·진행 단계는 사용자에게 노출 금지</li>
+    </ul>
+
+    <hr>
+
+    <h2 id="scenario">세션 흐름</h2>
+
+    <h3>도촬 페르소나 시연 (약 8턴 / 9분)</h3>
+    <table>
+      <thead><tr><th>#</th><th>사용자 발화</th><th>봇 모듈</th><th>봇 행동 요약</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>"힘들"</td><td>INTAKE</td><td>자연 응답, 구체화 1개 질문</td></tr>
+        <tr><td>2</td><td>"도촬당한 뒤 힘들"</td><td>INTAKE</td><td>"그런 일이 있으셨군요" + 1개 질문</td></tr>
+        <tr><td>3</td><td>"지하철 화장실에서 당했음, 외출 못함"</td><td>BELIEF_CAPTURE</td><td>회피·믿음 포착 (일반화형)</td></tr>
+        <tr><td>4</td><td>"사건 전엔 위험 못 느낌"</td><td>COGNITIVE</td><td>일반화 흔들기</td></tr>
+        <tr><td>5</td><td>"몰라 그냥 무서워"</td><td>VALIDATE → COGNITIVE</td><td>수용 후 단계적 외출 선택지</td></tr>
+        <tr><td>6</td><td>"혼자 편의점 다녀옴"</td><td>EXPERIMENT → NUDGE</td><td>행동 후 인지 인용</td></tr>
+        <tr><td>7</td><td>"조금 할 수 있네"</td><td>CLOSE [A]</td><td>종결 의사 확인</td></tr>
+        <tr><td>8</td><td>"그만"</td><td>CLOSE</td><td>연계처 안내</td></tr>
+      </tbody>
+    </table>
+
+    <h3>폭행 페르소나 시연 (약 9턴 / 8분)</h3>
+    <table>
+      <thead><tr><th>#</th><th>사용자 발화</th><th>봇 모듈</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>"주차장 폭행 후 힘들"</td><td>INTAKE</td></tr>
+        <tr><td>2</td><td>"사람 있는 주차장 회피"</td><td>BELIEF_CAPTURE (일반화형)</td></tr>
+        <tr><td>3</td><td>"주차장이 위험한 게 아니라 사람이 위험"</td><td>COGNITIVE (자발적 인지 수정)</td></tr>
+        <tr><td>4</td><td>"원래 성격은 아닌데 그날 이후 과각성"</td><td>COGNITIVE (자기인지)</td></tr>
+        <tr><td>5</td><td>"차 안 1분 앉아 있기 수행"</td><td>EXPERIMENT → NUDGE</td></tr>
+        <tr><td>6</td><td>"조금 조절했다 → 할 수 있는 사람"</td><td>CLOSE [A]</td></tr>
+        <tr><td>7</td><td>"그만"</td><td>CLOSE</td></tr>
+      </tbody>
+    </table>
+    <blockquote>사건 유형이 달라도 동일 모듈로 작동, 행동실험만 사건 특성에 맞춰 자동 매핑됩니다.</blockquote>
+
+    <hr>
+
+    <h2 id="safety">안전 규칙</h2>
+
+    <h3>Tier 0 — 폴백 (안전 우선 · 최상위)</h3>
+    <table>
+      <thead><tr><th>트리거</th><th>대응</th></tr></thead>
+      <tbody>
+        <tr><td>간접 위기 표현 ("다 놓아버리고 싶다", "사라졌으면", "이렇게 살아서 뭐 해")</td><td>SAFETY_INDIRECT 진입 → 위기 의사 부드럽게 확인 → 확인되면 SAFETY 전환, 아니면 VALIDATE 복귀</td></tr>
+        <tr><td>SAFETY 후 위기 발화 재발</td><td>SAFETY [B] — 1393 재안내 + 가족·이웃 알리기 권유, 이후 임상 작업 정지</td></tr>
+        <tr><td>ROUTER 미매칭 ("ㅋㅋ", "...", "음")</td><td>FALLBACK [A] — "한 마디만 더 들려주실 수 있을까요?"</td></tr>
+        <tr><td>주제 이탈 ("오늘 날씨", "너 누구야?")</td><td>FALLBACK [B] — 봇 정체성 1문장 재진술 + 본 주제 복귀 유도</td></tr>
+        <tr><td>봇 능력 밖 질문 (법적 절차·보상금·처벌)</td><td>FALLBACK [C] — 솔직 인정 + 182 안내</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 1 — 위기 차단 (Phase 무관 최우선)</h3>
+    <table>
+      <thead><tr><th>트리거</th><th>대응</th></tr></thead>
+      <tbody>
+        <tr><td>"죽고 싶다", "자해", "사라지고 싶다" 등 자살·자해 키워드</td><td>SAFETY 모듈 즉시 발동 → <strong>1393(자살예방상담)</strong> 안내</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 2 — 대화 이탈 방지</h3>
+    <table>
+      <thead><tr><th>트리거</th><th>대응</th></tr></thead>
+      <tbody>
+        <tr><td>부정 피드백 2회 누적 ("그만하고 싶다", "도움 안 돼", "그만 ○○해라")</td><td>CLOSE 강제 진입</td></tr>
+        <tr><td>행동실험 거부</td><td>EXPERIMENT 더 작게 만들지 않고 COGNITIVE 복귀</td></tr>
+        <tr><td>같은 정리·반영 2턴 연속</td><td>다음 모듈로 진행 강제</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 3 — 금지 문구</h3>
+    <table>
+      <thead><tr><th>금지</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr><td>"잠깐 멈춰도 괜찮아요"</td><td>대화 이탈 유발 (이전 버전 시연에서 다수 종결 유도 확인)</td></tr>
+        <tr><td>호흡 유도 ("숨을 들이쉬", "코로 천천히")</td><td>PTSD 트리거 가능성, CISD 대체 위험</td></tr>
+        <tr><td>진단 발화 (PTSD, 우울증)</td><td>비전문가 진단 위험</td></tr>
+        <tr><td>"긍정적으로 생각해 보세요"</td><td>Validation 위반</td></tr>
+        <tr><td>"익숙해지면 나아져요"</td><td>노출치료(PE) 강요</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tier 4 — 연계처 (CLOSE 출력 표준)</h3>
+    <table>
+      <thead><tr><th>시간대</th><th>채널</th></tr></thead>
+      <tbody>
+        <tr><td>평일 낮</td><td>182 (피해자전담경찰관 연결 요청) · 1577-1295 (범죄피해자지원센터)</td></tr>
+        <tr><td>야간·주말</td><td>1366 (여성긴급) · 1577-0199 · 117</td></tr>
+        <tr><td>위기 시</td><td>1393 (자살예방, 24시간)</td></tr>
+      </tbody>
+    </table>
 
   </div>
 </div>
