@@ -120,7 +120,23 @@
     .lightbox-close:hover { opacity: 1; }
 
     @media (max-width: 600px) {
+      body { font-size: 15px; line-height: 1.7; }
+      .container { padding: 16px 12px 60px; }
       .info-grid { grid-template-columns: 1fr; }
+      #content h1 { font-size: 1.35rem; margin: 2rem 0 0.8rem; }
+      #content h2 { font-size: 1.15rem; margin: 1.6rem 0 0.6rem; }
+      #content h3 { font-size: 1rem; padding: 12px 14px; margin: 1.6rem 0 0.6rem; }
+      #content ul, #content ol { padding-left: 1.2rem; }
+      #content blockquote { padding: 8px 14px; font-size: 0.9em; }
+      #content table { font-size: 0.82rem; }
+      #content th, #content td { padding: 8px 10px; min-width: 90px; }
+      .nav { padding: 8px 10px; gap: 6px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+      .nav::-webkit-scrollbar { display: none; }
+      .nav a { font-size: 0.78rem; padding: 5px 10px; flex-shrink: 0; }
+      .alert-box { padding: 12px 14px; }
+      .info-card { padding: 12px 14px; }
+      .info-card .value { font-size: 0.95rem; word-break: keep-all; }
+      .top-btn { width: 40px; height: 40px; bottom: 16px; right: 16px; }
     }
   </style>
 </head>
@@ -133,7 +149,6 @@
   <a href="#persona">페르소나</a>
   <a href="#design">CBT 설계</a>
   <a href="#rag">RAG 구조</a>
-  <a href="#scenario">세션 흐름</a>
   <a href="#safety">안전 규칙</a>
 </nav>
 
@@ -141,7 +156,6 @@
   <div id="content">
 
     <h1 id="overview">피해자전담경찰봇 — CBT 설계 문서</h1>
-    <p>작성일: 2026-05-26 · 심리학기반AI 수업 (정경미 교수)</p>
 
     <hr>
 
@@ -331,40 +345,6 @@
       <li>연계처 안내 출력 후 새 임상 작업(인지 흔들기·실험·척도) 금지</li>
       <li>모듈 이름·번호·진행 단계는 사용자에게 노출 금지</li>
     </ul>
-
-    <hr>
-
-    <h2 id="scenario">세션 흐름</h2>
-
-    <h3>도촬 페르소나 시연 (약 8턴 / 9분)</h3>
-    <table>
-      <thead><tr><th>#</th><th>사용자 발화</th><th>봇 모듈</th><th>봇 행동 요약</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>"힘들"</td><td>INTAKE</td><td>자연 응답, 구체화 1개 질문</td></tr>
-        <tr><td>2</td><td>"도촬당한 뒤 힘들"</td><td>INTAKE</td><td>"그런 일이 있으셨군요" + 1개 질문</td></tr>
-        <tr><td>3</td><td>"지하철 화장실에서 당했음, 외출 못함"</td><td>BELIEF_CAPTURE</td><td>회피·믿음 포착 (일반화형)</td></tr>
-        <tr><td>4</td><td>"사건 전엔 위험 못 느낌"</td><td>COGNITIVE</td><td>일반화 흔들기</td></tr>
-        <tr><td>5</td><td>"몰라 그냥 무서워"</td><td>VALIDATE → COGNITIVE</td><td>수용 후 단계적 외출 선택지</td></tr>
-        <tr><td>6</td><td>"혼자 편의점 다녀옴"</td><td>EXPERIMENT → NUDGE</td><td>행동 후 인지 인용</td></tr>
-        <tr><td>7</td><td>"조금 할 수 있네"</td><td>CLOSE [A]</td><td>종결 의사 확인</td></tr>
-        <tr><td>8</td><td>"그만"</td><td>CLOSE</td><td>연계처 안내</td></tr>
-      </tbody>
-    </table>
-
-    <h3>폭행 페르소나 시연 (약 9턴 / 8분)</h3>
-    <table>
-      <thead><tr><th>#</th><th>사용자 발화</th><th>봇 모듈</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>"주차장 폭행 후 힘들"</td><td>INTAKE</td></tr>
-        <tr><td>2</td><td>"사람 있는 주차장 회피"</td><td>BELIEF_CAPTURE (일반화형)</td></tr>
-        <tr><td>3</td><td>"주차장이 위험한 게 아니라 사람이 위험"</td><td>COGNITIVE (자발적 인지 수정)</td></tr>
-        <tr><td>4</td><td>"원래 성격은 아닌데 그날 이후 과각성"</td><td>COGNITIVE (자기인지)</td></tr>
-        <tr><td>5</td><td>"차 안 1분 앉아 있기 수행"</td><td>EXPERIMENT → NUDGE</td></tr>
-        <tr><td>6</td><td>"조금 조절했다 → 할 수 있는 사람"</td><td>CLOSE [A]</td></tr>
-        <tr><td>7</td><td>"그만"</td><td>CLOSE</td></tr>
-      </tbody>
-    </table>
-    <blockquote>사건 유형이 달라도 동일 모듈로 작동, 행동실험만 사건 특성에 맞춰 자동 매핑됩니다.</blockquote>
 
     <hr>
 
