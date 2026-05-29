@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>W7 주교재 7장 기억과 훈련 - 김형모</title>
+  <title>W13 주교재 12장 자동화와 인간 수행 - 김형모</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
   <style>
     :root {
@@ -23,345 +23,151 @@
     html { scroll-behavior: smooth; }
 
     .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
+      position: fixed; top: 0; left: 0; height: 3px;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
-      z-index: 300;
-      transition: width 0.1s linear;
-      width: 0%;
+      z-index: 300; transition: width 0.1s linear; width: 0%;
     }
-
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.85;
-      font-size: 17px;
-      padding: 0;
+      background: var(--bg); color: var(--text); line-height: 1.85; font-size: 17px;
     }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px 16px 80px;
-    }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px 16px 80px; }
     #content h1 {
-      font-size: 1.6rem;
-      color: var(--heading);
-      margin: 2.5rem 0 1rem;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--accent);
+      font-size: 1.6rem; color: var(--heading); margin: 2.5rem 0 1rem;
+      padding-bottom: 10px; border-bottom: 2px solid var(--accent);
     }
-    #content h2 {
-      font-size: 1.35rem;
-      color: var(--accent);
-      margin: 2rem 0 0.8rem;
-    }
+    #content h2 { font-size: 1.35rem; color: var(--accent); margin: 2rem 0 0.8rem; }
     #content h3 {
-      font-size: 1.15rem;
-      color: var(--accent-soft);
-      margin: 2rem 0 0.8rem;
-      background: var(--card);
-      padding: 14px 18px;
-      border-radius: 10px;
-      border-left: 4px solid var(--accent);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      font-size: 1.15rem; color: var(--accent-soft); margin: 2rem 0 0.8rem;
+      background: var(--card); padding: 14px 18px; border-radius: 10px;
+      border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    #content h4 {
-      font-size: 1.05rem;
-      color: var(--accent2);
-      margin: 1.4rem 0 0.5rem;
-    }
+    #content h4 { font-size: 1.05rem; color: var(--accent2); margin: 1.4rem 0 0.5rem; }
     #content p { margin: 0.7rem 0; }
     #content ul, #content ol { padding-left: 1.5rem; margin: 0.5rem 0; }
     #content li { margin: 0.35rem 0; }
     #content strong { color: #000; font-weight: 700; }
     #content em {
-      color: var(--accent-soft);
-      font-style: normal;
-      background: var(--highlight-bg);
-      padding: 1px 6px;
-      border-radius: 3px;
+      color: var(--accent-soft); font-style: normal;
+      background: var(--highlight-bg); padding: 1px 6px; border-radius: 3px;
     }
-
     #content img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 1.2rem auto;
-      border-radius: 10px;
-      background: #fff;
-      padding: 10px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-      cursor: zoom-in;
-      transition: transform 0.2s;
+      max-width: 100%; height: auto; display: block; margin: 1.2rem auto;
+      border-radius: 10px; background: #fff; padding: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3); cursor: zoom-in; transition: transform 0.2s;
     }
     #content img:hover { transform: scale(1.02); }
-
     #content blockquote {
-      border-left: 4px solid var(--accent);
-      padding: 10px 18px;
-      margin: 1rem 0;
-      background: var(--surface);
-      border-radius: 0 10px 10px 0;
-      font-size: 0.95em;
+      border-left: 4px solid var(--accent); padding: 10px 18px; margin: 1rem 0;
+      background: var(--surface); border-radius: 0 10px 10px 0; font-size: 0.95em;
     }
     #content code {
-      background: var(--code-bg);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.88em;
+      background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.88em;
     }
     #content pre {
-      background: var(--code-bg);
-      padding: 16px;
-      border-radius: 10px;
-      overflow-x: auto;
-      margin: 1rem 0;
-      font-size: 0.85rem;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+      background: var(--code-bg); padding: 16px; border-radius: 10px; overflow-x: auto;
+      margin: 1rem 0; font-size: 0.85rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;
     }
     #content pre code { background: none; padding: 0; }
     #content table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-      font-size: 0.9rem;
-      display: block;
-      overflow-x: auto;
+      width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;
+      display: block; overflow-x: auto;
     }
-    #content th, #content td {
-      border: 1px solid var(--border);
-      padding: 10px 14px;
-      text-align: left;
-    }
-    #content th {
-      background: var(--surface);
-      color: var(--accent);
-      font-weight: 600;
-    }
-    #content tr:nth-child(even) { background: rgba(255,255,255,0.03); }
-    #content hr {
-      border: none;
-      border-top: 2px solid var(--border);
-      margin: 2.5rem 0;
-    }
-    #content a {
-      color: var(--accent-soft);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
+    #content th, #content td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+    #content th { background: var(--surface); color: var(--accent); font-weight: 600; }
+    #content tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+    #content hr { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+    #content a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
 
     /* ─── Prequiz Card ─── */
     .prequiz-card {
-      background: linear-gradient(135deg,
-        rgba(108,99,255,0.18),
-        rgba(233,69,96,0.08));
-      border: 2px solid var(--accent);
-      border-radius: 14px;
-      padding: 20px 24px;
-      margin: 24px 0 36px;
+      background: linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0.03));
+      border: 2px solid var(--accent); border-radius: 14px; padding: 20px 24px; margin: 24px 0 36px;
     }
-    .prequiz-card h2 {
-      margin: 0 0 8px;
-      color: var(--accent);
-      font-size: 1.3rem;
-      border: none;
-      padding: 0;
-    }
-    .prequiz-card .prequiz-guide {
-      color: var(--accent-soft);
-      font-size: 0.9rem;
-      font-style: italic;
-      margin: 0 0 16px;
-    }
+    .prequiz-card h2 { margin: 0 0 8px; color: var(--accent); font-size: 1.3rem; border: none; padding: 0; }
+    .prequiz-card .prequiz-guide { color: var(--accent-soft); font-size: 0.9rem; font-style: italic; margin: 0 0 16px; }
     .prequiz-card ol { padding-left: 22px; margin: 0; }
     .prequiz-card li { margin: 12px 0; line-height: 1.6; }
-    .prequiz-footer {
-      margin: 14px 0 0;
-      font-size: 0.88rem;
-      color: rgba(255,255,255,0.45);
-    }
+    .prequiz-footer { margin: 14px 0 0; font-size: 0.88rem; color: #999; }
 
     /* ─── Answer Section ─── */
     .answer-section {
-      margin: 40px 0 24px;
-      border: 2px solid var(--accent2);
-      border-radius: 14px;
-      padding: 12px 24px;
-      background: rgba(0,0,0,0.22);
+      margin: 40px 0 24px; border: 2px solid var(--accent2);
+      border-radius: 14px; padding: 12px 24px; background: rgba(0,0,0,0.04);
     }
     .answer-section summary {
-      cursor: pointer;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent2);
-      padding: 10px 0;
-      list-style: none;
-      user-select: none;
+      cursor: pointer; font-size: 1.1rem; font-weight: 700; color: var(--accent2);
+      padding: 10px 0; list-style: none; user-select: none;
     }
     .answer-section summary::-webkit-details-marker { display: none; }
     .answer-section summary::before { content: "▶ "; margin-right: 4px; }
     .answer-section[open] summary::before { content: "▼ "; }
-    .answer-section[open] {
-      background: rgba(0,0,0,0.32);
-      padding-bottom: 20px;
-    }
+    .answer-section[open] { background: rgba(0,0,0,0.06); padding-bottom: 20px; }
     .answer-section ol { padding-left: 22px; }
     .answer-section li { margin: 14px 0; line-height: 1.7; }
     .answer-section .q { font-weight: 600; color: var(--accent-soft); margin-bottom: 4px; }
     .answer-section .a { color: var(--text); padding-left: 1rem; }
 
+    /* ─── Lightbox ─── */
     .lightbox {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.92);
-      z-index: 500;
-      justify-content: center;
-      align-items: center;
-      cursor: zoom-out;
-      padding: 20px;
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9); z-index: 500; justify-content: center; align-items: center;
+      cursor: zoom-out; padding: 20px;
     }
     .lightbox.show { display: flex; }
-    .lightbox img {
-      max-width: 95vw;
-      max-height: 90vh;
-      border-radius: 8px;
-      box-shadow: 0 0 40px rgba(108,99,255,0.3);
-    }
+    .lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 8px; }
     .lightbox-close {
-      position: fixed;
-      top: 16px;
-      right: 20px;
-      color: #fff;
-      font-size: 32px;
-      cursor: pointer;
-      z-index: 501;
-      opacity: 0.7;
+      position: fixed; top: 16px; right: 20px; color: #fff; font-size: 32px;
+      cursor: pointer; z-index: 501; opacity: 0.7;
     }
     .lightbox-close:hover { opacity: 1; }
 
+    /* ─── Nav / UI ─── */
+    .nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+    }
+    .nav a {
+      color: var(--text); text-decoration: none; font-size: 0.85rem; padding: 6px 14px;
+      border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap;
+    }
+    .nav a:hover { border-color: var(--accent); color: var(--accent); }
+    .nav a.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .nav-label { color: var(--accent-soft); font-size: 0.8rem; font-weight: 600; margin-right: 4px; }
+
     .top-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 44px;
-      height: 44px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      z-index: 200;
+      position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; display: none; align-items: center;
+      justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 200;
     }
-
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: var(--accent);
-      font-size: 1.1rem;
-    }
-
     .toc-toggle {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      width: 44px;
-      height: 44px;
-      background: var(--accent2);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed; bottom: 20px; left: 20px; width: 44px; height: 44px;
+      background: var(--accent2); color: #fff; border: none; border-radius: 50%;
+      font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
     }
     .toc-panel {
-      display: none;
-      position: fixed;
-      bottom: 72px;
-      left: 16px;
-      right: 16px;
-      max-height: 60vh;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      overflow-y: auto;
-      z-index: 199;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: none; position: fixed; bottom: 72px; left: 16px; right: 16px;
+      max-height: 60vh; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; overflow-y: auto; z-index: 199;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
     .toc-panel.show { display: block; }
     .toc-panel a {
-      display: block;
-      color: var(--text);
-      text-decoration: none;
-      padding: 8px 0;
-      font-size: 0.9rem;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: block; color: var(--text); text-decoration: none;
+      padding: 8px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(0,0,0,0.06);
     }
     .toc-panel a:hover { color: var(--accent); }
     .toc-panel a.toc-h2 { padding-left: 0; font-weight: 600; color: var(--accent); }
     .toc-panel a.toc-h3 { padding-left: 16px; color: var(--accent-soft); }
-
-    .nav {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 16px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-    .nav a {
-      color: var(--text);
-      text-decoration: none;
-      font-size: 0.85rem;
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    .nav a:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .nav a.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-    .nav-label {
-      color: var(--accent-soft);
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-right: 4px;
-    }
+    .loading { text-align: center; padding: 3rem; color: var(--accent); font-size: 1.1rem; }
 
     @media (max-width: 600px) {
       body { font-size: 16px; }
       .container { padding: 16px 12px 80px; }
       #content h3 { font-size: 1.05rem; padding: 12px 14px; }
-      #content img { padding: 6px; }
       .nav { padding: 8px 12px; gap: 6px; }
       .nav a { font-size: 0.8rem; padding: 5px 10px; }
     }
@@ -373,7 +179,8 @@
   <nav class="nav">
     <span class="nav-label">인지공학심리학 |</span>
     <a href="../w3-reports/prompt.html">프롬프트</a>
-    <a href="../ch1-reports/index.html">주교재 1장</a>    <a href="../w3-reports/index.html">W3 주교재 2장</a>
+    <a href="../ch1-reports/index.html">주교재 1장</a>
+    <a href="../w3-reports/index.html">W3 주교재 2장</a>
     <a href="../w3-reports/sub-chapter8.html">W3 부교재 8장</a>
     <a href="../w4-reports/index.html">W4 주교재 3장</a>
     <a href="../w4-reports/sub-chapter7.html">W4 부교재 7장</a>
@@ -382,12 +189,13 @@
     <a href="../w6-reports/index.html">W6 주교재 5장</a>
     <a href="../w6-reports/w6-chapter6.html">W6 주교재 6장</a>
     <a href="../w6-reports/w6-sub-laws-ux-ch5.html">W6 부교재 Laws of UX 5장</a>
-    <a href="index.html" class="active">W7 주교재 7장 🧠</a>
+    <a href="../w7-reports/index.html">W7 주교재 7장</a>
     <a href="../w10-reports/index.html">W10 주교재 8장</a>
     <a href="../w11-reports/index.html">W11 주교재 9장</a>
     <a href="../w12-reports/index.html">W12 주교재 10장</a>
-    <a href="../w13-reports/index.html">W13 주교재 12장</a>
+    <a href="index.html" class="active">W13 주교재 12장 ⚡</a>
   </nav>
+
   <div class="container">
     <div id="content"><div class="loading">Loading...</div></div>
   </div>
@@ -396,7 +204,6 @@
     <span class="lightbox-close" id="lightboxClose">&times;</span>
     <img id="lightboxImg" src="" alt="">
   </div>
-
   <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0})">&#8593;</button>
   <button class="toc-toggle" id="tocBtn">&#9776;</button>
   <div class="toc-panel" id="tocPanel"></div>
@@ -406,14 +213,18 @@
   <script>
     marked.setOptions({ gfm: true, breaks: true });
 
-    fetch('w7-chapter7.md')
+    function escapeHtml(s) {
+      const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+    }
+
+    fetch('w13-chapter12.md')
       .then(r => r.text())
       .then(md => {
         document.getElementById('content').innerHTML = marked.parse(md);
         buildToc();
         renderMath();
         setupLightbox();
-        // prequiz.json fetch — 없어도 조용히 패스
+
         fetch('prequiz.json')
           .then(r => r.ok ? r.json() : null)
           .then(data => { if (data && data.items && data.items.length) renderPrequiz(data); })
@@ -426,38 +237,25 @@
     function renderPrequiz(data) {
       const content = document.getElementById('content');
       if (!content) return;
-
-      function escapeHtml(s) {
-        const d = document.createElement('div');
-        d.textContent = s;
-        return d.innerHTML;
-      }
-
-      // 1. 프리 퀴즈 카드 (본문 최상단)
       const card = document.createElement('section');
       card.className = 'prequiz-card';
       card.innerHTML = `
         <h2>🎯 프리 퀴즈 (Ch.${data.chapter})</h2>
         <p class="prequiz-guide">${data.guide}</p>
-        <ol>
-          ${data.items.map(it => `<li>${escapeHtml(it.question)}</li>`).join('')}
-        </ol>
+        <ol>${data.items.map(it => `<li>${escapeHtml(it.question)}</li>`).join('')}</ol>
         <p class="prequiz-footer">↓ 본문을 읽고, 맨 아래 "✅ 정답 펼치기"에서 답을 확인하세요.</p>
       `;
       content.insertBefore(card, content.firstChild);
 
-      // 2. 정답 섹션 (본문 최하단)
       const details = document.createElement('details');
       details.className = 'answer-section';
       details.innerHTML = `
         <summary>✅ 정답 & 해설 펼치기</summary>
-        <ol>
-          ${data.items.map(it => `
-            <li>
-              <div class="q">Q. ${escapeHtml(it.question)}</div>
-              <div class="a">A. ${escapeHtml(it.answer)}</div>
-            </li>
-          `).join('')}
+        <ol>${data.items.map(it => `
+          <li>
+            <div class="q">Q. ${escapeHtml(it.question)}</div>
+            <div class="a">A. ${escapeHtml(it.answer)}</div>
+          </li>`).join('')}
         </ol>
       `;
       content.appendChild(details);
@@ -472,16 +270,13 @@
         a.href = '#sec-' + i;
         a.textContent = h.textContent;
         a.className = 'toc-' + h.tagName.toLowerCase();
-        a.onclick = () => { panel.classList.remove('show'); };
+        a.onclick = () => panel.classList.remove('show');
         panel.appendChild(a);
       });
     }
 
     function renderMath() {
-      const walk = document.createTreeWalker(
-        document.getElementById('content'),
-        NodeFilter.SHOW_TEXT, null, false
-      );
+      const walk = document.createTreeWalker(document.getElementById('content'), NodeFilter.SHOW_TEXT, null, false);
       const nodes = [];
       while (walk.nextNode()) nodes.push(walk.currentNode);
       nodes.forEach(node => {
@@ -508,10 +303,7 @@
       const lb = document.getElementById('lightbox');
       const lbImg = document.getElementById('lightboxImg');
       document.querySelectorAll('#content img').forEach(img => {
-        img.addEventListener('click', () => {
-          lbImg.src = img.src;
-          lb.classList.add('show');
-        });
+        img.addEventListener('click', () => { lbImg.src = img.src; lb.classList.add('show'); });
       });
       lb.addEventListener('click', () => lb.classList.remove('show'));
       document.getElementById('lightboxClose').addEventListener('click', () => lb.classList.remove('show'));
@@ -524,7 +316,6 @@
       document.getElementById('progressBar').style.width = pct + '%';
       document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'flex' : 'none';
     });
-
     document.getElementById('tocBtn').onclick = () => {
       document.getElementById('tocPanel').classList.toggle('show');
     };
