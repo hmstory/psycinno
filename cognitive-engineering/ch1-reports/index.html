@@ -148,29 +148,116 @@
       .links-box { grid-template-columns: 1fr; }
     }
   </style>
+  <style id="cnav-style">
+    /* ─── 학습노트 상단 네비 (드롭다운) ─── */
+    .cnav {
+      position: sticky; top: 0; z-index: 150;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 11px 18px;
+      background: var(--surface, #f0ede6);
+      border-bottom: 1px solid var(--border, #cccccc);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    }
+    .cnav-home {
+      font-weight: 700; font-size: 0.95rem; line-height: 1.2;
+      color: var(--heading, #000); text-decoration: none; white-space: nowrap;
+    }
+    .cnav-home:hover { color: var(--accent, #111); }
+    .cnav-toggle {
+      font-family: inherit; font-size: 0.85rem; font-weight: 600;
+      color: var(--text, #222); background: transparent;
+      border: 1px solid var(--border, #cccccc); border-radius: 20px;
+      padding: 7px 16px; cursor: pointer; white-space: nowrap; transition: all .2s;
+    }
+    .cnav-toggle:hover { border-color: var(--accent, #111); color: var(--accent, #111); }
+    .cnav-toggle[aria-expanded="true"] {
+      background: var(--accent, #111); color: #fff; border-color: var(--accent, #111);
+    }
+    .cnav-menu {
+      position: absolute; top: calc(100% + 6px); right: 12px;
+      min-width: 300px; max-width: calc(100vw - 24px);
+      background: var(--surface, #f0ede6); border: 1px solid var(--border, #cccccc);
+      border-radius: 14px; box-shadow: 0 10px 32px rgba(0,0,0,0.25);
+      padding: 16px 18px; display: none;
+    }
+    .cnav-menu.show { display: block; animation: cnav-pop .14s ease-out; }
+    @keyframes cnav-pop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+    .cnav-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 14px; }
+    .cnav-group:last-child { margin-bottom: 0; }
+    .cnav-gtitle {
+      width: 100%; font-size: 0.7rem; font-weight: 700; letter-spacing: .05em;
+      color: var(--accent-soft, #555); text-transform: uppercase; margin-bottom: 4px;
+    }
+    .cnav-menu a {
+      color: var(--text, #222); text-decoration: none; font-size: 0.85rem;
+      padding: 5px 13px; border-radius: 16px; border: 1px solid var(--border, #cccccc);
+      transition: all .2s; white-space: nowrap;
+    }
+    .cnav-menu a:hover { border-color: var(--accent, #111); color: var(--accent, #111); }
+    .cnav-menu a.active { background: var(--accent, #111); color: #fff; border-color: var(--accent, #111); }
+    @media (max-width: 600px) {
+      .cnav { padding: 9px 12px; }
+      .cnav-home { font-size: 0.85rem; }
+      .cnav-menu { left: 12px; right: 12px; min-width: 0; }
+    }
+  </style>
 </head>
 <body>
   <div class="progress-bar" id="progressBar"></div>
 
-  <nav class="nav">
-    <span class="nav-label">인지공학심리학 |</span>
-    <a href="../w3-reports/prompt.html">프롬프트</a>
-    <a href="index.html" class="active">주교재 1장</a>
-    <a href="../w3-reports/index.html">W3 주교재 2장</a>
-    <a href="../w3-reports/sub-chapter8.html">W3 부교재 8장</a>
-    <a href="../w4-reports/index.html">W4 주교재 3장</a>
-    <a href="../w4-reports/sub-chapter7.html">W4 부교재 7장</a>
-    <a href="../w5-reports/index.html">W5 주교재 4장</a>
-    <a href="../w5-reports/sub-laws-ux-ch2.html">W5 부교재 Laws of UX 2장</a>
-    <a href="../w6-reports/index.html">W6 주교재 5장</a>
-    <a href="../w6-reports/w6-chapter6.html">W6 주교재 6장</a>
-    <a href="../w6-reports/w6-sub-laws-ux-ch5.html">W6 부교재 Laws of UX 5장</a>
-    <a href="../w7-reports/index.html">W7 주교재 7장 🧠</a>
-    <a href="../w10-reports/index.html">W10 주교재 8장</a>
-    <a href="../w11-reports/index.html">W11 주교재 9장</a>
-    <a href="../w12-reports/index.html">W12 주교재 10장</a>
-    <a href="../w13-reports/index.html">W13 주교재 12장</a>
+    <nav class="cnav">
+    <a class="cnav-home" href="../../index.html">📘 인지공학심리학 학습노트</a>
+    <button class="cnav-toggle" id="cnavToggle" aria-expanded="false" aria-controls="cnavMenu">☰ 목차 ▾</button>
+    <div class="cnav-menu" id="cnavMenu">
+      <div class="cnav-group">
+        <span class="cnav-gtitle">주교재</span>
+        <a href="../ch1-reports/index.html">1장</a>
+        <a href="../w3-reports/index.html">2장</a>
+        <a href="../w4-reports/index.html">3장</a>
+        <a href="../w5-reports/index.html">4장</a>
+        <a href="../w6-reports/index.html">5장</a>
+        <a href="../w6-reports/w6-chapter6.html">6장</a>
+        <a href="../w7-reports/index.html">7장</a>
+        <a href="../w10-reports/index.html">8장</a>
+        <a href="../w11-reports/index.html">9장</a>
+        <a href="../w12-reports/index.html">10장</a>
+        <a href="../w13-reports/index.html">12장</a>
+      </div>
+      <div class="cnav-group">
+        <span class="cnav-gtitle">부교재</span>
+        <a href="../w3-reports/sub-chapter8.html">8장</a>
+        <a href="../w4-reports/sub-chapter7.html">7장</a>
+        <a href="../w5-reports/sub-laws-ux-ch2.html">UX 2장</a>
+        <a href="../w6-reports/w6-sub-laws-ux-ch5.html">UX 5장</a>
+      </div>
+      <div class="cnav-group">
+        <span class="cnav-gtitle">기타</span>
+        <a href="../w3-reports/prompt.html">프롬프트</a>
+        <a href="../midterm-strategy/index.html">중간고사 전략</a>
+      </div>
+    </div>
   </nav>
+  <script>
+  (function(){
+    var t=document.getElementById('cnavToggle'), m=document.getElementById('cnavMenu');
+    if(!t||!m) return;
+    t.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open=m.classList.toggle('show');
+      t.setAttribute('aria-expanded', open?'true':'false');
+    });
+    document.addEventListener('click', function(e){
+      if(!m.contains(e.target) && e.target!==t){ m.classList.remove('show'); t.setAttribute('aria-expanded','false'); }
+    });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ m.classList.remove('show'); t.setAttribute('aria-expanded','false'); } });
+    // 현재 페이지 링크 자동 강조
+    var here=location.pathname.replace(/index\.html$/,'');
+    m.querySelectorAll('a').forEach(function(a){
+      var p=a.pathname.replace(/index\.html$/,'');
+      if(p===here) a.classList.add('active');
+    });
+  })();
+  </script>
 
   <div class="container">
     <div id="content"><div class="loading">Loading...</div></div>
