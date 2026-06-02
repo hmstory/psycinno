@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg:#0a0a0a; --card:#161616; --line:#2a2a2a; --sub:#8a8a8a;
+    --green:#34D399; --blue:#4F8CFF; --purple:#A78BFA; --gray:#9aa0a6; --red:#F87171;
+  }
+  html,body{ background:var(--bg); }
+  .page{
+    width:1080px; height:1520px; background:var(--bg); color:#fff;
+    font-family:'Pretendard',-apple-system,sans-serif;
+    padding:52px 64px; display:flex; flex-direction:column;
+  }
+  .head{ text-align:center; margin-bottom:24px; }
+  .tag{ font-size:14px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--blue); margin-bottom:12px; }
+  h1{ font-size:38px; font-weight:900; line-height:1.25; }
+  h1 .accent{ color:var(--green); }
+  .sub{ font-size:16px; color:var(--sub); margin-top:12px; }
+
+  .safety{
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    border:1.5px dashed #3d3d3d; border-radius:14px; padding:13px 24px;
+    background:rgba(248,113,113,.05); margin-bottom:6px;
+  }
+  .safety .lbl{ font-size:14px; font-weight:800; letter-spacing:1px; color:var(--red); }
+  .safety .item{ font-size:14px; color:#c4c4c4; }
+  .safety .item b{ color:#fff; font-weight:700; }
+  .band-note{ text-align:center; font-size:12px; color:#5a5a5a; margin-bottom:14px; }
+
+  .flow{ display:flex; flex-direction:column; align-items:center; gap:0; flex:1; justify-content:space-between; }
+  .node{
+    width:100%; background:var(--card); border:1px solid var(--line); border-radius:14px;
+    border-left:5px solid var(--gray); padding:14px 22px;
+    display:flex; align-items:center; gap:22px;
+  }
+  .node.emo{ border-left-color:var(--green); }
+  .node.cog{ border-left-color:var(--blue); }
+  .node.beh{ border-left-color:var(--purple); }
+  .n-left{ width:240px; flex:0 0 240px; }
+  .mod{ font-size:18px; font-weight:800; font-family:ui-monospace,monospace; letter-spacing:.5px; }
+  .node.g .mod{ color:#d2d2d2; }
+  .node.emo .mod{ color:var(--green); }
+  .node.cog .mod{ color:var(--blue); }
+  .node.beh .mod{ color:var(--purple); }
+  .node.close .mod{ color:#d2d2d2; }
+  .stage{ font-size:11px; font-weight:700; letter-spacing:2px; color:#6a6a6a; text-transform:uppercase; margin-top:4px; }
+  .n-mid{ flex:1; }
+  .tech{ font-size:21px; font-weight:700; line-height:1.3; }
+  .n-right{ font-size:13px; color:#777; text-align:right; flex:0 0 150px; }
+  .arrow{ color:#3a3a3a; font-size:20px; line-height:1; padding:5px 0; }
+
+  .axis{
+    border-radius:14px; padding:16px 28px; text-align:center; font-size:17px; margin-top:8px;
+    background:linear-gradient(90deg, rgba(52,211,153,.16), rgba(79,140,255,.16), rgba(167,139,250,.16));
+    border:1px solid var(--line);
+  }
+  .axis b{ color:var(--green); font-weight:800; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="head">
+      <div class="tag">RAG × CBT</div>
+      <h1>챗봇은 <span class="accent">CBT 단계</span>를 따라 작동합니다</h1>
+      <div class="sub">대화 흐름의 각 모듈이, 검증된 임상 기법 하나에 대응합니다</div>
+    </div>
+
+    <div class="safety">
+      <span class="lbl">🛡 상시 안전 계층</span>
+      <span class="item"><b>SAFETY</b> 위기 선별 · 1393 (PFA)</span>
+      <span class="item">·</span>
+      <span class="item"><b>FALLBACK</b> 주제 이탈 처리</span>
+    </div>
+    <div class="band-note">▲ 모든 단계에 우선해 위기 발화를 먼저 가로챕니다</div>
+
+    <div class="flow">
+      <div class="node g">
+        <div class="n-left"><div class="mod">그리팅</div><div class="stage">측정</div></div>
+        <div class="n-mid"><div class="tech">통제감 척도</div></div>
+        <div class="n-right">통제소재(LOC)<br>사전 측정</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node g">
+        <div class="n-left"><div class="mod">INTAKE</div><div class="stage">수용</div></div>
+        <div class="n-mid"><div class="tech">피해 진술 경청</div></div>
+        <div class="n-right">판단 없이 받기</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node emo">
+        <div class="n-left"><div class="mod">VALIDATE</div><div class="stage">정서</div></div>
+        <div class="n-mid"><div class="tech">타당화 · 정상화</div></div>
+        <div class="n-right">Linehan<br>TF-CBT</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node cog">
+        <div class="n-left"><div class="mod">BELIEF_CAPTURE</div><div class="stage">인지</div></div>
+        <div class="n-mid"><div class="tech">Stuck Point 포착</div></div>
+        <div class="n-right">Resick · CPT<br>1992</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node cog">
+        <div class="n-left"><div class="mod">COGNITIVE</div><div class="stage">인지</div></div>
+        <div class="n-mid"><div class="tech">소크라테스식 인지재구성</div></div>
+        <div class="n-right">Beck<br>1979</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node beh">
+        <div class="n-left"><div class="mod">EXPERIMENT</div><div class="stage">행동</div></div>
+        <div class="n-mid"><div class="tech">행동실험</div></div>
+        <div class="n-right">Clark &amp; Beck<br>2010</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node beh">
+        <div class="n-left"><div class="mod">NUDGE</div><div class="stage">행동</div></div>
+        <div class="n-mid"><div class="tech">자기효능감 강화</div></div>
+        <div class="n-right">Bandura</div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <div class="node close">
+        <div class="n-left"><div class="mod">CLOSE</div><div class="stage">종결</div></div>
+        <div class="n-mid"><div class="tech">연계처 안내</div></div>
+        <div class="n-right">182 · 1366 등</div>
+      </div>
+    </div>
+
+    <div class="axis">
+      감정을 받아주고 → 믿음을 흔들고 → 행동으로 증명한다<br>
+      전 과정을 관통하는 축은 <b>통제감 회복</b>
+    </div>
+  </div>
+</body>
+</html>

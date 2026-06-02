@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg:#0a0a0a; --card:#161616; --line:#2a2a2a; --sub:#8a8a8a;
+    --green:#34D399; --blue:#4F8CFF; --purple:#A78BFA; --gray:#9aa0a6;
+  }
+  html,body{ background:var(--bg); }
+  .page{
+    width:1200px; height:1780px; background:var(--bg); color:#fff;
+    font-family:'Pretendard',-apple-system,sans-serif;
+    padding:50px 60px; display:flex; flex-direction:column;
+  }
+  .head{ text-align:center; margin-bottom:22px; }
+  .tag{ font-size:14px; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--blue); margin-bottom:10px; }
+  h1{ font-size:34px; font-weight:900; }
+  h1 .accent{ color:var(--green); }
+  .sub{ font-size:15px; color:var(--sub); margin-top:10px; }
+
+  .flow{ display:flex; flex-direction:column; flex:1; justify-content:space-between; }
+  .row{ display:flex; gap:20px; align-items:stretch; }
+  .left{
+    flex:0 0 250px; background:var(--card); border:1px solid var(--line); border-radius:14px;
+    border-left:5px solid var(--gray); padding:16px 18px; display:flex; flex-direction:column; justify-content:center;
+  }
+  .row.emo .left{ border-left-color:var(--green); }
+  .row.cog .left{ border-left-color:var(--blue); }
+  .row.beh .left{ border-left-color:var(--purple); }
+  .mod{ font-size:17px; font-weight:800; font-family:ui-monospace,monospace; letter-spacing:.3px; }
+  .row.g .mod{ color:#d2d2d2; }
+  .row.emo .mod{ color:var(--green); }
+  .row.cog .mod{ color:var(--blue); }
+  .row.beh .mod{ color:var(--purple); }
+  .stage{ font-size:11px; font-weight:700; letter-spacing:2px; color:#6a6a6a; text-transform:uppercase; margin-top:5px; }
+  .theory{ font-size:12.5px; color:#888; margin-top:9px; }
+
+  .chat{ flex:1; background:#121212; border:1px solid var(--line); border-radius:14px; padding:15px 18px; display:flex; flex-direction:column; gap:9px; justify-content:center; }
+  .msg{ font-size:15px; line-height:1.45; max-width:88%; padding:9px 14px; border-radius:12px; }
+  .victim{ align-self:flex-start; background:#1f1f1f; color:#e2e2e2; }
+  .bot{ align-self:flex-end; color:#fff; }
+  .row.g .bot{ background:#2a2a2a; }
+  .row.emo .bot{ background:rgba(52,211,153,.18); border:1px solid rgba(52,211,153,.35); }
+  .row.cog .bot{ background:rgba(79,140,255,.18); border:1px solid rgba(79,140,255,.35); }
+  .row.beh .bot{ background:rgba(167,139,250,.18); border:1px solid rgba(167,139,250,.35); }
+  .who{ font-size:11px; font-weight:700; opacity:.6; margin-right:5px; }
+
+  .arrow{ text-align:center; color:#3a3a3a; font-size:18px; padding:3px 0; }
+
+  .foot{
+    border-radius:12px; padding:13px 24px; text-align:center; font-size:15px; margin-top:10px;
+    background:linear-gradient(90deg, rgba(52,211,153,.16), rgba(79,140,255,.16), rgba(167,139,250,.16));
+    border:1px solid var(--line);
+  }
+  .foot b{ color:var(--green); font-weight:800; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="head">
+      <div class="tag">임상 CBT 흐름 · 실제 대화</div>
+      <h1>페르소나 A — <span class="accent">도촬 피해 여성</span>과의 대화</h1>
+      <div class="sub">각 모듈이 실제로 어떻게 말하는지 — 자책형 회복 흐름</div>
+    </div>
+
+    <div class="flow">
+
+      <!-- INTAKE -->
+      <div class="row g">
+        <div class="left">
+          <div class="mod">INTAKE</div><div class="stage">수용</div>
+          <div class="theory">판단 없이 받기</div>
+        </div>
+        <div class="chat">
+          <div class="msg victim"><span class="who">A</span>화장실에서 누가 절 몰래 찍었어요. 제가 잡아 넘겼는데, 그 뒤로 밖을 못 나가겠어요.</div>
+          <div class="msg bot"><span class="who">봇</span>그런 일이 있으셨군요. 지금 가장 힘든 건 어떤 부분이세요?</div>
+        </div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <!-- VALIDATE -->
+      <div class="row emo">
+        <div class="left">
+          <div class="mod">VALIDATE</div><div class="stage">정서</div>
+          <div class="theory">타당화·정상화<br>Linehan · TF-CBT</div>
+        </div>
+        <div class="chat">
+          <div class="msg victim"><span class="who">A</span>범인도 잡았는데 왜 이렇게 무너지죠. 제가 약한 것 같아요.</div>
+          <div class="msg bot"><span class="who">봇</span>그렇게 느끼는 건 이상한 게 아니에요. 그런 일을 겪으면 당연히 그럴 수 있어요.</div>
+        </div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <!-- BELIEF_CAPTURE -->
+      <div class="row cog">
+        <div class="left">
+          <div class="mod">BELIEF_<br>CAPTURE</div><div class="stage">인지</div>
+          <div class="theory">Stuck Point 포착<br>Resick · CPT</div>
+        </div>
+        <div class="chat">
+          <div class="msg bot"><span class="who">봇</span>요즘 피하고 있는 행동이 있다면 하나만 알려주실 수 있을까요?</div>
+          <div class="msg victim"><span class="who">A</span>화장실을 못 가겠어요. 그래서 외출을 아예 안 해요.</div>
+          <div class="msg bot"><span class="who">봇</span>'무너지는 건 내가 약해서다'라는 생각이 자리 잡은 것 같아요. <span style="opacity:.7">(자책형)</span></div>
+        </div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <!-- COGNITIVE -->
+      <div class="row cog">
+        <div class="left">
+          <div class="mod">COGNITIVE ★</div><div class="stage">인지</div>
+          <div class="theory">소크라테스식 재구성<br>Beck, 1979</div>
+        </div>
+        <div class="chat">
+          <div class="msg bot"><span class="who">봇</span>친구가 똑같은 일을 당했다면, '네가 약해서 그래'라고 하시겠어요?</div>
+          <div class="msg victim"><span class="who">A</span>...아니요. 친구한텐 그런 말 절대 안 하죠.</div>
+        </div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <!-- EXPERIMENT -->
+      <div class="row beh">
+        <div class="left">
+          <div class="mod">EXPERIMENT</div><div class="stage">행동</div>
+          <div class="theory">행동실험<br>Clark &amp; Beck</div>
+        </div>
+        <div class="chat">
+          <div class="msg bot"><span class="who">봇</span>현관문 열고 복도까지 1분만 서 있기, 해보실까요? 안전 증명이 아니라 '작은 건 내가 정할 수 있다'를 확인하는 거예요.</div>
+          <div class="msg victim"><span class="who">A</span>...해볼게요.</div>
+        </div>
+      </div>
+      <div class="arrow">▼</div>
+
+      <!-- NUDGE -->
+      <div class="row beh">
+        <div class="left">
+          <div class="mod">NUDGE</div><div class="stage">행동</div>
+          <div class="theory">자기효능감 강화<br>Bandura</div>
+        </div>
+        <div class="chat">
+          <div class="msg victim"><span class="who">A</span>심장이 엄청 뛰었는데… 그래도 1분 서 있었어요.</div>
+          <div class="msg bot"><span class="who">봇</span>해내셨네요. 무서운데도 직접 해낸 분이, 정말 '약한 사람'일까요?</div>
+          <div class="msg victim"><span class="who">A</span>...약한 건 아닌 것 같기도 하네요.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="foot">감정을 받아주고 → 믿음을 흔들고 → 행동으로 증명한다 &nbsp;·&nbsp; 축은 <b>통제감 회복</b></div>
+  </div>
+</body>
+</html>
