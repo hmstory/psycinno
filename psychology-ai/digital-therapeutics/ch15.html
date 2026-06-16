@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>디지털 치료제 16장 — 윤리적 쟁점 | 김형모</title>
+  <title>디지털 치료제 15장 — 개인정보 보호와 보안 | 김형모</title>
   <style>
     :root {
       --bg: #0f1a1f;
@@ -93,13 +93,13 @@
     <a class="nav-home" href="index.html">💊 디지털 치료제</a>
     <span class="nav-label">|</span>
     <a class="chip" href="ch14.html">14장</a>
-    <a class="chip" href="ch15.html">15장</a>
-    <a class="chip active" href="ch16.html">16장</a>
+    <a class="chip active" href="ch15.html">15장</a>
+    <a class="chip" href="ch16.html">16장</a>
   </nav>
 
   <div class="container">
-    <h1 class="doc-title">디지털 치료제 16장</h1>
-    <p class="doc-sub">개인정보·신뢰·자율성 등 윤리적 쟁점 (Ethical Considerations)</p>
+    <h1 class="doc-title">디지털 치료제 15장</h1>
+    <p class="doc-sub">개인정보 보호와 보안 (Privacy and Security)</p>
     <div id="content"><div class="loading">불러오는 중…</div></div>
   </div>
 
@@ -110,7 +110,7 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     marked.setOptions({ gfm: true, breaks: true });
-    fetch('ch16.md')
+    fetch('ch15.md')
       .then(r => r.text())
       .then(md => {
         document.getElementById('content').innerHTML = marked.parse(md);
