@@ -6,16 +6,16 @@
   <title>디지털 치료제 14장 — 잠재적 함정과 교훈 | 김형모</title>
   <style>
     :root {
-      --bg: #0f1a1f;
-      --surface: #15252c;
-      --card: #1b303a;
-      --text: #dfe9ec;
-      --heading: #ffffff;
-      --accent: #38bdf8;
-      --accent2: #34d399;
-      --accent-soft: #8fd6f5;
-      --highlight-bg: rgba(56,189,248,0.15);
-      --border: #2c4651;
+      --bg: #ffffff;
+      --surface: #f1f5f7;
+      --card: #f5f8fa;
+      --text: #243239;
+      --heading: #0f1c22;
+      --accent: #0d9488;
+      --accent2: #0369a1;
+      --accent-soft: #0e7490;
+      --highlight-bg: rgba(13,148,136,0.12);
+      --border: #d8e0e4;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -30,11 +30,11 @@
     }
     .container { max-width: 800px; margin: 0 auto; padding: 28px 16px 90px; }
     #content h1 { font-size: 1.6rem; color: var(--heading); margin: 2.5rem 0 1rem; padding-bottom: 10px; border-bottom: 2px solid var(--accent); }
-    #content h2 { font-size: 1.35rem; color: var(--accent); margin: 2rem 0 0.8rem; }
+    #content h2 { font-size: 1.32rem; color: var(--accent); margin: 2.4rem 0 0.8rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
     #content h3 {
-      font-size: 1.15rem; color: var(--accent-soft); margin: 2rem 0 0.8rem;
-      background: var(--card); padding: 14px 18px; border-radius: 10px;
-      border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      font-size: 1.12rem; color: var(--accent-soft); margin: 1.8rem 0 0.7rem;
+      background: var(--card); padding: 13px 18px; border-radius: 10px;
+      border-left: 4px solid var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
     #content h4 { font-size: 1.05rem; color: var(--accent2); margin: 1.4rem 0 0.5rem; }
     #content p { margin: 0.7rem 0; }
@@ -47,12 +47,12 @@
     #content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; display: block; overflow-x: auto; }
     #content th, #content td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
     #content th { background: var(--surface); color: var(--accent); font-weight: 600; }
-    #content tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+    #content tr:nth-child(even) { background: rgba(0,0,0,0.025); }
     #content hr { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
     #content a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
 
     .nav {
-      background: var(--surface); border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.9); border-bottom: 1px solid var(--border);
       padding: 11px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
       position: sticky; top: 0; z-index: 100; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     }
@@ -61,17 +61,16 @@
     .nav-label { color: var(--accent-soft); font-size: 0.78rem; font-weight: 600; margin: 0 2px; }
     .nav a.chip { color: var(--text); text-decoration: none; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap; }
     .nav a.chip:hover { border-color: var(--accent); color: var(--accent); }
-    .nav a.chip.active { background: var(--accent); color: #06222f; border-color: var(--accent); font-weight: 600; }
-    .nav .chip.disabled { color: #5e7681; border: 1px dashed var(--border); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; cursor: not-allowed; }
+    .nav a.chip.active { background: var(--accent); color: #ffffff; border-color: var(--accent); font-weight: 600; }
 
     .doc-title { margin: 8px 0 4px; font-size: 1.5rem; color: var(--heading); }
     .doc-sub { color: var(--accent-soft); font-size: 0.95rem; margin-bottom: 8px; }
 
-    .top-btn { position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; background: var(--accent); color: #06222f; border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.4); z-index: 200; }
-    .toc-toggle { position: fixed; bottom: 20px; left: 20px; width: 44px; height: 44px; background: var(--accent2); color: #06322a; border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.4); z-index: 200; display: none; align-items: center; justify-content: center; }
-    .toc-panel { display: none; position: fixed; bottom: 72px; left: 16px; right: 16px; max-height: 60vh; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; overflow-y: auto; z-index: 199; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .top-btn { position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; background: var(--accent); color: #fff; border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 200; }
+    .toc-toggle { position: fixed; bottom: 20px; left: 20px; width: 44px; height: 44px; background: var(--accent2); color: #fff; border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 200; display: none; align-items: center; justify-content: center; }
+    .toc-panel { display: none; position: fixed; bottom: 72px; left: 16px; right: 16px; max-height: 60vh; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; overflow-y: auto; z-index: 199; box-shadow: 0 4px 20px rgba(0,0,0,0.18); }
     .toc-panel.show { display: block; }
-    .toc-panel a { display: block; color: var(--text); text-decoration: none; padding: 8px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .toc-panel a { display: block; color: var(--text); text-decoration: none; padding: 8px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
     .toc-panel a:hover { color: var(--accent); }
     .toc-panel a.toc-h2 { font-weight: 600; color: var(--accent); }
     .toc-panel a.toc-h3 { padding-left: 16px; color: var(--accent-soft); }
@@ -80,9 +79,9 @@
     @media (max-width: 600px) {
       body { font-size: 16px; }
       .container { padding: 20px 12px 90px; }
-      #content h3 { font-size: 1.05rem; padding: 12px 14px; }
+      #content h3 { font-size: 1.03rem; padding: 11px 14px; }
       .nav { padding: 8px 12px; gap: 6px; }
-      .nav a.chip, .nav .chip.disabled { font-size: 0.8rem; padding: 5px 10px; }
+      .nav a.chip { font-size: 0.8rem; padding: 5px 10px; }
     }
   </style>
 </head>
@@ -114,14 +113,39 @@
       .then(r => r.text())
       .then(md => {
         document.getElementById('content').innerHTML = marked.parse(md);
+        autoSection();
         buildToc();
       })
-      .catch(() => { document.getElementById('content').innerHTML = '<p style="color:#f87171;">콘텐츠를 불러오지 못했습니다.</p>'; });
+      .catch(() => { document.getElementById('content').innerHTML = '<p style="color:#dc2626;">콘텐츠를 불러오지 못했습니다.</p>'; });
+
+    // 원본 md는 헤더(#)가 없고 제목을 **볼드 문단**으로만 표기한다.
+    // → 렌더 후 "문단 전체가 하나의 <strong>인 <p>"만 헤딩으로 승격한다.
+    //   (문장 중간 **강조**는 건드리지 않음. 원본 .md 불변.)
+    function autoSection() {
+      const content = document.getElementById('content');
+      content.querySelectorAll('p').forEach(p => {
+        const kids = p.childNodes;
+        // 의미 있는 자식이 <strong> 하나뿐인지 확인 (공백 텍스트는 허용)
+        const meaningful = [...kids].filter(n =>
+          !(n.nodeType === 3 && !n.textContent.trim())
+        );
+        if (meaningful.length !== 1) return;
+        const only = meaningful[0];
+        if (only.nodeName !== 'STRONG') return;
+        const text = only.textContent.trim();
+        if (!text || text.length > 120) return; // 너무 길면 제목 아님
+        // 숫자로 시작(1. , 2) )하면 하위 섹션(h3), 그 외는 상위 섹션(h2)
+        const isSub = /^\d+[.)]/.test(text);
+        const h = document.createElement(isSub ? 'h3' : 'h2');
+        h.textContent = text;
+        p.replaceWith(h);
+      });
+    }
 
     function buildToc() {
       const headings = document.querySelectorAll('#content h1, #content h2, #content h3');
       const panel = document.getElementById('tocPanel');
-      if (!headings.length) return; // 헤더 없으면 TOC 비활성
+      if (!headings.length) return;
       document.getElementById('tocBtn').style.display = 'flex';
       headings.forEach((h, i) => {
         h.id = 'sec-' + i;
