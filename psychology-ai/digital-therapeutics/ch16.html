@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>디지털 치료제 16장 — 윤리적 쟁점 | 김형모</title>
+  <style>
+    :root {
+      --bg: #0f1a1f;
+      --surface: #15252c;
+      --card: #1b303a;
+      --text: #dfe9ec;
+      --heading: #ffffff;
+      --accent: #38bdf8;
+      --accent2: #34d399;
+      --accent-soft: #8fd6f5;
+      --highlight-bg: rgba(56,189,248,0.15);
+      --border: #2c4651;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      z-index: 300; transition: width 0.1s linear; width: 0%;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.85; font-size: 17px;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 28px 16px 90px; }
+    #content h1 { font-size: 1.6rem; color: var(--heading); margin: 2.5rem 0 1rem; padding-bottom: 10px; border-bottom: 2px solid var(--accent); }
+    #content h2 { font-size: 1.35rem; color: var(--accent); margin: 2rem 0 0.8rem; }
+    #content h3 {
+      font-size: 1.15rem; color: var(--accent-soft); margin: 2rem 0 0.8rem;
+      background: var(--card); padding: 14px 18px; border-radius: 10px;
+      border-left: 4px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    #content h4 { font-size: 1.05rem; color: var(--accent2); margin: 1.4rem 0 0.5rem; }
+    #content p { margin: 0.7rem 0; }
+    #content ul, #content ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+    #content li { margin: 0.35rem 0; }
+    #content strong { color: var(--heading); font-weight: 700; }
+    #content em { color: var(--accent-soft); font-style: normal; background: var(--highlight-bg); padding: 1px 6px; border-radius: 3px; }
+    #content blockquote { border-left: 4px solid var(--accent); padding: 10px 18px; margin: 1rem 0; background: var(--surface); border-radius: 0 10px 10px 0; font-size: 0.97em; }
+    #content code { background: var(--surface); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+    #content table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; display: block; overflow-x: auto; }
+    #content th, #content td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+    #content th { background: var(--surface); color: var(--accent); font-weight: 600; }
+    #content tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+    #content hr { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+    #content a { color: var(--accent-soft); text-decoration: underline; text-underline-offset: 3px; }
+
+    .nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 11px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      position: sticky; top: 0; z-index: 100; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    }
+    .nav-home { font-weight: 700; font-size: 0.92rem; color: var(--heading); text-decoration: none; margin-right: 6px; white-space: nowrap; }
+    .nav-home:hover { color: var(--accent); }
+    .nav-label { color: var(--accent-soft); font-size: 0.78rem; font-weight: 600; margin: 0 2px; }
+    .nav a.chip { color: var(--text); text-decoration: none; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s; white-space: nowrap; }
+    .nav a.chip:hover { border-color: var(--accent); color: var(--accent); }
+    .nav a.chip.active { background: var(--accent); color: #06222f; border-color: var(--accent); font-weight: 600; }
+    .nav .chip.disabled { color: #5e7681; border: 1px dashed var(--border); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; white-space: nowrap; cursor: not-allowed; }
+
+    .doc-title { margin: 8px 0 4px; font-size: 1.5rem; color: var(--heading); }
+    .doc-sub { color: var(--accent-soft); font-size: 0.95rem; margin-bottom: 8px; }
+
+    .top-btn { position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px; background: var(--accent); color: #06222f; border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.4); z-index: 200; }
+    .toc-toggle { position: fixed; bottom: 20px; left: 20px; width: 44px; height: 44px; background: var(--accent2); color: #06322a; border: none; border-radius: 50%; font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.4); z-index: 200; display: none; align-items: center; justify-content: center; }
+    .toc-panel { display: none; position: fixed; bottom: 72px; left: 16px; right: 16px; max-height: 60vh; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; overflow-y: auto; z-index: 199; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .toc-panel.show { display: block; }
+    .toc-panel a { display: block; color: var(--text); text-decoration: none; padding: 8px 0; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .toc-panel a:hover { color: var(--accent); }
+    .toc-panel a.toc-h2 { font-weight: 600; color: var(--accent); }
+    .toc-panel a.toc-h3 { padding-left: 16px; color: var(--accent-soft); }
+    .loading { text-align: center; padding: 3rem; color: var(--accent); font-size: 1.1rem; }
+
+    @media (max-width: 600px) {
+      body { font-size: 16px; }
+      .container { padding: 20px 12px 90px; }
+      #content h3 { font-size: 1.05rem; padding: 12px 14px; }
+      .nav { padding: 8px 12px; gap: 6px; }
+      .nav a.chip, .nav .chip.disabled { font-size: 0.8rem; padding: 5px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <nav class="nav">
+    <a class="nav-home" href="index.html">💊 디지털 치료제</a>
+    <span class="nav-label">|</span>
+    <a class="chip" href="ch14.html">14장</a>
+    <span class="chip disabled" title="원본 md 미제공 — 준비중">15장 (준비중)</span>
+    <a class="chip active" href="ch16.html">16장</a>
+  </nav>
+
+  <div class="container">
+    <h1 class="doc-title">디지털 치료제 16장</h1>
+    <p class="doc-sub">개인정보·신뢰·자율성 등 윤리적 쟁점 (Ethical Considerations)</p>
+    <div id="content"><div class="loading">불러오는 중…</div></div>
+  </div>
+
+  <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0})">&#8593;</button>
+  <button class="toc-toggle" id="tocBtn">&#9776;</button>
+  <div class="toc-panel" id="tocPanel"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    marked.setOptions({ gfm: true, breaks: true });
+    fetch('ch16.md')
+      .then(r => r.text())
+      .then(md => {
+        document.getElementById('content').innerHTML = marked.parse(md);
+        buildToc();
+      })
+      .catch(() => { document.getElementById('content').innerHTML = '<p style="color:#f87171;">콘텐츠를 불러오지 못했습니다.</p>'; });
+
+    function buildToc() {
+      const headings = document.querySelectorAll('#content h1, #content h2, #content h3');
+      const panel = document.getElementById('tocPanel');
+      if (!headings.length) return; // 헤더 없으면 TOC 비활성
+      document.getElementById('tocBtn').style.display = 'flex';
+      headings.forEach((h, i) => {
+        h.id = 'sec-' + i;
+        const a = document.createElement('a');
+        a.href = '#sec-' + i;
+        a.textContent = h.textContent;
+        a.className = 'toc-' + h.tagName.toLowerCase();
+        a.onclick = () => panel.classList.remove('show');
+        panel.appendChild(a);
+      });
+    }
+
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('topBtn').style.display = window.scrollY > 400 ? 'flex' : 'none';
+    });
+    document.getElementById('tocBtn').onclick = () => document.getElementById('tocPanel').classList.toggle('show');
+  </script>
+</body>
+</html>
